@@ -671,6 +671,50 @@ function bindParentInfoNavigation(){
   document.querySelectorAll('[data-parent-info-menu]').forEach(btn=>btn.addEventListener('click',()=>showParentInfoPanel('')));
 }
 
+
+function ensureHolidaySheetModal(){
+  let modal=document.querySelector('.holiday-sheet-modal');
+  if(modal)return modal;
+  modal=document.createElement('div');
+  modal.className='holiday-sheet-modal';
+  modal.hidden=true;
+  modal.setAttribute('role','dialog');
+  modal.setAttribute('aria-modal','true');
+  modal.setAttribute('aria-label','Fiche de vacances agrandie');
+  modal.innerHTML='<div class="holiday-sheet-modal__dialog"><img class="holiday-sheet-modal__image" alt=""><button class="holiday-sheet-modal__close" type="button" aria-label="Fermer la fiche">×</button></div>';
+  document.body.appendChild(modal);
+  const close=()=>{
+    modal.hidden=true;
+    document.body.classList.remove('holiday-sheet-modal-open');
+    modal.querySelector('.holiday-sheet-modal__image').removeAttribute('src');
+  };
+  modal.querySelector('.holiday-sheet-modal__close').addEventListener('click',close);
+  modal.addEventListener('click',e=>{if(e.target===modal)close()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)close()});
+  modal._closeHolidaySheet=close;
+  return modal;
+}
+function openHolidaySheet(link){
+  const img=link.querySelector('img');
+  const src=link.getAttribute('href')||img?.getAttribute('src');
+  if(!src)return;
+  const modal=ensureHolidaySheetModal();
+  const full=modal.querySelector('.holiday-sheet-modal__image');
+  full.src=src;
+  full.alt=img?.alt||'Fiche de vacances agrandie';
+  modal.hidden=false;
+  document.body.classList.add('holiday-sheet-modal-open');
+  modal.querySelector('.holiday-sheet-modal__close').focus({preventScroll:true});
+}
+function bindHolidayRevisionPreviews(){
+  document.addEventListener('click',e=>{
+    const link=e.target.closest('.holiday-revisions__page');
+    if(!link)return;
+    e.preventDefault();
+    openHolidaySheet(link);
+  });
+}
+
 function showParentView(view){
   document.querySelectorAll('[data-parent-panel]').forEach(panel=>panel.hidden=panel.dataset.parentPanel!==view);
   document.querySelector('.parents-dashboard').hidden=!!view;
@@ -692,6 +736,6 @@ function bindParentNavigation(){
   if(hash.startsWith('info-')){showParentView('info');showParentInfoPanel(hash.slice(5));}
   else if(['schedule','homework','learning','info'].includes(hash))showParentView(hash);
 }
-function init(){const now=new Date(),p=period();$('parentsDate').textContent=frDate(now);renderPublished();renderFlashTicker();renderSchedule();bindParentInfoNavigation();bindParentNavigation();setupHomeworkTest()}
+function init(){const now=new Date(),p=period();$('parentsDate').textContent=frDate(now);renderPublished();renderFlashTicker();renderSchedule();bindParentInfoNavigation();bindParentNavigation();bindHolidayRevisionPreviews();setupHomeworkTest()}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
