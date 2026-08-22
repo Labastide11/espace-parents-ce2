@@ -1216,3 +1216,94 @@ footer{
 
 /* V34.51 — évaluations annoncées à l'avance */
 .homework-evaluations{margin:10px 0 12px;padding:12px;border-radius:15px;background:#fff8e8;border:1px solid #efd39b}.homework-evaluations-title{font-weight:900;color:#795817;margin-bottom:8px}.homework-evaluation{background:#fff;border-radius:12px;padding:11px 12px;margin-top:8px;border-left:4px solid #e5ad39}.homework-evaluation-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline}.homework-evaluation-head strong{color:#4e356d}.homework-evaluation-head span{font-size:12px;font-weight:800;color:#7a658d;text-transform:capitalize}.homework-evaluation h4{margin:6px 0;color:#332844}.homework-evaluation ul{margin:7px 0 5px;padding-left:20px;line-height:1.45}.homework-evaluation-prep{margin:8px 0 0;line-height:1.45}.homework-evaluation .homework-hibou{margin-top:8px}.homework-evaluations+.homework-routine{margin-top:10px}@media(max-width:620px){.homework-evaluation-head{display:block}.homework-evaluation-head span{display:block;margin-top:2px}}
+
+/* V34.79 — mini-calendrier hebdomadaire de l'Espace Parents */
+.homework-week-calendar{
+  margin:10px 0 14px;
+  padding:12px;
+  border:1px solid #e5dcf0;
+  border-radius:18px;
+  background:linear-gradient(180deg,#fff,#fbf9ff);
+}
+.homework-week-calendar__title{
+  margin:0 0 10px;
+  color:#51347f;
+  font-size:13px;
+  font-weight:900;
+}
+.homework-week-calendar__grid{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:6px;
+}
+.homework-week-calendar__day{
+  min-width:0;
+  min-height:88px;
+  padding:10px 8px;
+  border:1px solid #e7dff0;
+  border-radius:13px;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.homework-week-calendar__date{
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+  color:#4b3170;
+  line-height:1.15;
+}
+.homework-week-calendar__date strong{
+  font-size:12px;
+  text-transform:capitalize;
+}
+.homework-week-calendar__date span{
+  font-size:11px;
+  color:#786b83;
+  font-weight:700;
+}
+.homework-week-calendar__status{
+  display:flex;
+  align-items:flex-start;
+  gap:4px;
+  margin-top:auto;
+  color:#51425f;
+  line-height:1.15;
+}
+.homework-week-calendar__status>span{
+  flex:0 0 auto;
+  font-size:12px;
+}
+.homework-week-calendar__status small{
+  display:block;
+  min-width:0;
+  font-size:10px;
+  font-weight:800;
+  overflow-wrap:anywhere;
+}
+.homework-week-calendar__day--weekend{
+  background:#f6f6f8;
+  border-color:#e5e4e8;
+}
+.homework-week-calendar__day--noclass{
+  background:#f6fbf7;
+  border-color:#dfebdf;
+}
+.homework-week-calendar__day--holiday,
+.homework-week-calendar__day--dayoff{
+  background:#eef9fb;
+  border-color:#cde8ed;
+}
+.homework-week-calendar__day--evaluation{
+  background:#f5effd;
+  border-color:#d9c7f0;
+}
+.homework-week-calendar__day--homework{
+  background:#fffaf0;
+  border-color:#eee0bd;
+}
+@media(max-width:760px){
+  .homework-week-calendar{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .homework-week-calendar__grid{min-width:720px}
+}
