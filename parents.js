@@ -1,4 +1,4 @@
-// V34.91 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
+// V34.92 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
 // Le référentiel enseignant reste inchangé : seule la présentation destinée aux familles est simplifiée.
 // Les repères annuels transversaux Arts / éducation musicale sont affichés pour chaque période.
 (function(){
@@ -715,6 +715,7 @@ function renderFlashTicker(){
   ticker.setAttribute('aria-label',`Information de dernière minute : ${msg}. Ouvrir les infos de la classe.`);
 }
 
+// V34.92 — « À venir » : plus d’extraction automatique des séances ordinaires de l’emploi du temps.
 function renderClassInfo(){
   const important=infoLines(I.importantItems?.length?I.importantItems:W.items);
   $('parentsImportantList').innerHTML=important.length
@@ -725,7 +726,7 @@ function renderClassInfo(){
   const activeUpcomingPeriod=upcomingTestPeriod||periodKey();
   const periodItems=I.upcomingByPeriod&&Array.isArray(I.upcomingByPeriod[activeUpcomingPeriod])?I.upcomingByPeriod[activeUpcomingPeriod]:[];
   const manual=infoLines(periodItems.length?periodItems:(I.upcomingItems?.length?I.upcomingItems:L.items));
-  const autoHtml=automatic.map(e=>`<article class="parents-upcoming-item"><time>${esc(frDate(e.date,{weekday:'short',day:'numeric',month:'short'}))}</time><div>${e.subject?`<strong>${esc(e.subject)}</strong>`:''}<span>${esc(e.label)}</span></div></article>`).join('');
+  const autoHtml='';
   const manualHtml=manual.map(x=>`<article class="parents-upcoming-item parents-upcoming-item--manual"><span class="parents-upcoming-dot">•</span><div><span>${esc(x)}</span></div></article>`).join('');
   $('parentsUpcomingList').innerHTML=(autoHtml||manualHtml)
     ? `${autoHtml}${manualHtml}`

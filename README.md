@@ -28,3 +28,5 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - V34.90 : rappels pratiques automatiques dans Devoirs à partir de l’emploi du temps : EPS / Domec / natation. Lundi → rappel le vendredi pour le week-end ; mardi → lundi ; jeudi → mercredi ; vendredi → jeudi. Les rappels sont séparés et ne comptent pas comme devoirs pédagogiques.
 
 - V34.91 : « Infos de la classe → À venir » change automatiquement selon P1 à P5. Appui long (1,2 s) sur l’icône 📅 du titre « À venir » : barre enseignant pour parcourir P1 → P5 et vérifier les messages, avec bouton « Retour auto ».
+
+- V34.92 : nettoyage de « Infos de la classe → À venir ». Suppression de l’extraction automatique des séances ordinaires de l’emploi du temps (ex. tournoi régulé, présentation du chant). « À venir » affiche désormais uniquement les messages dédiés par période et les éventuels `upcomingItems` explicitement publiés.
