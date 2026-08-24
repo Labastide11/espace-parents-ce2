@@ -1,4 +1,4 @@
-// V34.77 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
+// V34.90 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
 // Le référentiel enseignant reste inchangé : seule la présentation destinée aux familles est simplifiée.
 // Les repères annuels transversaux Arts / éducation musicale sont affichés pour chaque période.
 (function(){
@@ -567,8 +567,65 @@ function homeworkStructuredBlock(task,extraClass=''){
   </div>`;
 }
 function homeworkItemCard(it,compact=false,periodTag='',lightWeek=false,week=null){if(it&&it.evaluationToday)return homeworkEvaluationTodayHtml(it.evaluationToday);const evaluations=homeworkEvaluationsHtml(it.evaluations,periodTag);const structured=Boolean(it&&(it.subject||it.instruction||it.action));const main=structured?homeworkStructuredBlock(it,'homework-task--main'):`<div class="homework-block homework-routine"><b>${esc(it.routineIcon||'📚')} ${esc(it.routineTitle||'Je revois')}</b><p>${esc(it.routine||'')}</p></div>`;const secondary=structured&&it.secondary?homeworkStructuredBlock(it.secondary,'homework-task--secondary'):'';const challenge=(!structured&&!lightWeek&&it.challenge)?`<div class="homework-block homework-challenge"><b>🎯 Petit défi</b><p>${esc(it.challenge)}</p></div>`:'';const family=(!lightWeek&&it.family)?`<div class="homework-block homework-family"><b>👨‍👩‍👧 Défi famille <span>facultatif</span></b><p>${esc(it.family)}</p></div>`:'';const hibou=homeworkHibouHtml(it.hibou);const dictation=dictationReviewHtml(week,it);const dateTitle=evaluationWeekLabel(it);return `<article class="homework-card${compact?' homework-card--compact':''}"><div class="homework-date">${esc(dateTitle)}</div>${evaluations}${main}${dictation}${secondary}${family}${hibou}</article>`}
+
+function physicalActivityReminderMeta(rows){
+  const subjects=(Array.isArray(rows)?rows:[]).map(r=>String(r?.[1]||'')).filter(Boolean);
+  const joined=subjects.join(' · ').toLowerCase();
+  if(!joined)return null;
+  if(/\b(natation|piscine)\b/.test(joined)){
+    return {icon:'🏊',title:'Natation',message:'Pense à préparer ton maillot, ta serviette et les affaires demandées pour la piscine.'};
+  }
+  if(/\bdomec\b/.test(joined)){
+    return {icon:'🏟️',title:'EPS — Domec',message:'Pense à préparer une tenue de sport adaptée pour la séance à Domec.'};
+  }
+  if(/\beps\b/.test(joined)){
+    return {icon:'🏃',title:'EPS',message:'Pense à prévoir une tenue adaptée pour l’activité physique.'};
+  }
+  return null;
+}
+function physicalActivityReminderDate(activityDate){
+  const d=new Date(activityDate);d.setHours(12,0,0,0);
+  const day=d.getDay();
+  if(day===1)return EDT.addDays(d,-3); // lundi → vendredi : rappel pour le week-end
+  if(day===2)return EDT.addDays(d,-1); // mardi → lundi
+  if(day===4)return EDT.addDays(d,-1); // jeudi → mercredi
+  if(day===5)return EDT.addDays(d,-1); // vendredi → jeudi
+  return EDT.addDays(d,-1);
+}
+function homeworkPhysicalReminders(week){
+  if(!week||!EDT?.rowsForDate)return [];
+  const start=dateFromIso(week.start),end=dateFromIso(week.end);
+  const scanStart=EDT.addDays(start,-1),scanEnd=EDT.addDays(end,3);
+  const reminders=[],seen=new Set();
+  for(let d=new Date(scanStart);d<=scanEnd;d=EDT.addDays(d,1)){
+    const data=EDT.rowsForDate(d);
+    const meta=physicalActivityReminderMeta(data?.rows||[]);
+    if(!meta)continue;
+    const reminderDate=physicalActivityReminderDate(d);
+    const reminderIso=isoLocal(reminderDate);
+    if(reminderIso<week.start||reminderIso>week.end)continue;
+    const activityIso=isoLocal(d),key=`${activityIso}|${meta.title}`;
+    if(seen.has(key))continue;
+    seen.add(key);
+    const activityLabel=frDate(d,{weekday:'long',day:'numeric',month:'long'});
+    const when=d.getDay()===1?'lundi (rappel du week-end)':activityLabel;
+    reminders.push({...meta,activityDate:activityIso,reminderDate:reminderIso,when});
+  }
+  return reminders.sort((a,b)=>a.reminderDate.localeCompare(b.reminderDate));
+}
+function homeworkPhysicalRemindersHtml(week){
+  const reminders=homeworkPhysicalReminders(week);
+  if(!reminders.length)return '';
+  return `<section class="homework-practical-reminders" aria-label="Rappels pratiques pour les activités physiques">
+    <div class="homework-practical-reminders__head"><strong>🎒 Rappels pratiques</strong><span>Ne comptent pas comme devoirs</span></div>
+    ${reminders.map(r=>`<div class="homework-practical-reminder">
+      <span class="homework-practical-reminder__icon" aria-hidden="true">${esc(r.icon)}</span>
+      <div><strong>${esc(r.title)} ${esc(r.when)}</strong><p>${esc(r.message)}</p></div>
+    </div>`).join('')}
+  </section>`;
+}
 function allEvaluationDates(){return [...new Set(allEvaluations().map(ev=>String(ev.date||'')).filter(Boolean))]}
-function renderHomework(){const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');if(!cur)return;if(!week){cur.innerHTML='<div class="homework-empty">Aucun devoir programmé.</div>';return}const sourceItems=Array.isArray(week.items)?week.items:[];let items=[...sourceItems];const periodTag=week.__period||'';const noSchool=noSchoolDateSet();items=items.filter(it=>!noSchool.has(String(it&&it.due||'')));const evalDates=allEvaluationDates();const weekEvalDates=evalDates.filter(d=>d>=week.start&&d<=week.end);const lightWeek=['p1','p2','p3','p4','p5'].includes(periodTag)&&weekEvalDates.length>0;if(lightWeek){items=items.filter(it=>{const hasOwnEvaluations=Array.isArray(it.evaluations)&&it.evaluations.length>0;return hasOwnEvaluations||!weekEvalDates.includes(String(it.due||''))})}const dayJItems=allEvaluations().filter(ev=>String(ev.date||'')>=week.start&&String(ev.date||'')<=week.end).map(ev=>({due:String(ev.date),evaluationToday:ev}));items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));const dates=`${esc(frDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(frDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;const head=`<div class="homework-week-head"><div><span>${esc(week.label||'Semaine en cours')}</span><h3>${dates}</h3>${week.theme?`<p class="homework-theme">${esc(week.theme)}</p>`:''}</div></div>`;const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);const calendar=schoolCalendarHtml(week);const holidayRevisions=holidayRevisionHtml(week);if(!items.length){cur.innerHTML=`${head}${weekCalendar}${calendar}<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`;return}cur.innerHTML=`${head}${weekCalendar}${calendar}${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`}
+function renderHomework(){const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');if(!cur)return;if(!week){cur.innerHTML='<div class="homework-empty">Aucun devoir programmé.</div>';return}const sourceItems=Array.isArray(week.items)?week.items:[];let items=[...sourceItems];const periodTag=week.__period||'';const noSchool=noSchoolDateSet();items=items.filter(it=>!noSchool.has(String(it&&it.due||'')));const evalDates=allEvaluationDates();const weekEvalDates=evalDates.filter(d=>d>=week.start&&d<=week.end);const lightWeek=['p1','p2','p3','p4','p5'].includes(periodTag)&&weekEvalDates.length>0;if(lightWeek){items=items.filter(it=>{const hasOwnEvaluations=Array.isArray(it.evaluations)&&it.evaluations.length>0;return hasOwnEvaluations||!weekEvalDates.includes(String(it.due||''))})}const dayJItems=allEvaluations().filter(ev=>String(ev.date||'')>=week.start&&String(ev.date||'')<=week.end).map(ev=>({due:String(ev.date),evaluationToday:ev}));items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));const dates=`${esc(frDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(frDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;const head=`<div class="homework-week-head"><div><span>${esc(week.label||'Semaine en cours')}</span><h3>${dates}</h3>${week.theme?`<p class="homework-theme">${esc(week.theme)}</p>`:''}</div></div>`;const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);const calendar=schoolCalendarHtml(week);const practicalReminders=homeworkPhysicalRemindersHtml(week);const holidayRevisions=holidayRevisionHtml(week);if(!items.length){cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`;return}cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`}
 
 function setupHomeworkTest(){
   const btn=$('homeworkTestHotspot'),bar=$('homeworkTestBar'),label=$('homeworkTestLabel'),prev=$('homeworkTestPrev'),next=$('homeworkTestNext'),reset=$('homeworkTestReset');

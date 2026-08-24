@@ -24,3 +24,5 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - V34.87 : P1 adopte le moteur annuel des devoirs : matière + verbe d’action, consigne autonome, aide/exemple, durée, lien avec le travail de classe, deuxième tâche disciplinaire éventuelle et Défi famille facultatif. Les dictées peuvent être rappelées deux fois à partir de la même banque de mots.
 
 - V34.89 : l’Espace Parents recharge les données P3/P4 V34.98 et affiche dans « Infos de la classe → À venir » l’amorce GDVB de P3 et le Grand Défi Vivez Bougez du 22 février au 4 avril 2027.
+
+- V34.90 : rappels pratiques automatiques dans Devoirs à partir de l’emploi du temps : EPS / Domec / natation. Lundi → rappel le vendredi pour le week-end ; mardi → lundi ; jeudi → mercredi ; vendredi → jeudi. Les rappels sont séparés et ne comptent pas comme devoirs pédagogiques.

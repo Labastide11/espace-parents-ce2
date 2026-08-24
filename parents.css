@@ -1462,3 +1462,15 @@ body.holiday-sheet-modal-open{overflow:hidden}
 .homework-help{margin-top:8px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.72);line-height:1.45}
 .homework-task-meta{display:flex;flex-wrap:wrap;gap:6px 10px;margin-top:8px;font-size:12px;color:#696274}
 .homework-task-meta span{background:rgba(255,255,255,.75);border-radius:999px;padding:4px 8px}
+
+
+/* V34.90 — rappels pratiques EPS / natation, générés depuis l'emploi du temps */
+.homework-practical-reminders{margin:12px 0 14px;border:1px solid #d9e8df;border-radius:16px;background:#f7fbf8;overflow:hidden}
+.homework-practical-reminders__head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#edf7f0;color:#315d40}
+.homework-practical-reminders__head strong{font-size:14px}
+.homework-practical-reminders__head span{font-size:11px;font-weight:800;background:#fff;border-radius:999px;padding:4px 8px;color:#56705e}
+.homework-practical-reminder{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border-top:1px solid #e2eee6}
+.homework-practical-reminder__icon{font-size:22px;line-height:1.1}
+.homework-practical-reminder strong{color:#315d40}
+.homework-practical-reminder p{margin:4px 0 0;line-height:1.45;color:#514b58}
+@media(max-width:620px){.homework-practical-reminders__head{align-items:flex-start;flex-direction:column}.homework-practical-reminders__head span{font-size:10px}}
