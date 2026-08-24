@@ -1474,3 +1474,14 @@ body.holiday-sheet-modal-open{overflow:hidden}
 .homework-practical-reminder strong{color:#315d40}
 .homework-practical-reminder p{margin:4px 0 0;line-height:1.45;color:#514b58}
 @media(max-width:620px){.homework-practical-reminders__head{align-items:flex-start;flex-direction:column}.homework-practical-reminders__head span{font-size:10px}}
+
+
+/* V34.91 — test enseignant « À venir » par appui long sur l'icône du titre */
+.upcoming-test-icon{appearance:none;border:0;background:transparent;padding:0;margin:0;font:inherit;line-height:1;cursor:default}
+.upcoming-test-icon:focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:8px}
+.upcoming-test-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 12px;padding:9px 10px;border:1px dashed #b9c9d4;border-radius:12px;background:#f6f9fb;font-size:12px}
+.upcoming-test-bar[hidden]{display:none!important}
+.upcoming-test-bar strong{color:#45616f}
+.upcoming-test-bar span{font-weight:800;color:#334f5d;min-width:150px;text-align:center}
+.upcoming-test-bar button{border:1px solid #cedbe2;background:#fff;border-radius:9px;padding:6px 9px;font-weight:800;cursor:pointer}
+@media(max-width:620px){.upcoming-test-bar span{min-width:0;flex:1 1 130px}.upcoming-test-bar{gap:6px}}

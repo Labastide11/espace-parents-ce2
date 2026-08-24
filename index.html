@@ -7,8 +7,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents — Progressions CE2 V34.90</title>
-  <link rel="stylesheet" href="parents.css?v=34.90">
+  <title>Espace Parents — Progressions CE2 V34.91</title>
+  <link rel="stylesheet" href="parents.css?v=34.91">
 </head>
 <body>
 <main class="parents-main">
@@ -160,7 +160,14 @@
   <section class="parents-info-detail" data-parent-info-panel="upcoming" hidden>
     <div class="parents-info-detail__toolbar"><button class="parents-back" type="button" data-parent-info-menu>← Infos de la classe</button></div>
     <div class="parents-info-block parents-info-upcoming" id="parentsInfoUpcoming">
-      <h3>📅 À venir</h3>
+      <h3><button id="upcomingTestHotspot" class="upcoming-test-icon" type="button" aria-label="Icône À venir — appui long enseignant" aria-expanded="false">📅</button> À venir</h3>
+      <div id="upcomingTestBar" class="upcoming-test-bar" hidden>
+        <strong>🧪 Test À venir</strong>
+        <button id="upcomingTestPrev" type="button" aria-label="Période précédente">←</button>
+        <span id="upcomingTestLabel"></span>
+        <button id="upcomingTestNext" type="button" aria-label="Période suivante">→</button>
+        <button id="upcomingTestReset" type="button">Retour auto</button>
+      </div>
       <p class="parents-info-help">Sorties, rencontres et temps forts déjà programmés dans Progressions CE2, complétés si besoin par l’enseignant.</p>
       <div id="parentsUpcomingList"></div>
     </div>
@@ -239,12 +246,12 @@
   <span>Directeur : Gilles Maigron</span>
   <a href="tel:+33608023741">☎ 06 08 02 37 41</a>
 </section>
-<footer>Progressions CE2 · Espace Parents · V34.90</footer>
+<footer>Progressions CE2 · Espace Parents · V34.91</footer>
 <!-- Interface Parents séparée ; Progressions CE2 reste la source unique des données partagées. -->
 <script src="https://labastide11.github.io/progressions-ce2/data.js?v=34.38"></script>
 <script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p1.js?v=34.51"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p2.js?v=34.51"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p3.js?v=34.98"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p4.js?v=34.98"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p5.js?v=34.51"></script>
 <script src="https://labastide11.github.io/progressions-ce2/public-emploi-du-temps.js?v=34.51"></script>
-<script src="https://labastide11.github.io/progressions-ce2/data/parents-semaine.js?v=33.69"></script><script src="https://labastide11.github.io/progressions-ce2/data/calendrier-scolaire-2026-2027.js?v=34.63"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-engine.js?v=34.97"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p1.js?v=34.97"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p2.js?v=34.55"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p3.js?v=34.57"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p4.js?v=34.61"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p5.js?v=34.62"></script><script src="https://labastide11.github.io/progressions-ce2/data/parents-travail.js?v=33.69"></script><script src="https://labastide11.github.io/progressions-ce2/data/parents-vie-classe.js?v=33.69"></script><script src="https://labastide11.github.io/progressions-ce2/data/parents-infos.js?v=34.98"></script>
+<script src="https://labastide11.github.io/progressions-ce2/data/parents-semaine.js?v=33.69"></script><script src="https://labastide11.github.io/progressions-ce2/data/calendrier-scolaire-2026-2027.js?v=34.63"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-engine.js?v=34.97"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p1.js?v=34.97"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p2.js?v=34.55"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p3.js?v=34.57"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p4.js?v=34.61"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p5.js?v=34.62"></script><script src="https://labastide11.github.io/progressions-ce2/data/parents-travail.js?v=33.69"></script><script src="https://labastide11.github.io/progressions-ce2/data/parents-vie-classe.js?v=33.69"></script><script src="https://labastide11.github.io/progressions-ce2/data/parents-infos.js?v=34.99"></script>
 <script src="https://labastide11.github.io/progressions-ce2/data/parents-dictees.js?v=34.96"></script>
-<script src="parents.js?v=34.90"></script>
+<script src="parents.js?v=34.91"></script>
 </body></html>

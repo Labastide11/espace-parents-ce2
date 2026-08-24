@@ -1,4 +1,4 @@
-// V34.90 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
+// V34.91 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
 // Le référentiel enseignant reste inchangé : seule la présentation destinée aux familles est simplifiée.
 // Les repères annuels transversaux Arts / éducation musicale sont affichés pour chaque période.
 (function(){
@@ -6,6 +6,7 @@
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const EDT=window.PUBLIC_EDT,PROG=window.PROGRESSIONS||{},W=window.PARENTS_SEMAINE||{},H=window.PARENTS_TRAVAIL||{},L=window.PARENTS_VIE_CLASSE||{},I=window.PARENTS_INFOS||{},D1=window.DEVOIRS_P1||{weeks:[]},D2=window.DEVOIRS_P2||{weeks:[]},D3=window.DEVOIRS_P3||{weeks:[]},D4=window.DEVOIRS_P4||{weeks:[]},D5=window.DEVOIRS_P5||{weeks:[]},D={weeks:[...(D1.weeks||[]).map(w=>({...w,__period:'p1'})),...(D2.weeks||[]).map(w=>({...w,__period:'p2'})),...(D3.weeks||[]).map(w=>({...w,__period:'p3'})),...(D4.weeks||[]).map(w=>({...w,__period:'p4'})),...(D5.weeks||[]).map(w=>({...w,__period:'p5'}))].sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')))};
 const CAL=window.CALENDRIER_SCOLAIRE_2026_2027||{daysOff:[],breaks:[]};
+let upcomingTestPeriod=null;
 function currentParentsDictations(){
   return window.PARENTS_DICTEES_CE2||{periods:{}};
 }
@@ -721,12 +722,19 @@ function renderClassInfo(){
     : '<div class="parents-info-empty">Aucun rappel important publié pour le moment.</div>';
 
   const automatic=plannedFamilyEvents();
-  const manual=infoLines(I.upcomingItems?.length?I.upcomingItems:L.items);
+  const activeUpcomingPeriod=upcomingTestPeriod||periodKey();
+  const periodItems=I.upcomingByPeriod&&Array.isArray(I.upcomingByPeriod[activeUpcomingPeriod])?I.upcomingByPeriod[activeUpcomingPeriod]:[];
+  const manual=infoLines(periodItems.length?periodItems:(I.upcomingItems?.length?I.upcomingItems:L.items));
   const autoHtml=automatic.map(e=>`<article class="parents-upcoming-item"><time>${esc(frDate(e.date,{weekday:'short',day:'numeric',month:'short'}))}</time><div>${e.subject?`<strong>${esc(e.subject)}</strong>`:''}<span>${esc(e.label)}</span></div></article>`).join('');
   const manualHtml=manual.map(x=>`<article class="parents-upcoming-item parents-upcoming-item--manual"><span class="parents-upcoming-dot">•</span><div><span>${esc(x)}</span></div></article>`).join('');
   $('parentsUpcomingList').innerHTML=(autoHtml||manualHtml)
     ? `${autoHtml}${manualHtml}`
-    : '<div class="parents-info-empty">Aucune sortie ou rencontre familiale n’est programmée pour le moment.</div>';
+    : '<div class="parents-info-empty">Aucun temps fort particulier n’est encore annoncé pour cette période.</div>';
+  const testLabel=$('upcomingTestLabel');
+  if(testLabel){
+    const key=upcomingTestPeriod||periodKey();
+    testLabel.textContent=`${LEARNING_PERIOD_DATES[key]?.label||key.toUpperCase()}${upcomingTestPeriod?' · mode test':' · affichage automatique'}`;
+  }
 
   const docs=Array.isArray(I.documents)?I.documents:[];
   $('parentsDocumentsUseful').innerHTML=docs.length
@@ -738,6 +746,49 @@ function renderClassInfo(){
     : '<div class="parents-info-empty">Aucun document utile publié pour le moment.</div>';
 }
 
+
+function setupUpcomingTest(){
+  const btn=$('upcomingTestHotspot'),bar=$('upcomingTestBar'),label=$('upcomingTestLabel'),prev=$('upcomingTestPrev'),next=$('upcomingTestNext'),reset=$('upcomingTestReset');
+  if(!btn||!bar)return;
+  const keys=['p1','p2','p3','p4','p5'];
+  let timer=null;
+  function currentIndex(){
+    const key=upcomingTestPeriod||periodKey();
+    const i=keys.indexOf(key);
+    return i>=0?i:0;
+  }
+  function refresh(){
+    const key=upcomingTestPeriod||periodKey();
+    if(label)label.textContent=`${LEARNING_PERIOD_DATES[key]?.label||key.toUpperCase()}${upcomingTestPeriod?' · mode test':' · affichage automatique'}`;
+    renderClassInfo();
+  }
+  function show(){
+    bar.hidden=false;
+    btn.setAttribute('aria-expanded','true');
+    if(!upcomingTestPeriod)upcomingTestPeriod=keys[currentIndex()];
+    refresh();
+  }
+  const start=()=>{clearTimeout(timer);timer=setTimeout(show,1200)};
+  const cancel=()=>clearTimeout(timer);
+  ['pointerdown','touchstart'].forEach(e=>btn.addEventListener(e,start,{passive:true}));
+  ['pointerup','pointercancel','pointerleave','touchend'].forEach(e=>btn.addEventListener(e,cancel,{passive:true}));
+  prev?.addEventListener('click',()=>{
+    const i=currentIndex();
+    upcomingTestPeriod=keys[(i-1+keys.length)%keys.length];
+    refresh();
+  });
+  next?.addEventListener('click',()=>{
+    const i=currentIndex();
+    upcomingTestPeriod=keys[(i+1)%keys.length];
+    refresh();
+  });
+  reset?.addEventListener('click',()=>{
+    upcomingTestPeriod=null;
+    bar.hidden=true;
+    btn.setAttribute('aria-expanded','false');
+    renderClassInfo();
+  });
+}
 function frDate(d,opts={weekday:'long',day:'numeric',month:'long',year:'numeric'}){return new Intl.DateTimeFormat('fr-FR',opts).format(d).replace(/^./,c=>c.toUpperCase())}
 function scheduleTargetDate(){
   const now=new Date();now.setHours(12,0,0,0);
@@ -880,6 +931,7 @@ function init(){
   bindParentNavigation();
   bindHolidayRevisionPreviews();
   setupHomeworkTest();
+  setupUpcomingTest();
 }
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
