@@ -6,7 +6,9 @@
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const EDT=window.PUBLIC_EDT,PROG=window.PROGRESSIONS||{},W=window.PARENTS_SEMAINE||{},H=window.PARENTS_TRAVAIL||{},L=window.PARENTS_VIE_CLASSE||{},I=window.PARENTS_INFOS||{},D1=window.DEVOIRS_P1||{weeks:[]},D2=window.DEVOIRS_P2||{weeks:[]},D3=window.DEVOIRS_P3||{weeks:[]},D4=window.DEVOIRS_P4||{weeks:[]},D5=window.DEVOIRS_P5||{weeks:[]},D={weeks:[...(D1.weeks||[]).map(w=>({...w,__period:'p1'})),...(D2.weeks||[]).map(w=>({...w,__period:'p2'})),...(D3.weeks||[]).map(w=>({...w,__period:'p3'})),...(D4.weeks||[]).map(w=>({...w,__period:'p4'})),...(D5.weeks||[]).map(w=>({...w,__period:'p5'}))].sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')))};
 const CAL=window.CALENDRIER_SCOLAIRE_2026_2027||{daysOff:[],breaks:[]};
-const PARENTS_DICTEES=window.PARENTS_DICTEES_CE2||{periods:{}};
+function currentParentsDictations(){
+  return window.PARENTS_DICTEES_CE2||{periods:{}};
+}
 const subjectOrder=['francais','maths','anglais','sciences','histoire','geographie','eps','arts'];
 const togetherOrder=['emc','evar','emi'];
 const LEARNING_PERIOD_DATES={
@@ -450,24 +452,43 @@ function evaluationWeekLabel(it){
 }
 let homeworkTestWeekIndex=null;
 function homeworkWeekFor(date){const iso=isoLocal(date),weeks=Array.isArray(D.weeks)?D.weeks:[];if(!weeks.length)return null;if(Number.isInteger(homeworkTestWeekIndex)&&weeks[homeworkTestWeekIndex])return weeks[homeworkTestWeekIndex];const current=weeks.find(w=>iso>=w.start&&iso<=w.end);if(current)return current;const next=weeks.find(w=>w.start>iso);if(next)return next;return weeks[weeks.length-1]}
+function dictationPeriodForWeek(week){
+  if(!week)return '';
+  if(/^p[1-5]$/.test(String(week.__period||'')))return String(week.__period);
+  const start=String(week.start||'');
+  for(const [key,range] of Object.entries(LEARNING_PERIOD_DATES)){
+    if(start&&start>=range.start&&start<=range.end)return key;
+  }
+  return '';
+}
+function dictationWeekNumber(week,period){
+  const label=String(week&&week.label||'');
+  const match=label.match(/(?:semaine|sem\.?|s)\s*(\d+)/i);
+  if(match)return Number(match[1]);
+
+  const source={p1:D1,p2:D2,p3:D3,p4:D4,p5:D5}[period];
+  const weeks=source&&Array.isArray(source.weeks)?source.weeks:[];
+  const index=weeks.findIndex(w=>w===week||w.start===week.start||(w.id&&week.id&&w.id===week.id));
+  return index>=0?index+1:null;
+}
 function parentDictationForWeek(week){
   if(!week)return null;
-  const period=String(week.__period||'');
-  const list=(((PARENTS_DICTEES||{}).periods||{})[period]||[]);
-  if(!list.length)return null;
 
-  // V34.84 : priorité au numéro de semaine affiché.
-  // Les tableaux "devoirs" et "dictées" restent ainsi alignés même si
-  // leurs objets internes n'ont pas les mêmes id ou le même nombre d'entrées techniques.
-  const label=String(week.label||'');
-  const match=label.match(/(?:semaine|sem\.?|s)\s*(\d+)/i);
-  if(match){
-    const weekNumber=Number(match[1]);
+  // V34.85 : lecture dynamique de la projection publique.
+  // On ne conserve plus une copie vide si le script distant termine son chargement
+  // juste après l'initialisation de parents.js.
+  const data=currentParentsDictations();
+  const period=dictationPeriodForWeek(week);
+  const list=(((data||{}).periods||{})[period]||[]);
+  if(!period||!list.length)return null;
+
+  const weekNumber=dictationWeekNumber(week,period);
+  if(Number.isFinite(weekNumber)){
     const byNumber=list.find(d=>Number(d&&d.week)===weekNumber);
     if(byNumber)return byNumber;
   }
 
-  // Repli : position de la semaine dans la période.
+  // Dernier repli : position dans la période.
   const source={p1:D1,p2:D2,p3:D3,p4:D4,p5:D5}[period];
   const weeks=source&&Array.isArray(source.weeks)?source.weeks:[];
   const index=weeks.findIndex(w=>w.start===week.start||(w.id&&week.id&&w.id===week.id));
@@ -772,6 +793,22 @@ function bindParentNavigation(){
   if(hash.startsWith('info-')){showParentView('info');showParentInfoPanel(hash.slice(5));}
   else if(['schedule','homework','learning','info'].includes(hash))showParentView(hash);
 }
-function init(){const now=new Date(),p=period();$('parentsDate').textContent=frDate(now);renderPublished();renderFlashTicker();renderSchedule();bindParentInfoNavigation();bindParentNavigation();bindHolidayRevisionPreviews();setupHomeworkTest()}
+function init(){
+  const now=new Date(),p=period();
+  $('parentsDate').textContent=frDate(now);
+  renderPublished();
+  renderFlashTicker();
+  renderSchedule();
+  bindParentInfoNavigation();
+  bindParentNavigation();
+  bindHolidayRevisionPreviews();
+  setupHomeworkTest();
+
+  // V34.85 : seconde passe légère pour les ressources publiques distantes.
+  // Si la banque de dictée arrive avec un très léger retard, la vue Devoirs se met à jour.
+  setTimeout(()=>{
+    if(location.hash==='#homework')renderHomework();
+  },500);
+}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
