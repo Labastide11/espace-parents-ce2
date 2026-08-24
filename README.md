@@ -22,3 +22,5 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - V34.86 : suppression de la carte dictée hebdomadaire indépendante. Les mots issus de Progressions CE2 sont maintenant injectés directement dans le devoir daté `reviewDue` (normalement le jeudi, veille de la dictée du vendredi). La liaison se fait d’abord par les dates exactes `start/end`.
 
 - V34.87 : P1 adopte le moteur annuel des devoirs : matière + verbe d’action, consigne autonome, aide/exemple, durée, lien avec le travail de classe, deuxième tâche disciplinaire éventuelle et Défi famille facultatif. Les dictées peuvent être rappelées deux fois à partir de la même banque de mots.
+
+- V34.89 : l’Espace Parents recharge les données P3/P4 V34.98 et affiche dans « Infos de la classe → À venir » l’amorce GDVB de P3 et le Grand Défi Vivez Bougez du 22 février au 4 avril 2027.
