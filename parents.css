@@ -1436,3 +1436,14 @@ body.holiday-sheet-modal-open{overflow:hidden}
 .parents-dictation-card p{margin:6px 0;line-height:1.45}
 .parents-dictation-card__priority{background:#fff;border-radius:9px;padding:8px 10px}
 .parents-dictation-card small{display:block;margin-top:8px;color:#6f633f}
+
+
+/* V34.86 — mots de dictée intégrés au devoir de la veille */
+.homework-dictation-review{
+  border-left:4px solid #d6a400;
+  background:#fff8df;
+}
+.homework-dictation-review b{color:#6d5200}
+.homework-dictation-review p{margin:6px 0}
+.homework-dictation-theme{font-weight:700;color:#5d5272}
+.homework-dictation-review small{display:block;margin-top:7px;color:#665c3a}
