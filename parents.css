@@ -1447,3 +1447,18 @@ body.holiday-sheet-modal-open{overflow:hidden}
 .homework-dictation-review p{margin:6px 0}
 .homework-dictation-theme{font-weight:700;color:#5d5272}
 .homework-dictation-review small{display:block;margin-top:7px;color:#665c3a}
+
+
+/* V34.87 — moteur annuel : matière + verbe d'action + aide + lien classe */
+.homework-task{border-left:5px solid #a7a7a7}
+.homework-task--reading{background:#eef7ff;border-left-color:#4d91c9}
+.homework-task--french{background:#fff1f5;border-left-color:#c45b7c}
+.homework-task--maths{background:#eefaf1;border-left-color:#55a36a}
+.homework-task--prep{background:#fff8df;border-left-color:#d6a400}
+.homework-task--poetry{background:#f7f1ff;border-left-color:#8c65bf}
+.homework-task--discovery{background:#f1f6ef;border-left-color:#7a9a55}
+.homework-task--science{background:#eef9f7;border-left-color:#4e9b90}
+.homework-task--secondary{margin-top:8px}
+.homework-help{margin-top:8px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.72);line-height:1.45}
+.homework-task-meta{display:flex;flex-wrap:wrap;gap:6px 10px;margin-top:8px;font-size:12px;color:#696274}
+.homework-task-meta span{background:rgba(255,255,255,.75);border-radius:999px;padding:4px 8px}

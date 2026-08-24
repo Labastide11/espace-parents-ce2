@@ -20,3 +20,5 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - V34.85 : raccord dictées renforcé. La période est déduite de `__period` ou des dates, la banque publique est relue dynamiquement depuis `window.PARENTS_DICTEES_CE2`, et une seconde passe de rendu sécurise les chargements distants légèrement tardifs.
 
 - V34.86 : suppression de la carte dictée hebdomadaire indépendante. Les mots issus de Progressions CE2 sont maintenant injectés directement dans le devoir daté `reviewDue` (normalement le jeudi, veille de la dictée du vendredi). La liaison se fait d’abord par les dates exactes `start/end`.
+
+- V34.87 : P1 adopte le moteur annuel des devoirs : matière + verbe d’action, consigne autonome, aide/exemple, durée, lien avec le travail de classe, deuxième tâche disciplinaire éventuelle et Défi famille facultatif. Les dictées peuvent être rappelées deux fois à partir de la même banque de mots.
