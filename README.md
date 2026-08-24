@@ -1,4 +1,4 @@
-# Espace Parents CE2 — V34.81
+# Espace Parents CE2 — V34.82
 
 Site public séparé de l'espace professionnel Progressions CE2.
 
@@ -11,4 +11,6 @@ GitHub Pages : Settings → Pages → Deploy from a branch → `main` → `/ (ro
 
 Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 
-- V34.81 : mots de dictée + 5 mots prioritaires lus depuis `data/parents-dictees.js`. Les données DRAS/enseignant ne sont pas chargées.
+- V34.82 : mots de dictée + 5 mots prioritaires lus depuis `data/parents-dictees.js`. Les données DRAS/enseignant ne sont pas chargées.
+
+- V34.82 : correction du lien semaine ↔ banque de dictée ; une semaine sans identifiant ne retombe plus sur S1.

@@ -455,7 +455,7 @@ function parentDictationForWeek(week){
   const period=String(week.__period||'');
   const source={p1:D1,p2:D2,p3:D3,p4:D4,p5:D5}[period];
   const weeks=source&&Array.isArray(source.weeks)?source.weeks:[];
-  const index=weeks.findIndex(w=>w===week||w.id===week.id||w.start===week.start);
+  const index=weeks.findIndex(w=>w===week||w.start===week.start||(w.id&&week.id&&w.id===week.id));
   if(index<0)return null;
   return (((PARENTS_DICTEES||{}).periods||{})[period]||[])[index]||null;
 }
