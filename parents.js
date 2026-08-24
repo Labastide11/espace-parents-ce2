@@ -453,11 +453,25 @@ function homeworkWeekFor(date){const iso=isoLocal(date),weeks=Array.isArray(D.we
 function parentDictationForWeek(week){
   if(!week)return null;
   const period=String(week.__period||'');
+  const list=(((PARENTS_DICTEES||{}).periods||{})[period]||[]);
+  if(!list.length)return null;
+
+  // V34.84 : priorité au numéro de semaine affiché.
+  // Les tableaux "devoirs" et "dictées" restent ainsi alignés même si
+  // leurs objets internes n'ont pas les mêmes id ou le même nombre d'entrées techniques.
+  const label=String(week.label||'');
+  const match=label.match(/(?:semaine|sem\.?|s)\s*(\d+)/i);
+  if(match){
+    const weekNumber=Number(match[1]);
+    const byNumber=list.find(d=>Number(d&&d.week)===weekNumber);
+    if(byNumber)return byNumber;
+  }
+
+  // Repli : position de la semaine dans la période.
   const source={p1:D1,p2:D2,p3:D3,p4:D4,p5:D5}[period];
   const weeks=source&&Array.isArray(source.weeks)?source.weeks:[];
-  const index=weeks.findIndex(w=>w===week||w.start===week.start||(w.id&&week.id&&w.id===week.id));
-  if(index<0)return null;
-  return (((PARENTS_DICTEES||{}).periods||{})[period]||[])[index]||null;
+  const index=weeks.findIndex(w=>w.start===week.start||(w.id&&week.id&&w.id===week.id));
+  return index>=0?(list[index]||null):null;
 }
 function parentDictationHtml(week){
   const d=parentDictationForWeek(week); if(!d)return '';

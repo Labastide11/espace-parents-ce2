@@ -14,3 +14,5 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - V34.82 : mots de dictée + 5 mots prioritaires lus depuis `data/parents-dictees.js`. Les données DRAS/enseignant ne sont pas chargées.
 
 - V34.82 : correction du lien semaine ↔ banque de dictée ; une semaine sans identifiant ne retombe plus sur S1.
+
+- V34.84 : le raccord dictée utilise en priorité le numéro visible de la semaine (`Semaine 2`, `Semaine 3`...) pour retrouver la bonne entrée de `parents-dictees.js`. Ce mode est plus robuste que l'alignement par objets internes des fichiers de devoirs.
