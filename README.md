@@ -1,4 +1,4 @@
-# Espace Parents CE2 — V34.78
+# Espace Parents CE2 — V34.81
 
 Site public séparé de l'espace professionnel Progressions CE2.
 
@@ -10,3 +10,5 @@ Site public séparé de l'espace professionnel Progressions CE2.
 GitHub Pages : Settings → Pages → Deploy from a branch → `main` → `/ (root)` → Save.
 
 Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
+
+- V34.81 : mots de dictée + 5 mots prioritaires lus depuis `data/parents-dictees.js`. Les données DRAS/enseignant ne sont pas chargées.
