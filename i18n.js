@@ -1,5 +1,5 @@
 // V34.94 — Couche multilingue Espace Parents (FR / AR / ES / EN)
-// V34.98 - finition traduction : décorations, retours, bandeau, pied de page et chaînes restantes
+// V34.99 - contenus dynamiques : emploi du temps, apprentissages et ressources
 (function(){
 'use strict';
 const LANGS=['fr','ar','es','en'];
@@ -179,7 +179,64 @@ Object.assign(EXACT,{
   'Rubriques de l’espace Parents':{ar:'أقسام فضاء أولياء الأمور',es:'Secciones del espacio para familias',en:'Parent Space sections'},
   'Rubriques des informations de la classe':{ar:'أقسام معلومات الصف',es:'Secciones de la información de la clase',en:'Class information sections'},
   'Choisir la langue':{ar:'اختيار اللغة',es:'Elegir idioma',en:'Choose language'},
-  'Progressions CE2 · Espace Parents · V34.98':{ar:'Progressions CE2 · فضاء أولياء الأمور · V34.98',es:'Progressions CE2 · Espacio para familias · V34.98',en:'Progressions CE2 · Parent Space · V34.98'}
+  'Progressions CE2 · Espace Parents · V34.99':{ar:'Progressions CE2 · فضاء أولياء الأمور · V34.98',es:'Progressions CE2 · Espacio para familias · V34.98',en:'Progressions CE2 · Parent Space · V34.98'}
+});
+
+
+
+// V34.99 — chaînes dynamiques encore produites par parents.js et les données publiques.
+Object.assign(EXACT,{
+  'Prochain jour de classe':{ar:'اليوم الدراسي القادم',es:'Próximo día de clase',en:'Next school day'},
+  'Prochain jour de classe :':{ar:'اليوم الدراسي القادم:',es:'Próximo día de clase:',en:'Next school day:'},
+  'Prochain :':{ar:'التالي:',es:'Próximo:',en:'Next:'},
+  'Pas de classe aujourd’hui.':{ar:'لا توجد دراسة اليوم.',es:'Hoy no hay clase.',en:'There is no school today.'},
+  'Voici l’emploi du temps réel de':{ar:'هذا هو الجدول الدراسي الفعلي ليوم',es:'Este es el horario real de',en:'Here is the actual timetable for'},
+  'Période 1':{ar:'الفترة 1',es:'Periodo 1',en:'Term 1'},
+  'Voir toute la semaine':{ar:'عرض الأسبوع كاملًا',es:'Ver toda la semana',en:'View the whole week'},
+  'Voir l’essentiel':{ar:'عرض الأساسيات',es:'Ver lo esencial',en:'View key learning'},
+  'Ce sont les principaux apprentissages travaillés en classe.':{ar:'هذه هي أهم التعلمات التي يتم العمل عليها في الصف.',es:'Estos son los principales aprendizajes trabajados en clase.',en:'These are the main learning goals worked on in class.'},
+  'D’autres compétences sont également travaillées au quotidien.':{ar:'كما يتم العمل يوميًا على مهارات أخرى.',es:'También se trabajan otras competencias a diario.',en:'Other skills are also practised every day.'},
+  '5 apprentissages importants pour cette période.':{ar:'5 تعلمات مهمة لهذه الفترة.',es:'5 aprendizajes importantes para este periodo.',en:'5 important learning goals for this term.'},
+
+  'Comprendre un texte court et retrouver les informations importantes.':{ar:'فهم نص قصير والعثور على المعلومات المهمة.',es:'Comprender un texto corto y encontrar la información importante.',en:'Understand a short text and find the important information.'},
+  'Lire à voix haute avec de plus en plus de fluidité.':{ar:'القراءة بصوت مرتفع بطلاقة متزايدة.',es:'Leer en voz alta con cada vez más fluidez.',en:'Read aloud with increasing fluency.'},
+  'Écrire et copier quelques phrases correctes, puis se relire.':{ar:'كتابة ونسخ بعض الجمل الصحيحة ثم مراجعتها.',es:'Escribir y copiar algunas frases correctas y después revisarlas.',en:'Write and copy a few correct sentences, then check them.'},
+  'Repérer le verbe et le sujet dans une phrase simple.':{ar:'تحديد الفعل والفاعل في جملة بسيطة.',es:'Identificar el verbo y el sujeto en una frase sencilla.',en:'Identify the verb and subject in a simple sentence.'},
+  'Commencer à conjuguer au présent et enrichir son vocabulaire.':{ar:'البدء في تصريف الأفعال في المضارع وإثراء المفردات.',es:'Empezar a conjugar en presente y ampliar el vocabulario.',en:'Begin to use the present tense and expand vocabulary.'},
+  'Lire, écrire, décomposer et comparer les nombres.':{ar:'قراءة الأعداد وكتابتها وتفكيكها ومقارنتها.',es:'Leer, escribir, descomponer y comparar números.',en:'Read, write, partition and compare numbers.'},
+  'Calculer mentalement avec des stratégies simples.':{ar:'الحساب ذهنيًا باستخدام استراتيجيات بسيطة.',es:'Calcular mentalmente con estrategias sencillas.',en:'Calculate mentally using simple strategies.'},
+  'Poser et calculer des additions et des soustractions.':{ar:'إجراء عمليات الجمع والطرح عموديًا.',es:'Plantear y calcular sumas y restas.',en:'Set out and calculate additions and subtractions.'},
+  'Résoudre un problème simple et expliquer sa démarche.':{ar:'حل مسألة بسيطة وشرح طريقة الحل.',es:'Resolver un problema sencillo y explicar el procedimiento.',en:'Solve a simple problem and explain the method.'},
+  'Utiliser les premiers outils et repères de géométrie.':{ar:'استخدام الأدوات والمفاهيم الأولى في الهندسة.',es:'Utilizar las primeras herramientas y referencias de geometría.',en:'Use the first geometry tools and ideas.'},
+  'Comprendre et utiliser quelques salutations courantes.':{ar:'فهم واستخدام بعض عبارات التحية الشائعة.',es:'Comprender y utilizar algunos saludos habituales.',en:'Understand and use some common greetings.'},
+  'Demander et dire son prénom.':{ar:'السؤال عن الاسم الأول وقوله.',es:'Preguntar y decir el nombre.',en:'Ask and say your first name.'},
+  'Comprendre et dire le temps qu’il fait.':{ar:'فهم حالة الطقس والتحدث عنها.',es:'Comprender y decir qué tiempo hace.',en:'Understand and say what the weather is like.'},
+  'Oser prendre la parole avec des expressions très simples.':{ar:'التجرؤ على التحدث باستخدام عبارات بسيطة جدًا.',es:'Atreverse a hablar con expresiones muy sencillas.',en:'Have the confidence to speak using very simple expressions.'},
+  'Découvrir quelques repères culturels liés à l’Angleterre et à Halloween.':{ar:'اكتشاف بعض المعالم الثقافية المرتبطة بإنجلترا وهالوين.',es:'Descubrir algunas referencias culturales relacionadas con Inglaterra y Halloween.',en:'Discover some cultural references linked to England and Halloween.'},
+  'Se poser une question que l’on peut étudier.':{ar:'طرح سؤال يمكن دراسته.',es:'Plantearse una pregunta que se pueda estudiar.',en:'Ask a question that can be investigated.'},
+  'Réaliser une expérience simple en respectant les consignes.':{ar:'إجراء تجربة بسيطة مع احترام التعليمات.',es:'Realizar un experimento sencillo respetando las instrucciones.',en:'Carry out a simple experiment while following instructions.'},
+  'Observer et garder une trace des résultats.':{ar:'الملاحظة والاحتفاظ بسجل للنتائج.',es:'Observar y conservar un registro de los resultados.',en:'Observe and keep a record of the results.'},
+  'Comparer ce que l’on observe.':{ar:'مقارنة ما تتم ملاحظته.',es:'Comparar lo que se observa.',en:'Compare what is observed.'},
+  'Tirer une conclusion simple à partir des résultats.':{ar:'استخلاص نتيجة بسيطة من النتائج.',es:'Sacar una conclusión sencilla a partir de los resultados.',en:'Draw a simple conclusion from the results.'},
+
+  'Accueil, présentation de la classe et premiers échanges.':{ar:'استقبال وتقديم الصف وأولى المحادثات.',es:'Acogida, presentación de la clase y primeros intercambios.',en:'Welcome, class introduction and first conversations.'},
+  'Lecture-compréhension : découvrir un texte court et échanger sur ce qui a été compris.':{ar:'قراءة وفهم: اكتشاف نص قصير ومناقشة ما تم فهمه.',es:'Lectura y comprensión: descubrir un texto corto y comentar lo comprendido.',en:'Reading comprehension: discover a short text and discuss what was understood.'},
+  'Découverte du cahier, copie courte et écriture du prénom / d’une phrase de rentrée.':{ar:'التعرف إلى الدفتر ونسخ قصير وكتابة الاسم الأول أو جملة عن بداية السنة.',es:'Descubrir el cuaderno, copia breve y escritura del nombre / de una frase de inicio de curso.',en:'Discover the notebook, short copying task and writing a first name / back-to-school sentence.'},
+  'Calcul mental : petits calculs connus et compléments simples.':{ar:'حساب ذهني: عمليات بسيطة معروفة ومكملات عددية بسيطة.',es:'Cálculo mental: pequeños cálculos conocidos y complementos sencillos.',en:'Mental maths: familiar calculations and simple number complements.'},
+  'Jeux de nombres : lire, écrire et comparer des nombres selon les acquis de la classe.':{ar:'ألعاب الأعداد: قراءة الأعداد وكتابتها ومقارنتها حسب مكتسبات الصف.',es:'Juegos de números: leer, escribir y comparar números según lo aprendido en clase.',en:'Number games: read, write and compare numbers using prior class knowledge.'},
+  "Quart d’heure de lecture":{ar:'ربع ساعة قراءة',es:'Cuarto de hora de lectura',en:'Fifteen minutes of reading'},
+  'Lecture offerte ou lecture autonome : installer le rituel.':{ar:'قراءة يقدمها المعلم أو قراءة مستقلة: تثبيت الروتين.',es:'Lectura compartida o autónoma: establecer la rutina.',en:'Read-aloud or independent reading: establish the routine.'},
+  'Saluer et se présenter : première prise de contact orale.':{ar:'التحية والتعريف بالنفس: أول تواصل شفهي.',es:'Saludar y presentarse: primer contacto oral.',en:'Greet and introduce yourself: first oral interaction.'},
+  'Vie de classe / Arts':{ar:'حياة الصف / الفنون',es:'Vida de clase / Artes',en:'Class life / Arts'},
+  'Découvrir les espaces, construire les règles de vie et réaliser une première production collective.':{ar:'اكتشاف الأماكن ووضع قواعد الحياة الصفية وإنجاز أول عمل جماعي.',es:'Descubrir los espacios, construir las normas de convivencia y realizar una primera producción colectiva.',en:'Discover the spaces, establish class rules and create a first group piece.'},
+  'Ateliers de rentrée':{ar:'ورشات بداية السنة',es:'Talleres de inicio de curso',en:'Back-to-school workshops'},
+  'Découverte des outils de la classe, jeux de lecture et de Mathématiques.':{ar:'اكتشاف أدوات الصف وألعاب القراءة والرياضيات.',es:'Descubrir las herramientas de clase y realizar juegos de lectura y matemáticas.',en:'Discover classroom tools and play reading and maths games.'},
+  'Bilan de journée':{ar:'حصيلة اليوم',es:'Balance del día',en:'End-of-day review'},
+  'Dire ce que l’on a découvert et préparer le lendemain.':{ar:'التعبير عما تم اكتشافه والاستعداد لليوم التالي.',es:'Decir lo que se ha descubierto y preparar el día siguiente.',en:'Say what was discovered and prepare for the next day.'},
+  'Français':{ar:'اللغة الفرنسية',es:'Francés',en:'French'},
+  'Mathématiques':{ar:'الرياضيات',es:'Matemáticas',en:'Mathematics'},
+  'Anglais':{ar:'اللغة الإنجليزية',es:'Inglés',en:'English'},
+  'Sciences — questionner le monde du vivant, de la matière et des objets':{ar:'العلوم — استكشاف عالم الكائنات الحية والمادة والأشياء',es:'Ciencias — explorar el mundo de los seres vivos, la materia y los objetos',en:'Science — exploring living things, materials and objects'}
 });
 
 const REPLACEMENTS={

@@ -1,4 +1,5 @@
-// V34.93 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
+// V34.99 — Espace Parents : traduction des contenus dynamiques + retrait du lien Ressources obsolète.
+// Base fonctionnelle V34.93 conservée ; seules les sorties dynamiques concernées sont ajustées.
 // Le référentiel enseignant reste inchangé : seule la présentation destinée aux familles est simplifiée.
 // Les repères annuels transversaux Arts / éducation musicale sont affichés pour chaque période.
 (function(){
@@ -737,7 +738,11 @@ function renderClassInfo(){
     testLabel.textContent=`${LEARNING_PERIOD_DATES[key]?.label||key.toUpperCase()}${upcomingTestPeriod?' · mode test':' · affichage automatique'}`;
   }
 
-  const docs=Array.isArray(I.documents)?I.documents:[];
+  const docs=(Array.isArray(I.documents)?I.documents:[]).filter(d=>{
+    const raw=typeof d==='string'?d:String(d?.label||d?.title||'');
+    // V34.99 : ancien lien « Espace Parents & Maître Hibou » retiré car destination obsolète/morte.
+    return !/Espace Parents\s*&\s*Ma[îi]tre Hibou/i.test(raw);
+  });
   $('parentsDocumentsUseful').innerHTML=docs.length
     ? docs.map(d=>{
         if(typeof d==='string')return `<div class="parents-document-useful">${esc(d)}</div>`;
@@ -836,6 +841,7 @@ function renderSchedule(){
   $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(frDate(target,{weekday:'long',day:'numeric',month:'long'}))}</h3>${scheduleRowsHtml(target)}</article>`;
   const monday=EDT.mondayOf(target),days=[0,1,3,4].map(n=>EDT.addDays(monday,n));
   $('parentsScheduleWeek').innerHTML=days.map(d=>`<article class="schedule-day${isoLocal(d)===isoLocal(target)?' schedule-day--selected':''}"><h3>${esc(frDate(d,{weekday:'long',day:'numeric',month:'long'}))}</h3>${scheduleRowsHtml(d)}</article>`).join('');
+  if(window.PARENTS_I18N)window.PARENTS_I18N.refresh();
 }
 function showParentInfoPanel(target){
   const menu=$('parentsInfoMenu');
