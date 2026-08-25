@@ -1,4 +1,5 @@
 // V34.94 — Couche multilingue Espace Parents (FR / AR / ES / EN)
+// V34.96 - correction technique i18n : observer anti-boucle et rafraichissement groupe
 (function(){
 'use strict';
 const LANGS=['fr','ar','es','en'];
@@ -179,29 +180,74 @@ function translateText(text,lang){
 }
 let current='fr';
 const originals=new WeakMap();
-let observer=null,applying=false;
+let observer=null;
+let applying=false;
+let refreshQueued=false;
+
+const OBSERVER_OPTIONS={childList:true,subtree:true};
+
+function observeBody(){
+  if(observer&&document.body)observer.observe(document.body,OBSERVER_OPTIONS);
+}
+
+function withObserverPaused(fn){
+  const shouldResume=!!observer;
+  if(observer)observer.disconnect();
+  applying=true;
+  try{return fn()}
+  finally{
+    applying=false;
+    if(shouldResume)observeBody();
+  }
+}
+
 function translateNode(root=document.body){
   if(!root)return;
-  applying=true;
-  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
-    if(!node.parentElement)return NodeFilter.FILTER_REJECT;
-    if(['SCRIPT','STYLE','NOSCRIPT'].includes(node.parentElement.tagName))return NodeFilter.FILTER_REJECT;
-    if(!node.nodeValue||!node.nodeValue.trim())return NodeFilter.FILTER_REJECT;
-    return NodeFilter.FILTER_ACCEPT;
-  }});
-  const nodes=[];let n;while((n=walker.nextNode()))nodes.push(n);
-  nodes.forEach(node=>{
-    if(!originals.has(node))originals.set(node,node.nodeValue);
-    node.nodeValue=translateText(originals.get(node),current);
+  withObserverPaused(()=>{
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
+      if(!node.parentElement)return NodeFilter.FILTER_REJECT;
+      if(['SCRIPT','STYLE','NOSCRIPT'].includes(node.parentElement.tagName))return NodeFilter.FILTER_REJECT;
+      if(!node.nodeValue||!node.nodeValue.trim())return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }});
+    const nodes=[];let n;while((n=walker.nextNode()))nodes.push(n);
+    nodes.forEach(node=>{
+      if(!originals.has(node))originals.set(node,node.nodeValue);
+      const original=originals.get(node);
+      const translated=translateText(original,current);
+      if(node.nodeValue!==translated)node.nodeValue=translated;
+    });
+
+    const scope=root.nodeType===1?root:document.body;
+    if(scope&&scope.querySelectorAll){
+      const labelled=[];
+      if(scope.matches&&scope.matches('[aria-label]'))labelled.push(scope);
+      scope.querySelectorAll('[aria-label]').forEach(el=>labelled.push(el));
+      labelled.forEach(el=>{
+        if(!el.dataset.i18nAriaOriginal)el.dataset.i18nAriaOriginal=el.getAttribute('aria-label')||'';
+        const translated=translateText(el.dataset.i18nAriaOriginal,current);
+        if(el.getAttribute('aria-label')!==translated)el.setAttribute('aria-label',translated);
+      });
+    }
   });
-  document.querySelectorAll('[aria-label]').forEach(el=>{
-    if(!el.dataset.i18nAriaOriginal)el.dataset.i18nAriaOriginal=el.getAttribute('aria-label')||'';
-    el.setAttribute('aria-label',translateText(el.dataset.i18nAriaOriginal,current));
-  });
-  applying=false;
 }
+
+function refreshDynamicContent(){
+  if(refreshQueued)return;
+  refreshQueued=true;
+  requestAnimationFrame(()=>{
+    refreshQueued=false;
+    if(!applying)translateNode(document.body);
+  });
+}
+
 function applyLang(lang,{persist=true}={}){
   if(!LANGS.includes(lang))lang='fr';
+  if(current===lang&&document.documentElement.lang===lang){
+    const menu=document.getElementById('parentsLanguageMenu');
+    if(menu)menu.hidden=true;
+    return;
+  }
   current=lang;
   const meta=META[lang];
   document.documentElement.lang=lang;
@@ -214,6 +260,7 @@ function applyLang(lang,{persist=true}={}){
   translateNode(document.body);
   window.dispatchEvent(new CustomEvent('parentslanguagechange',{detail:{lang}}));
 }
+
 function setupMenu(){
   const btn=document.getElementById('parentsLanguageButton'),menu=document.getElementById('parentsLanguageMenu');
   if(!btn||!menu)return;
@@ -226,28 +273,31 @@ function setupMenu(){
   });
   menu.addEventListener('click',e=>e.stopPropagation());
   menu.querySelectorAll('[data-lang-choice]').forEach(b=>b.addEventListener('click',()=>{
-    applyLang(b.dataset.langChoice);
     close();
+    requestAnimationFrame(()=>applyLang(b.dataset.langChoice));
   }));
   document.addEventListener('click',close);
   document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
   window.addEventListener('resize',close);
   window.addEventListener('scroll',close,{passive:true});
 }
+
 function init(){
   let saved='fr';try{saved=localStorage.getItem('parentsLanguage')||'fr'}catch(e){}
   if(!LANGS.includes(saved))saved='fr';
   setupMenu();
-  applyLang(saved,{persist:false});
+
   observer=new MutationObserver(muts=>{
     if(applying)return;
     for(const m of muts){
-      if(m.type==='childList'&&m.addedNodes.length){m.addedNodes.forEach(n=>{if(n.nodeType===1)translateNode(n);else if(n.nodeType===3&&n.parentElement)translateNode(n.parentElement)})}
-      if(m.type==='characterData'&&m.target.parentElement)translateNode(m.target.parentElement);
+      if(m.type==='childList'&&m.addedNodes.length){refreshDynamicContent();break}
     }
   });
-  observer.observe(document.body,{childList:true,subtree:true,characterData:true});
+
+  applyLang(saved,{persist:false});
+  observeBody();
 }
-window.PARENTS_I18N={langs:LANGS,meta:META,get lang(){return current},setLanguage:applyLang,translate:translateText,refresh:()=>translateNode(document.body)};
+
+window.PARENTS_I18N={langs:LANGS,meta:META,get lang(){return current},setLanguage:applyLang,translate:translateText,refresh:refreshDynamicContent};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
