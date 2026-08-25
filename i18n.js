@@ -1,5 +1,5 @@
 // V34.94 — Couche multilingue Espace Parents (FR / AR / ES / EN)
-// V34.96 - correction technique i18n : observer anti-boucle et rafraichissement groupe
+// V34.97 - traduction complète : textes statiques + fragments HTML structurés
 (function(){
 'use strict';
 const LANGS=['fr','ar','es','en'];
@@ -120,6 +120,53 @@ Object.assign(EXACT,{
   '🏃 Grand Défi Vivez Bougez 2027 — C’est parti ! Du 22 février au 4 avril, la classe participe au GDVB. Pendant plusieurs semaines, les élèves seront encouragés à bouger régulièrement, relever de petits défis et cumuler leurs cubes énergie.':{ar:'🏃 Grand Défi Vivez Bougez 2027 — انطلقنا! من 22 فبراير إلى 4 أبريل يشارك الصف في GDVB. خلال عدة أسابيع، سيُشجَّع التلاميذ على الحركة بانتظام وخوض تحديات صغيرة وجمع مكعبات الطاقة.',es:'🏃 Grand Défi Vivez Bougez 2027 — ¡Empezamos! Del 22 de febrero al 4 de abril, la clase participa en el GDVB. Durante varias semanas, se animará al alumnado a moverse con regularidad, superar pequeños retos y acumular cubos de energía.',en:'🏃 Grand Défi Vivez Bougez 2027 — Let’s go! From 22 February to 4 April, the class takes part in GDVB. For several weeks, pupils will be encouraged to move regularly, take on small challenges and collect energy cubes.'},
   '🏟️ Le lundi après-midi, les séances au Pôle sportif de Domec avec gymnastique et lutte constituent le temps fort EPS de la période.':{ar:'🏟️ بعد ظهر الاثنين، تشكل حصص المركز الرياضي في Domec، مع الجمباز والمصارعة، النشاط الرئيسي للتربية البدنية خلال هذه الفترة.',es:'🏟️ Los lunes por la tarde, las sesiones en el centro deportivo de Domec, con gimnasia y lucha, son el momento principal de Educación Física del periodo.',en:'🏟️ On Monday afternoons, sessions at the Domec sports centre, with gymnastics and wrestling, are the main PE activity of the term.'},
   '🎯 Chaque semaine, un nouveau défi collectif GDVB sera proposé à la classe.':{ar:'🎯 كل أسبوع سيُقترح على الصف تحدٍّ جماعي جديد ضمن GDVB.',es:'🎯 Cada semana se propondrá a la clase un nuevo reto colectivo GDVB.',en:'🎯 Each week, the class will be given a new GDVB group challenge.'}
+});
+
+
+
+// V34.97 - couverture complète des textes statiques, y compris les fragments autour des balises <strong>.
+Object.assign(EXACT,{
+  '10 à 15 minutes':{ar:'10 إلى 15 دقيقة',es:'10 a 15 minutos',en:'10 to 15 minutes'},
+  'Rappels · dates · documents':{ar:'تذكيرات · تواريخ · وثائق',es:'Recordatorios · fechas · documentos',en:'Reminders · dates · documents'},
+  'Objectifs de la période':{ar:'أهداف الفترة',es:'Objetivos del periodo',en:'Goals for the term'},
+  'Voir toute la semaine':{ar:'عرض الأسبوع كاملًا',es:'Ver toda la semana',en:'View the whole week'},
+  'À la maison, les devoirs restent':{ar:'في المنزل، تبقى الواجبات',es:'En casa, los deberes siguen siendo',en:'At home, homework stays'},
+  'courts et simples':{ar:'قصيرة وبسيطة',es:'breves y sencillos',en:'short and simple'},
+  ': quelques minutes de lecture, de mémorisation ou un petit entraînement oral pour revoir tranquillement ce qui a été travaillé en classe.':{ar:': بضع دقائق من القراءة أو الحفظ أو تدريب شفهي قصير لمراجعة ما تم العمل عليه في الصف بهدوء.',es:': unos minutos de lectura, memorización o un pequeño ejercicio oral para repasar tranquilamente lo trabajado en clase.',en:': a few minutes of reading, memorising or a short oral activity to calmly review what was worked on in class.'},
+  'L’objectif n’est pas de refaire la journée d’école, mais d’installer une':{ar:'الهدف ليس إعادة يوم المدرسة في المنزل، بل بناء',es:'El objetivo no es repetir la jornada escolar en casa, sino crear una',en:'The goal is not to repeat the school day at home, but to build a'},
+  'petite routine régulière':{ar:'عادة صغيرة ومنتظمة',es:'pequeña rutina regular',en:'short regular routine'},
+  ', sans pression, et de partager parfois un petit défi en famille.':{ar:'، دون ضغط، وأحيانًا مشاركة تحدٍّ عائلي بسيط.',es:', sin presión, y compartir de vez en cuando un pequeño reto en familia.',en:', without pressure, and sometimes share a small family challenge.'},
+  '📚 Je revois → 🎯 Je m’entraîne → 👨‍👩‍👧 Je partage':{ar:'📚 أراجع ← 🎯 أتدرّب ← 👨‍👩‍👧 أشارك',es:'📚 Repaso → 🎯 Practico → 👨‍👩‍👧 Comparto',en:'📚 I review → 🎯 I practise → 👨‍👩‍👧 I share'},
+  'Voir aussi : grandir ensemble':{ar:'انظر أيضًا: ننمو معًا',es:'Ver también: crecer juntos',en:'See also: growing together'},
+  'Mots, rappels et documents':{ar:'رسائل وتذكيرات ووثائق',es:'Mensajes, recordatorios y documentos',en:'Messages, reminders and documents'},
+  'Dates et événements':{ar:'تواريخ وفعاليات',es:'Fechas y eventos',en:'Dates and events'},
+  'Fournitures et réserve':{ar:'لوازم ومخزون احتياطي',es:'Material y reserva',en:'Supplies and reserve'},
+  'Conseils et accompagnement':{ar:'نصائح ومرافقة',es:'Consejos y acompañamiento',en:'Advice and support'},
+  'Repères pour le numérique':{ar:'إرشادات للاستخدام الرقمي',es:'Orientaciones para lo digital',en:'Digital guidance'},
+  'PDF, liens et documents':{ar:'ملفات PDF وروابط ووثائق',es:'PDF, enlaces y documentos',en:'PDFs, links and documents'},
+  '📚 Les cahiers et les supports de travail sont fournis par l’enseignant.':{ar:'📚 يوفّر المعلم الدفاتر ووسائل العمل.',es:'📚 Los cuadernos y materiales de trabajo los proporciona el docente.',en:'📚 Exercise books and learning materials are provided by the teacher.'},
+  '1 trousse':{ar:'مقلمة واحدة',es:'1 estuche',en:'1 pencil case'},
+  'contenant : 2 crayons à papier HB, 1 gomme blanche, 1 taille-crayon avec réservoir, 4 stylos (bleu, noir, rouge et vert), 2 surligneurs (jaune et vert), 1 paire de ciseaux à bouts ronds et 2 bâtons de colle.':{ar:'تحتوي على: قلمين رصاص HB، ممحاة بيضاء، مبراة بخزان، 4 أقلام (أزرق وأسود وأحمر وأخضر)، قلمين للتحديد (أصفر وأخضر)، مقص ذي أطراف مستديرة وعودَي صمغ.',es:'con: 2 lápices HB, 1 goma blanca, 1 sacapuntas con depósito, 4 bolígrafos (azul, negro, rojo y verde), 2 subrayadores (amarillo y verde), 1 tijera de punta redonda y 2 barras de pegamento.',en:'containing: 2 HB pencils, 1 white eraser, 1 pencil sharpener with container, 4 pens (blue, black, red and green), 2 highlighters (yellow and green), 1 pair of round-ended scissors and 2 glue sticks.'},
+  '1 règle plate de 20 cm,':{ar:'مسطرة مستقيمة بطول 20 سم،',es:'1 regla plana de 20 cm,',en:'1 flat 20 cm ruler,'},
+  'rigide et non métallique':{ar:'صلبة وغير معدنية',es:'rígida y no metálica',en:'rigid and non-metallic'},
+  '1 équerre':{ar:'مثلث قياس واحد',es:'1 escuadra',en:'1 set square'},
+  '1 compas simple':{ar:'فرجار بسيط واحد',es:'1 compás sencillo',en:'1 simple compass'},
+  '1 ardoise blanche':{ar:'لوح أبيض صغير واحد',es:'1 pizarra blanca',en:'1 small whiteboard'},
+  'avec 2 feutres effaçables et 1 chiffon':{ar:'مع قلمين قابلين للمسح وقطعة قماش',es:'con 2 rotuladores borrables y 1 paño',en:'with 2 erasable markers and 1 cloth'},
+  '1 boîte de crayons de couleur':{ar:'علبة أقلام تلوين واحدة',es:'1 caja de lápices de colores',en:'1 box of coloured pencils'},
+  '1 boîte de feutres':{ar:'علبة أقلام تلوين لبادية واحدة',es:'1 caja de rotuladores',en:'1 box of felt-tip pens'},
+  'crayons à papier':{ar:'أقلام رصاص',es:'lápices',en:'pencils'},
+  'stylos bleus':{ar:'أقلام زرقاء',es:'bolígrafos azules',en:'blue pens'},
+  'bâtons de colle':{ar:'أعواد صمغ',es:'barras de pegamento',en:'glue sticks'},
+  'feutres d’ardoise':{ar:'أقلام السبورة',es:'rotuladores de pizarra',en:'whiteboard markers'},
+  'Accompagner les écrans':{ar:'مرافقة استخدام الشاشات',es:'Acompañar el uso de pantallas',en:'Supporting screen use'},
+  'Conseils et repères pour un usage raisonné.':{ar:'نصائح وإرشادات لاستخدام متوازن.',es:'Consejos y orientaciones para un uso equilibrado.',en:'Advice and guidance for balanced use.'},
+  'Conseils 7–12 ans':{ar:'نصائح لعمر 7–12 سنة',es:'Consejos para 7–12 años',en:'Advice for ages 7–12'},
+  'Un guide pour les enfants et leurs parents.':{ar:'دليل للأطفال وأولياء أمورهم.',es:'Una guía para niños y sus familias.',en:'A guide for children and their parents.'},
+  'Contrôle parental':{ar:'الرقابة الأبوية',es:'Control parental',en:'Parental controls'},
+  'Téléphones, tablettes, ordinateurs et consoles.':{ar:'الهواتف والأجهزة اللوحية والحواسيب وأجهزة الألعاب.',es:'Teléfonos, tabletas, ordenadores y consolas.',en:'Phones, tablets, computers and games consoles.'},
+  'Documents, liens pratiques et ressources pour accompagner votre enfant.':{ar:'وثائق وروابط عملية وموارد لمساعدة طفلك.',es:'Documentos, enlaces prácticos y recursos para acompañar a su hijo/a.',en:'Documents, useful links and resources to support your child.'},
+  'Directeur : Gilles Maigron':{ar:'المدير: Gilles Maigron',es:'Director: Gilles Maigron',en:'Headteacher: Gilles Maigron'}
 });
 
 const REPLACEMENTS={
