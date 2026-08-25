@@ -1,5 +1,5 @@
 // V34.94 — Couche multilingue Espace Parents (FR / AR / ES / EN)
-// V35.01 - audit espagnol : devoirs + évaluations + vacances
+// V35.10 - compatibilité i18n ; les blocs dynamiques espagnols sont rendus avant insertion.
 (function(){
 'use strict';
 const LANGS=['fr','ar','es','en'];
@@ -464,7 +464,7 @@ Object.assign(EXACT,{
   'École primaire La Gravette — Carcassonne':{es:'Escuela primaria La Gravette — Carcassonne'},
   'Directeur : Gilles Maigron':{es:'Director: Gilles Maigron'},
   'Progressions CE2 · Espace Parents · V35.00':{es:'Progressions CE2 · Espacio para familias · V35.00'},
-  'Progressions CE2 · Espace Parents · V35.01':{es:'Progressions CE2 · Espacio para familias · V35.01'},
+  'Progressions CE2 · Espace Parents · V35.10':{ar:'Progressions CE2 · فضاء أولياء الأمور · V35.10',es:'Progressions CE2 · Espacio para familias · V35.10',en:'Progressions CE2 · Parent Space · V35.10'},
   'Pour t’aider :':{es:'Para ayudarte:'},
   'Pour se préparer :':{es:'Para prepararse:'},
   'Nouvelles compétences évaluées':{es:'Nuevas competencias evaluadas'},
