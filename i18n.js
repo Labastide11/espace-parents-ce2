@@ -1,5 +1,5 @@
 // V34.94 — Couche multilingue Espace Parents (FR / AR / ES / EN)
-// V35.20 - traduction ciblée et stable (FR / AR / ES / EN)
+// V35.21 - traduction ciblée : emploi du temps + introduction fixe des devoirs
 // Périmètre traduit : accueil, infos de classe, matériel, aide, numérique,
 // ressources, navigation/bandeaux, pied de page et structure/matières de l'emploi du temps.
 // Sont volontairement laissés en français : devoirs, évaluations, vacances,
@@ -177,7 +177,15 @@ Object.assign(EXACT,{
   'Contrôle parental':{ar:'الرقابة الأبوية',es:'Control parental',en:'Parental controls'},
   'Téléphones, tablettes, ordinateurs et consoles.':{ar:'الهواتف والأجهزة اللوحية والحواسيب وأجهزة الألعاب.',es:'Teléfonos, tabletas, ordenadores y consolas.',en:'Phones, tablets, computers and games consoles.'},
   'Documents, liens pratiques et ressources pour accompagner votre enfant.':{ar:'وثائق وروابط عملية وموارد لمساعدة طفلك.',es:'Documentos, enlaces prácticos y recursos para acompañar a su hijo/a.',en:'Documents, useful links and resources to support your child.'},
-  'Directeur : Gilles Maigron':{ar:'المدير: Gilles Maigron',es:'Director: Gilles Maigron',en:'Headteacher: Gilles Maigron'}
+  'Directeur : Gilles Maigron':{ar:'المدير: Gilles Maigron',es:'Director: Gilles Maigron',en:'Headteacher: Gilles Maigron'},
+  'Vacances d’été':{ar:'العطلة الصيفية',es:'Vacaciones de verano',en:'Summer holidays'},
+  'Voici l’emploi du temps réel de':{ar:'هذا هو الجدول الدراسي الفعلي ليوم',es:'Este es el horario real de',en:'Here is the actual timetable for'},
+  'Pas de classe aujourd’hui.':{ar:'لا توجد دراسة اليوم.',es:'Hoy no hay clase.',en:'There is no school today.'},
+  'Quart d’heure de lecture':{ar:'15 دقيقة للقراءة',es:'15 minutos de lectura',en:'15 minutes of reading'},
+  "Quart d'heure de lecture":{ar:'15 دقيقة للقراءة',es:'15 minutos de lectura',en:'15 minutes of reading'},
+  'Vie de classe / Arts':{ar:'حياة الصف / الفنون',es:'Vida de clase / Artes',en:'Class life / Arts'},
+  'Ateliers de rentrée':{ar:'ورشات بداية السنة الدراسية',es:'Talleres de inicio de curso',en:'Back-to-school workshops'},
+  'Bilan de journée':{ar:'حصيلة اليوم',es:'Resumen del día',en:'Daily review'}
 });
 
 // V34.98 - finition des chaînes qui apparaissent avec une icône/flèche ou dans les zones communes.
@@ -190,7 +198,7 @@ Object.assign(EXACT,{
   'Rubriques de l’espace Parents':{ar:'أقسام فضاء أولياء الأمور',es:'Secciones del espacio para familias',en:'Parent Space sections'},
   'Rubriques des informations de la classe':{ar:'أقسام معلومات الصف',es:'Secciones de la información de la clase',en:'Class information sections'},
   'Choisir la langue':{ar:'اختيار اللغة',es:'Elegir idioma',en:'Choose language'},
-  'Progressions CE2 · Espace Parents · V35.20':{ar:'Progressions CE2 · فضاء أولياء الأمور · V35.20',es:'Progressions CE2 · Espacio para familias · V35.20',en:'Progressions CE2 · Parent Space · V35.20'}
+  'Progressions CE2 · Espace Parents · V35.21':{ar:'Progressions CE2 · فضاء أولياء الأمور · V35.21',es:'Progressions CE2 · Espacio para familias · V35.21',en:'Progressions CE2 · Parent Space · V35.21'}
 });
 
 const SCHEDULE_REPLACEMENTS={
@@ -254,6 +262,26 @@ function translateText(text,lang){
   const prefix=raw.match(/^\s*/)?.[0]||'',suffix=raw.match(/\s*$/)?.[0]||'';
   return prefix+translated+suffix;
 }
+const HOMEWORK_FIXED={
+  fr:{title:'Devoirs',hello:'Bonjour,',p1:'À la maison, les devoirs restent <strong>courts et simples</strong> : quelques minutes de lecture, de mémorisation ou un petit entraînement oral pour revoir tranquillement ce qui a été travaillé en classe.',p2:'L’objectif n’est pas de refaire la journée d’école, mais d’installer une <strong>petite routine régulière</strong>, sans pression, et de partager parfois un petit défi en famille.',how:'Ils se dérouleront ainsi :'},
+  es:{title:'Deberes',hello:'Hola,',p1:'En casa, los deberes siguen siendo <strong>breves y sencillos</strong>: unos minutos de lectura, memorización o un pequeño ejercicio oral para repasar tranquilamente lo trabajado en clase.',p2:'El objetivo no es repetir la jornada escolar, sino establecer una <strong>pequeña rutina regular</strong>, sin presión, y compartir de vez en cuando un pequeño reto en familia.',how:'Se organizarán así:'},
+  en:{title:'Homework',hello:'Hello,',p1:'At home, homework remains <strong>short and simple</strong>: a few minutes of reading, memorising or a short oral activity to calmly review what was done in class.',p2:'The aim is not to repeat the school day, but to establish a <strong>small regular routine</strong>, without pressure, and sometimes share a little family challenge.',how:'It will be organised like this:'},
+  ar:{title:'الواجبات المنزلية',hello:'مرحبًا،',p1:'في المنزل، تبقى الواجبات <strong>قصيرة وبسيطة</strong>: بضع دقائق من القراءة أو الحفظ أو نشاط شفهي قصير لمراجعة ما تم تعلمه في الصف بهدوء.',p2:'الهدف ليس إعادة اليوم الدراسي، بل إنشاء <strong>روتين بسيط ومنتظم</strong> دون ضغط، ومشاركة تحدٍّ عائلي صغير من حين إلى آخر.',how:'وتنظَّم على النحو التالي:'}
+};
+function applyHomeworkFixed(lang){
+  const t=HOMEWORK_FIXED[lang]||HOMEWORK_FIXED.fr;
+  const title=document.getElementById('homeworkTitleLabel');
+  const hello=document.getElementById('homeworkIntroHello');
+  const p1=document.getElementById('homeworkIntroP1');
+  const p2=document.getElementById('homeworkIntroP2');
+  const how=document.getElementById('homeworkIntroHow');
+  if(title)title.textContent=t.title;
+  if(hello)hello.innerHTML='<strong>'+t.hello+'</strong>';
+  if(p1)p1.innerHTML=t.p1;
+  if(p2)p2.innerHTML=t.p2;
+  if(how)how.textContent=t.how;
+}
+
 let current='fr';
 const originals=new WeakMap();
 let observer=null;
@@ -335,6 +363,7 @@ function applyLang(lang,{persist=true}={}){
   document.documentElement.lang=lang;
   document.documentElement.dir=meta.dir;
   document.body?.classList.toggle('parents-rtl',meta.dir==='rtl');
+  applyHomeworkFixed(lang);
   if(persist)try{localStorage.setItem('parentsLanguage',lang)}catch(e){}
   const btn=document.getElementById('parentsLanguageButton');
   if(btn){btn.textContent='🌐';btn.title=`${meta.flag} ${meta.label}`;btn.setAttribute('aria-label',`Langue : ${meta.label}`)}

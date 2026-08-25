@@ -795,7 +795,7 @@ function setupUpcomingTest(){
   });
 }
 function frDate(d,opts={weekday:'long',day:'numeric',month:'long',year:'numeric'}){return new Intl.DateTimeFormat('fr-FR',opts).format(d).replace(/^./,c=>c.toUpperCase())}
-// V35.20 — traduction ciblée de l'emploi du temps : structure + matières uniquement.
+// V35.21 — emploi du temps cible : structure + matieres, descriptions detaillees en francais.
 function scheduleTr(text){
   const i18n=window.PARENTS_I18N;
   return i18n&&typeof i18n.translateSchedule==='function'?i18n.translateSchedule(String(text??''),i18n.lang):String(text??'');
@@ -834,13 +834,14 @@ function renderSchedule(){
   const isToday=isoLocal(target)===isoLocal(today);
   $('scheduleEyebrow').textContent=scheduleTr(isToday?'Aujourd’hui':'Prochain jour de classe');
   $('scheduleQuickHint').textContent=isToday?scheduleTr(frDate(target,{weekday:'long'})):scheduleTr(`Prochain : ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}`);
+  const targetLabel=scheduleTr(frDate(target,{weekday:'long',day:'numeric',month:'long'}));
   if(isToday){
-    $('scheduleViewMessage').textContent=`Voici l’emploi du temps réel de ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}.`;
+    $('scheduleViewMessage').textContent=`${scheduleTr('Voici l’emploi du temps réel de')} ${targetLabel}.`;
   }else if(todayInfo){
     const reason=todayInfo.type==='ferie'||todayInfo.type==='pont'?`${todayInfo.label} — pas de classe`:todayInfo.label;
-    $('scheduleViewMessage').textContent=`${reason}. Prochain jour de classe : ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}.`;
+    $('scheduleViewMessage').textContent=`${scheduleTr(reason)}. ${scheduleTr('Prochain jour de classe')} : ${targetLabel}.`;
   }else{
-    $('scheduleViewMessage').textContent=`Pas de classe aujourd’hui. Prochain jour de classe : ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}.`;
+    $('scheduleViewMessage').textContent=`${scheduleTr('Pas de classe aujourd’hui.')} ${scheduleTr('Prochain jour de classe')} : ${targetLabel}.`;
   }
   $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(scheduleTr(frDate(target,{weekday:'long',day:'numeric',month:'long'})))}</h3>${scheduleRowsHtml(target)}</article>`;
   const monday=EDT.mondayOf(target),days=[0,1,3,4].map(n=>EDT.addDays(monday,n));
