@@ -1,5 +1,9 @@
 // V34.94 — Couche multilingue Espace Parents (FR / AR / ES / EN)
-// V34.98 - finition traduction : décorations, retours, bandeau, pied de page et chaînes restantes
+// V35.20 - traduction ciblée et stable (FR / AR / ES / EN)
+// Périmètre traduit : accueil, infos de classe, matériel, aide, numérique,
+// ressources, navigation/bandeaux, pied de page et structure/matières de l'emploi du temps.
+// Sont volontairement laissés en français : devoirs, évaluations, vacances,
+// défis famille, « Ce que nous apprenons » et descriptions pédagogiques détaillées.
 (function(){
 'use strict';
 const LANGS=['fr','ar','es','en'];
@@ -31,6 +35,7 @@ const EXACT={
   'Ces objectifs viennent directement des progressions de la classe et évoluent avec la période.':{ar:'تأتي هذه الأهداف مباشرة من تخطيط الصف وتتغير حسب الفترة.',es:'Estos objetivos proceden directamente de la programación de la clase y evolucionan según el periodo.',en:'These goals come directly from the class learning plan and change with each term.'},
   'Cahier de liaison & informations':{ar:'دفتر التواصل والمعلومات',es:'Cuaderno de comunicación e información',en:'Home-school notebook & information'},
   'Rappels':{ar:'تذكيرات',es:'Recordatorios',en:'Reminders'},
+  'Rappels du cahier de liaison':{ar:'ملاحظات في دفتر التواصل بين الأسرة والمدرسة',es:'Notas en el cuaderno familia-escuela',en:'Notes in the home-school notebook'},
   'À venir':{ar:'قريبًا',es:'Próximamente',en:'Coming up'},
   'Matériel':{ar:'اللوازم',es:'Material',en:'Supplies'},
   'Aider mon enfant':{ar:'مساعدة طفلي',es:'Ayudar a mi hijo/a',en:'Helping my child'},
@@ -130,6 +135,12 @@ Object.assign(EXACT,{
   'Rappels · dates · documents':{ar:'تذكيرات · تواريخ · وثائق',es:'Recordatorios · fechas · documentos',en:'Reminders · dates · documents'},
   'Objectifs de la période':{ar:'أهداف الفترة',es:'Objetivos del periodo',en:'Goals for the term'},
   'Voir toute la semaine':{ar:'عرض الأسبوع كاملًا',es:'Ver toda la semana',en:'View the whole week'},
+  'Prochain jour de classe':{ar:'يوم الدراسة القادم',es:'Próximo día de clase',en:'Next school day'},
+  'Calendrier scolaire':{ar:'التقويم المدرسي',es:'Calendario escolar',en:'School calendar'},
+  'Pas de classe':{ar:'لا توجد دراسة',es:'No hay clase',en:'No school'},
+  'Pas de classe prévue ce jour-là.':{ar:'لا توجد دراسة مقررة في ذلك اليوم.',es:'No hay clase prevista ese día.',en:'No class is scheduled that day.'},
+  'Les élèves ne sont pas attendus à l’école.':{ar:'لا يُنتظر حضور التلاميذ إلى المدرسة.',es:'Los alumnos no tienen que acudir a la escuela.',en:'Pupils are not expected at school.'},
+  'Aucune prochaine journée de classe n’est encore programmée.':{ar:'لم يتم تحديد يوم الدراسة القادم بعد.',es:'Todavía no se ha programado el próximo día de clase.',en:'The next school day has not yet been scheduled.'},
   'À la maison, les devoirs restent':{ar:'في المنزل، تبقى الواجبات',es:'En casa, los deberes siguen siendo',en:'At home, homework stays'},
   'courts et simples':{ar:'قصيرة وبسيطة',es:'breves y sencillos',en:'short and simple'},
   ': quelques minutes de lecture, de mémorisation ou un petit entraînement oral pour revoir tranquillement ce qui a été travaillé en classe.':{ar:': بضع دقائق من القراءة أو الحفظ أو تدريب شفهي قصير لمراجعة ما تم العمل عليه في الصف بهدوء.',es:': unos minutos de lectura, memorización o un pequeño ejercicio oral para repasar tranquilamente lo trabajado en clase.',en:': a few minutes of reading, memorising or a short oral activity to calmly review what was worked on in class.'},
@@ -179,54 +190,41 @@ Object.assign(EXACT,{
   'Rubriques de l’espace Parents':{ar:'أقسام فضاء أولياء الأمور',es:'Secciones del espacio para familias',en:'Parent Space sections'},
   'Rubriques des informations de la classe':{ar:'أقسام معلومات الصف',es:'Secciones de la información de la clase',en:'Class information sections'},
   'Choisir la langue':{ar:'اختيار اللغة',es:'Elegir idioma',en:'Choose language'},
-  'Progressions CE2 · Espace Parents · V34.98':{ar:'Progressions CE2 · فضاء أولياء الأمور · V34.98',es:'Progressions CE2 · Espacio para familias · V34.98',en:'Progressions CE2 · Parent Space · V34.98'}
+  'Progressions CE2 · Espace Parents · V35.20':{ar:'Progressions CE2 · فضاء أولياء الأمور · V35.20',es:'Progressions CE2 · Espacio para familias · V35.20',en:'Progressions CE2 · Parent Space · V35.20'}
 });
 
-const REPLACEMENTS={
+const SCHEDULE_REPLACEMENTS={
   en:[
     ['Lundi','Monday'],['Mardi','Tuesday'],['Mercredi','Wednesday'],['Jeudi','Thursday'],['Vendredi','Friday'],['Samedi','Saturday'],['Dimanche','Sunday'],
     ['janvier','January'],['février','February'],['mars','March'],['avril','April'],['mai','May'],['juin','June'],['juillet','July'],['août','August'],['septembre','September'],['octobre','October'],['novembre','November'],['décembre','December'],
-    ['Français','French'],['Mathématiques','Mathematics'],['Maths','Maths'],['Anglais','English'],['Sciences','Science'],['Histoire','History'],['Géographie','Geography'],['Arts','Arts'],['Éducation musicale','Music'],['Lecture','Reading'],['Orthographe','Spelling'],['Grammaire','Grammar'],['Écriture','Writing'],['Numération','Number work'],['Calcul mental','Mental maths'],['Poésie','Poetry'],['EPS','PE'],
-    ['Je prépare ma lecture','I prepare my reading'],['Je prépare ma dictée','I prepare my dictation'],['Je prépare les mots de la semaine','I prepare the words of the week'],['Je réactive','I review'],['Je revois','I review'],['Je m’entraîne','I practise'],['Je manipule','I practise'],['Je reformule','I retell in my own words'],['Je mémorise','I memorise'],['Je relis','I reread'],['Je révise','I revise'],
-    ['Si tu as','If you have'],['Sans le texte','Without the text'],['Sans cahier','Without the notebook'],['Relis','Reread'],['Lis','Read'],['explique oralement','explain out loud'],['raconte oralement','tell it out loud'],['quelques minutes','a few minutes'],['à voix haute','out loud'],['avec tes mots','in your own words'],['si besoin','if needed'],['en classe','in class'],['à la maison','at home'],['mots prioritaires','priority words'],['mots de la semaine','words of the week'],['dictée','dictation'],['leçon','lesson'],['phrase','sentence'],['verbe','verb'],['sujet','subject'],['nom','noun'],['adjectif','adjective'],['déterminant','determiner'],['présent','present tense'],['futur','future tense'],['problème','problem'],['nombres','numbers'],['addition','addition'],['soustraction','subtraction'],['multiplication','multiplication'],['division','division'],['fractions','fractions'],['géométrie','geometry'],['mesures','measurement'],['heure','time'],['carte','map'],['texte','text'],['personnages','characters'],['histoire','story'],['question','question'],['réponse','answer'],['mots','words'],['évaluation','assessment'],['révision','revision'],['vacances','holiday'],['famille','family'],['classe','class'],['école','school']
+    ['Français','French'],['Mathématiques','Mathematics'],['Maths','Maths'],['Anglais','English'],['Sciences','Science'],['Histoire','History'],['Géographie','Geography'],['EPS','PE'],['Éducation physique','PE'],['Arts','Arts'],['Éducation musicale','Music'],['Lecture','Reading']
   ],
   es:[
     ['Lundi','Lunes'],['Mardi','Martes'],['Mercredi','Miércoles'],['Jeudi','Jueves'],['Vendredi','Viernes'],['Samedi','Sábado'],['Dimanche','Domingo'],
     ['janvier','enero'],['février','febrero'],['mars','marzo'],['avril','abril'],['mai','mayo'],['juin','junio'],['juillet','julio'],['août','agosto'],['septembre','septiembre'],['octobre','octubre'],['novembre','noviembre'],['décembre','diciembre'],
-    ['Français','Francés'],['Mathématiques','Matemáticas'],['Maths','Matemáticas'],['Anglais','Inglés'],['Sciences','Ciencias'],['Histoire','Historia'],['Géographie','Geografía'],['Arts','Artes'],['Éducation musicale','Música'],['Lecture','Lectura'],['Orthographe','Ortografía'],['Grammaire','Gramática'],['Écriture','Escritura'],['Numération','Numeración'],['Calcul mental','Cálculo mental'],['Poésie','Poesía'],['EPS','Educación física'],
-    ['Je prépare ma lecture','Preparo mi lectura'],['Je prépare ma dictée','Preparo mi dictado'],['Je prépare les mots de la semaine','Preparo las palabras de la semana'],['Je réactive','Repaso'],['Je revois','Repaso'],['Je m’entraîne','Practico'],['Je manipule','Practico'],['Je reformule','Lo explico con mis palabras'],['Je mémorise','Memorizo'],['Je relis','Vuelvo a leer'],['Je révise','Repaso'],
-    ['Si tu as','Si tienes'],['Sans le texte','Sin el texto'],['Sans cahier','Sin el cuaderno'],['Relis','Vuelve a leer'],['Lis','Lee'],['explique oralement','explica oralmente'],['raconte oralement','cuenta oralmente'],['quelques minutes','unos minutos'],['à voix haute','en voz alta'],['avec tes mots','con tus palabras'],['si besoin','si es necesario'],['en classe','en clase'],['à la maison','en casa'],['mots prioritaires','palabras prioritarias'],['mots de la semaine','palabras de la semana'],['dictée','dictado'],['leçon','lección'],['phrase','frase'],['verbe','verbo'],['sujet','sujeto'],['nom','nombre'],['adjectif','adjetivo'],['déterminant','determinante'],['présent','presente'],['futur','futuro'],['problème','problema'],['nombres','números'],['addition','suma'],['soustraction','resta'],['multiplication','multiplicación'],['division','división'],['fractions','fracciones'],['géométrie','geometría'],['mesures','medidas'],['heure','hora'],['carte','mapa'],['texte','texto'],['personnages','personajes'],['histoire','historia'],['question','pregunta'],['réponse','respuesta'],['mots','palabras'],['évaluation','evaluación'],['révision','repaso'],['vacances','vacaciones'],['famille','familia'],['classe','clase'],['école','escuela']
+    ['Français','Francés'],['Mathématiques','Matemáticas'],['Maths','Matemáticas'],['Anglais','Inglés'],['Sciences','Ciencias'],['Histoire','Historia'],['Géographie','Geografía'],['EPS','Educación física'],['Éducation physique','Educación física'],['Arts','Artes'],['Éducation musicale','Música'],['Lecture','Lectura']
   ],
   ar:[
     ['Lundi','الاثنين'],['Mardi','الثلاثاء'],['Mercredi','الأربعاء'],['Jeudi','الخميس'],['Vendredi','الجمعة'],['Samedi','السبت'],['Dimanche','الأحد'],
     ['janvier','يناير'],['février','فبراير'],['mars','مارس'],['avril','أبريل'],['mai','مايو'],['juin','يونيو'],['juillet','يوليو'],['août','أغسطس'],['septembre','سبتمبر'],['octobre','أكتوبر'],['novembre','نوفمبر'],['décembre','ديسمبر'],
-    ['Français','اللغة الفرنسية'],['Mathématiques','الرياضيات'],['Maths','الرياضيات'],['Anglais','اللغة الإنجليزية'],['Sciences','العلوم'],['Histoire','التاريخ'],['Géographie','الجغرافيا'],['Arts','الفنون'],['Éducation musicale','الموسيقى'],['Lecture','القراءة'],['Orthographe','الإملاء'],['Grammaire','القواعد'],['Écriture','الكتابة'],['Numération','الأعداد'],['Calcul mental','الحساب الذهني'],['Poésie','الشعر'],['EPS','التربية البدنية'],
-    ['Je prépare ma lecture','أحضّر قراءتي'],['Je prépare ma dictée','أحضّر الإملاء'],['Je prépare les mots de la semaine','أحضّر كلمات الأسبوع'],['Je réactive','أراجع'],['Je revois','أراجع'],['Je m’entraîne','أتدرّب'],['Je manipule','أتدرّب'],['Je reformule','أعيد الشرح بكلماتي'],['Je mémorise','أحفظ'],['Je relis','أعيد القراءة'],['Je révise','أراجع'],
-    ['Si tu as','إذا كان لديك'],['Sans le texte','من دون النص'],['Sans cahier','من دون الدفتر'],['Relis','أعد القراءة'],['Lis','اقرأ'],['explique oralement','اشرح شفهيًا'],['raconte oralement','احكِ شفهيًا'],['quelques minutes','بضع دقائق'],['à voix haute','بصوت مرتفع'],['avec tes mots','بكلماتك'],['si besoin','عند الحاجة'],['en classe','في الصف'],['à la maison','في المنزل'],['mots prioritaires','الكلمات ذات الأولوية'],['mots de la semaine','كلمات الأسبوع'],['dictée','الإملاء'],['leçon','الدرس'],['phrase','الجملة'],['verbe','الفعل'],['sujet','الفاعل'],['nom','الاسم'],['adjectif','الصفة'],['déterminant','المحدِّد'],['présent','المضارع'],['futur','المستقبل'],['problème','مسألة'],['nombres','الأعداد'],['addition','الجمع'],['soustraction','الطرح'],['multiplication','الضرب'],['division','القسمة'],['fractions','الكسور'],['géométrie','الهندسة'],['mesures','القياس'],['heure','الوقت'],['carte','الخريطة'],['texte','النص'],['personnages','الشخصيات'],['histoire','القصة'],['question','السؤال'],['réponse','الإجابة'],['mots','الكلمات'],['évaluation','التقييم'],['révision','المراجعة'],['vacances','العطلة'],['famille','العائلة'],['classe','الصف'],['école','المدرسة']
+    ['Français','اللغة الفرنسية'],['Mathématiques','الرياضيات'],['Maths','الرياضيات'],['Anglais','اللغة الإنجليزية'],['Sciences','العلوم'],['Histoire','التاريخ'],['Géographie','الجغرافيا'],['EPS','التربية البدنية'],['Éducation physique','التربية البدنية'],['Arts','الفنون'],['Éducation musicale','الموسيقى'],['Lecture','القراءة']
   ]
 };
 function escapeRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
-function translateFallback(text,lang){
-  let out=String(text||'');
-  const list=REPLACEMENTS[lang]||[];
-  list.slice().sort((a,b)=>b[0].length-a[0].length).forEach(([fr,tr])=>{
-    out=out.replace(new RegExp(escapeRe(fr),'gi'),m=>{
-      if(m===m.toUpperCase()&&m.length>2)return tr.toUpperCase();
-      return tr;
-    });
+function translateScheduleText(text,lang){
+  if(!text||lang==='fr')return text;
+  let out=String(text);
+  const exact=EXACT[out.trim()]?.[lang];
+  if(exact){
+    const pre=out.match(/^\s*/)?.[0]||'',post=out.match(/\s*$/)?.[0]||'';
+    return pre+exact+post;
+  }
+  (SCHEDULE_REPLACEMENTS[lang]||[]).slice().sort((a,b)=>b[0].length-a[0].length).forEach(([fr,tr])=>{
+    out=out.replace(new RegExp(escapeRe(fr),'gi'),tr);
   });
-  if(lang==='en'){
-    out=out.replace(/(\d+) grand(s?) apprentissage(s?) à retenir pendant cette période\./gi,(_,n)=>`${n} key learning goal${Number(n)>1?'s':''} for this term.`);
-    out=out.replace(/Semaine\s+(\d+)/gi,'Week $1');
-  }
-  if(lang==='es'){
-    out=out.replace(/(\d+) grand(s?) apprentissage(s?) à retenir pendant cette période\./gi,(_,n)=>`${n} aprendizaje${Number(n)>1?'s':''} importante${Number(n)>1?'s':''} para este periodo.`);
-    out=out.replace(/Semaine\s+(\d+)/gi,'Semana $1');
-  }
-  if(lang==='ar'){
-    out=out.replace(/(\d+) grand(s?) apprentissage(s?) à retenir pendant cette période\./gi,(_,n)=>`${n} من التعلمات الأساسية لهذه الفترة.`);
-    out=out.replace(/Semaine\s+(\d+)/gi,'الأسبوع $1');
-  }
+  if(lang==='en')out=out.replace(/Période\s+(\d+)/gi,'Term $1').replace(/^Prochain\s*:/i,'Next:');
+  if(lang==='es')out=out.replace(/Période\s+(\d+)/gi,'Periodo $1').replace(/^Prochain\s*:/i,'Próximo:');
+  if(lang==='ar')out=out.replace(/Période\s+(\d+)/gi,'الفترة $1').replace(/^Prochain\s*:/i,'التالي:');
   return out;
 }
 function translateText(text,lang){
@@ -249,8 +247,9 @@ function translateText(text,lang){
     }
   }
 
-  // 3. Repli lexical pour les contenus dynamiques venant des données partagées.
-  if(!translated)translated=translateFallback(trim,lang);
+  // 3. Aucun remplacement lexical générique : une chaîne non répertoriée reste en français.
+  // Cela empêche les phrases hybrides français/espagnol/anglais/arabe.
+  if(!translated)translated=trim;
 
   const prefix=raw.match(/^\s*/)?.[0]||'',suffix=raw.match(/\s*$/)?.[0]||'';
   return prefix+translated+suffix;
@@ -284,6 +283,11 @@ function translateNode(root=document.body){
     const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
       if(!node.parentElement)return NodeFilter.FILTER_REJECT;
       if(['SCRIPT','STYLE','NOSCRIPT'].includes(node.parentElement.tagName))return NodeFilter.FILTER_REJECT;
+      // V35.20 : les pages pédagogiques dynamiques restent volontairement en français.
+      if(node.parentElement.closest('#parentsViewHomework,#parentsViewLearning'))return NodeFilter.FILTER_REJECT;
+      // Dans l'emploi du temps, le rendu dynamique est géré explicitement par parents.js :
+      // on évite de retraduire les descriptions pédagogiques détaillées.
+      if(node.parentElement.closest('#parentsScheduleToday,#parentsScheduleWeek'))return NodeFilter.FILTER_REJECT;
       if(!node.nodeValue||!node.nodeValue.trim())return NodeFilter.FILTER_REJECT;
       return NodeFilter.FILTER_ACCEPT;
     }});
@@ -301,6 +305,7 @@ function translateNode(root=document.body){
       if(scope.matches&&scope.matches('[aria-label]'))labelled.push(scope);
       scope.querySelectorAll('[aria-label]').forEach(el=>labelled.push(el));
       labelled.forEach(el=>{
+        if(el.closest('#parentsViewHomework,#parentsViewLearning'))return;
         if(!el.dataset.i18nAriaOriginal)el.dataset.i18nAriaOriginal=el.getAttribute('aria-label')||'';
         const translated=translateText(el.dataset.i18nAriaOriginal,current);
         if(el.getAttribute('aria-label')!==translated)el.setAttribute('aria-label',translated);
@@ -375,6 +380,6 @@ function init(){
   observeBody();
 }
 
-window.PARENTS_I18N={langs:LANGS,meta:META,get lang(){return current},setLanguage:applyLang,translate:translateText,refresh:refreshDynamicContent};
+window.PARENTS_I18N={langs:LANGS,meta:META,get lang(){return current},setLanguage:applyLang,translate:translateText,translateSchedule:translateScheduleText,refresh:refreshDynamicContent};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();

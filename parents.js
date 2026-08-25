@@ -737,7 +737,11 @@ function renderClassInfo(){
     testLabel.textContent=`${LEARNING_PERIOD_DATES[key]?.label||key.toUpperCase()}${upcomingTestPeriod?' · mode test':' · affichage automatique'}`;
   }
 
-  const docs=Array.isArray(I.documents)?I.documents:[];
+  // V35.20 — ne plus afficher l'ancien lien « mots aux parents » devenu obsolète.
+  const docs=(Array.isArray(I.documents)?I.documents:[]).filter(d=>{
+    const label=String(typeof d==='string'?d:(d?.label||d?.title||''));
+    return !/(mots|palabras)\s+aux\s+parents|espace\s+parents\s*&\s*ma[iî]tre\s+hibou/i.test(label);
+  });
   $('parentsDocumentsUseful').innerHTML=docs.length
     ? docs.map(d=>{
         if(typeof d==='string')return `<div class="parents-document-useful">${esc(d)}</div>`;
@@ -791,6 +795,11 @@ function setupUpcomingTest(){
   });
 }
 function frDate(d,opts={weekday:'long',day:'numeric',month:'long',year:'numeric'}){return new Intl.DateTimeFormat('fr-FR',opts).format(d).replace(/^./,c=>c.toUpperCase())}
+// V35.20 — traduction ciblée de l'emploi du temps : structure + matières uniquement.
+function scheduleTr(text){
+  const i18n=window.PARENTS_I18N;
+  return i18n&&typeof i18n.translateSchedule==='function'?i18n.translateSchedule(String(text??''),i18n.lang):String(text??'');
+}
 function scheduleTargetDate(){
   const now=new Date();now.setHours(12,0,0,0);
   const todayData=EDT.rowsForDate(now);
@@ -799,32 +808,32 @@ function scheduleTargetDate(){
 }
 function noClassHtml(d){
   const data=EDT.rowsForDate(d),info=data.noClass||EDT.noClassInfo?.(d);
-  if(!info)return '<div class="homework-empty">Pas de classe prévue ce jour-là.</div>';
+  if(!info)return `<div class="homework-empty">${esc(scheduleTr('Pas de classe prévue ce jour-là.'))}</div>`;
   const detail=info.type==='ferie'||info.type==='pont' ? `${info.label} — pas de classe` : (info.message||info.label);
-  return `<div class="schedule-no-class schedule-no-class--${esc(info.type||'none')}"><span>${esc(info.icon||'📅')}</span><div><strong>${esc(detail)}</strong>${info.type==='vacances'?'<small>Les élèves ne sont pas attendus à l’école.</small>':''}</div></div>`;
+  return `<div class="schedule-no-class schedule-no-class--${esc(info.type||'none')}"><span>${esc(info.icon||'📅')}</span><div><strong>${esc(scheduleTr(detail))}</strong>${info.type==='vacances'?`<small>${esc(scheduleTr('Les élèves ne sont pas attendus à l’école.'))}</small>`:''}</div></div>`;
 }
 function scheduleRowsHtml(d){
   const data=EDT.rowsForDate(d);
   if(!data.rows.length)return noClassHtml(d);
-  return data.rows.map(r=>`<div class="schedule-row"><time>${esc(r[0])}</time><div><strong>${esc(r[1])}</strong>${r[2]?`<small>${esc(r[2])}</small>`:''}</div></div>`).join('');
+  return data.rows.map(r=>`<div class="schedule-row"><time>${esc(r[0])}</time><div><strong>${esc(scheduleTr(r[1]))}</strong>${r[2]?`<small>${esc(r[2])}</small>`:''}</div></div>`).join('');
 }
 function renderSchedule(){
   const today=new Date();today.setHours(12,0,0,0);
   const todayData=EDT.rowsForDate(today),todayInfo=todayData.noClass||null;
   const target=scheduleTargetDate();
   const periodTarget=target||today;
-  $('schedulePeriod').textContent=EDT.periodLabel(EDT.periodForDate(periodTarget));
+  $('schedulePeriod').textContent=scheduleTr(EDT.periodLabel(EDT.periodForDate(periodTarget)));
   if(!target){
-    $('scheduleEyebrow').textContent='Calendrier scolaire';
-    $('scheduleQuickHint').textContent=todayInfo?.label||'Pas de classe';
-    $('scheduleViewMessage').textContent=todayInfo?.message||'Aucune prochaine journée de classe n’est encore programmée.';
-    $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(frDate(today,{weekday:'long',day:'numeric',month:'long'}))}</h3>${noClassHtml(today)}</article>`;
+    $('scheduleEyebrow').textContent=scheduleTr('Calendrier scolaire');
+    $('scheduleQuickHint').textContent=scheduleTr(todayInfo?.label||'Pas de classe');
+    $('scheduleViewMessage').textContent=scheduleTr(todayInfo?.message||'Aucune prochaine journée de classe n’est encore programmée.');
+    $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(scheduleTr(frDate(today,{weekday:'long',day:'numeric',month:'long'})))}</h3>${noClassHtml(today)}</article>`;
     $('parentsScheduleWeek').innerHTML='';
     return;
   }
   const isToday=isoLocal(target)===isoLocal(today);
-  $('scheduleEyebrow').textContent=isToday?'Aujourd’hui':'Prochain jour de classe';
-  $('scheduleQuickHint').textContent=isToday?frDate(target,{weekday:'long'}):`Prochain : ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}`;
+  $('scheduleEyebrow').textContent=scheduleTr(isToday?'Aujourd’hui':'Prochain jour de classe');
+  $('scheduleQuickHint').textContent=isToday?scheduleTr(frDate(target,{weekday:'long'})):scheduleTr(`Prochain : ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}`);
   if(isToday){
     $('scheduleViewMessage').textContent=`Voici l’emploi du temps réel de ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}.`;
   }else if(todayInfo){
@@ -833,9 +842,9 @@ function renderSchedule(){
   }else{
     $('scheduleViewMessage').textContent=`Pas de classe aujourd’hui. Prochain jour de classe : ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}.`;
   }
-  $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(frDate(target,{weekday:'long',day:'numeric',month:'long'}))}</h3>${scheduleRowsHtml(target)}</article>`;
+  $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(scheduleTr(frDate(target,{weekday:'long',day:'numeric',month:'long'})))}</h3>${scheduleRowsHtml(target)}</article>`;
   const monday=EDT.mondayOf(target),days=[0,1,3,4].map(n=>EDT.addDays(monday,n));
-  $('parentsScheduleWeek').innerHTML=days.map(d=>`<article class="schedule-day${isoLocal(d)===isoLocal(target)?' schedule-day--selected':''}"><h3>${esc(frDate(d,{weekday:'long',day:'numeric',month:'long'}))}</h3>${scheduleRowsHtml(d)}</article>`).join('');
+  $('parentsScheduleWeek').innerHTML=days.map(d=>`<article class="schedule-day${isoLocal(d)===isoLocal(target)?' schedule-day--selected':''}"><h3>${esc(scheduleTr(frDate(d,{weekday:'long',day:'numeric',month:'long'})))}</h3>${scheduleRowsHtml(d)}</article>`).join('');
 }
 function showParentInfoPanel(target){
   const menu=$('parentsInfoMenu');
@@ -934,5 +943,9 @@ function init(){
   setupHomeworkTest();
   setupUpcomingTest();
 }
+// V35.20 — régénérer uniquement l'emploi du temps lors d'un changement de langue.
+window.addEventListener('parentslanguagechange',()=>{
+  try{renderSchedule()}catch(e){console.warn('V35.20: rafraîchissement emploi du temps impossible',e)}
+});
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
