@@ -1487,20 +1487,38 @@ body.holiday-sheet-modal-open{overflow:hidden}
 @media(max-width:620px){.upcoming-test-bar span{min-width:0;flex:1 1 130px}.upcoming-test-bar{gap:6px}}
 
 
-/* V34.93 — sélecteur de langue discret dans le titre */
-.parents-title-with-language{display:flex;align-items:center;gap:.32em;flex-wrap:wrap}
-.parents-language-wrap{position:relative;display:inline-flex;align-items:center}
-.parents-language-button{appearance:none;border:0;background:transparent;padding:0 .08em;font:inherit;font-size:.82em;line-height:1;cursor:pointer;opacity:.78;transition:opacity .15s ease,transform .15s ease}
-.parents-language-button:hover,.parents-language-button:focus-visible,.parents-language-button[aria-expanded="true"]{opacity:1;transform:scale(1.06)}
-.parents-language-button:focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:8px}
-.parents-language-menu{position:absolute;z-index:60;top:calc(100% + 10px);left:50%;transform:translateX(-50%);min-width:190px;padding:7px;border:1px solid rgba(70,80,90,.16);border-radius:14px;background:rgba(255,255,255,.98);box-shadow:0 10px 30px rgba(45,55,65,.16);font-size:14px}
+/* V34.94 — sélecteur de langue compact, flottant et compatible mobile */
+.parents-title-with-language{display:flex;align-items:center;gap:.18em;flex-wrap:nowrap}
+.parents-language-wrap{position:relative;display:inline-flex;align-items:center;flex:0 0 auto}
+.parents-language-button{appearance:none;border:0;background:transparent;padding:0 .03em;margin:0;font:inherit;font-size:.66em;line-height:1;cursor:pointer;opacity:.84;transition:opacity .15s ease,transform .15s ease}
+.parents-language-button:hover,.parents-language-button:focus-visible,.parents-language-button[aria-expanded="true"]{opacity:1;transform:scale(1.04)}
+.parents-language-button:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:7px}
+.parents-language-menu{position:absolute;z-index:100;top:calc(100% + 7px);left:0;width:156px;min-width:156px;max-width:156px;padding:4px;border:1px solid rgba(70,80,90,.14);border-radius:11px;background:rgba(255,255,255,.985);box-shadow:0 8px 22px rgba(45,55,65,.16);font-size:12px;line-height:1.15}
 .parents-language-menu[hidden]{display:none!important}
-.parents-language-menu button{display:block;width:100%;border:0;background:transparent;border-radius:10px;padding:8px 10px;text-align:left;font:inherit;white-space:nowrap;cursor:pointer;color:#2f3f48}
+.parents-language-menu button{display:block;width:100%;min-height:32px;border:0;background:transparent;border-radius:8px;padding:6px 8px;text-align:left;font:inherit;font-weight:700;white-space:nowrap;cursor:pointer;color:#2f3f48}
 .parents-language-menu button:hover,.parents-language-menu button:focus-visible{background:#f1f6f8;outline:none}
 .parents-language-menu button[aria-current="true"]{background:#e8f3ee;font-weight:800}
-html[dir="rtl"] .parents-language-menu{left:auto;right:50%;transform:translateX(50%)}
+html[dir="rtl"] .parents-language-menu{left:auto;right:0}
 html[dir="rtl"] .parents-language-menu button{text-align:right}
 html[dir="rtl"] .parents-info-detail,html[dir="rtl"] .homework-card,html[dir="rtl"] .learning-card,html[dir="rtl"] .together-card{text-align:right}
 html[dir="rtl"] .parents-back{direction:rtl}
 html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
-@media(max-width:620px){.parents-language-menu{min-width:176px;font-size:13px;top:calc(100% + 8px)}}
+
+@media(max-width:620px){
+  .parents-title-with-language{gap:.12em}
+  .parents-language-button{font-size:.58em}
+  .parents-language-menu{
+    position:fixed;
+    top:76px;
+    left:48px;
+    right:auto;
+    width:148px;
+    min-width:148px;
+    max-width:148px;
+    padding:3px;
+    font-size:11.5px;
+    border-radius:10px;
+  }
+  html[dir="rtl"] .parents-language-menu{left:48px;right:auto}
+  .parents-language-menu button{min-height:30px;padding:5px 7px}
+}

@@ -1,4 +1,4 @@
-// V34.93 — Couche multilingue Espace Parents (FR / AR / ES / EN)
+// V34.94 — Couche multilingue Espace Parents (FR / AR / ES / EN)
 (function(){
 'use strict';
 const LANGS=['fr','ar','es','en'];
@@ -218,10 +218,21 @@ function setupMenu(){
   const btn=document.getElementById('parentsLanguageButton'),menu=document.getElementById('parentsLanguageMenu');
   if(!btn||!menu)return;
   const close=()=>{menu.hidden=true;btn.setAttribute('aria-expanded','false')};
-  btn.addEventListener('click',e=>{e.stopPropagation();const opening=menu.hidden;menu.hidden=!opening;btn.setAttribute('aria-expanded',opening?'true':'false')});
-  menu.querySelectorAll('[data-lang-choice]').forEach(b=>b.addEventListener('click',()=>{applyLang(b.dataset.langChoice);close()}));
-  document.addEventListener('click',e=>{if(!menu.contains(e.target)&&e.target!==btn)close()});
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const opening=menu.hidden;
+    menu.hidden=!opening;
+    btn.setAttribute('aria-expanded',opening?'true':'false');
+  });
+  menu.addEventListener('click',e=>e.stopPropagation());
+  menu.querySelectorAll('[data-lang-choice]').forEach(b=>b.addEventListener('click',()=>{
+    applyLang(b.dataset.langChoice);
+    close();
+  }));
+  document.addEventListener('click',close);
   document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+  window.addEventListener('resize',close);
+  window.addEventListener('scroll',close,{passive:true});
 }
 function init(){
   let saved='fr';try{saved=localStorage.getItem('parentsLanguage')||'fr'}catch(e){}
