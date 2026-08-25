@@ -1,5 +1,5 @@
 // V34.94 — Couche multilingue Espace Parents (FR / AR / ES / EN)
-// V35.00 - audit espagnol complet : contenus dynamiques P1→P5 + EMC
+// V35.01 - audit espagnol : devoirs + évaluations + vacances
 (function(){
 'use strict';
 const LANGS=['fr','ar','es','en'];
@@ -463,7 +463,54 @@ Object.assign(EXACT,{
   'Éducation morale et civique':{es:'Educación moral y cívica'},
   'École primaire La Gravette — Carcassonne':{es:'Escuela primaria La Gravette — Carcassonne'},
   'Directeur : Gilles Maigron':{es:'Director: Gilles Maigron'},
-  'Progressions CE2 · Espace Parents · V35.00':{es:'Progressions CE2 · Espacio para familias · V35.00'}
+  'Progressions CE2 · Espace Parents · V35.00':{es:'Progressions CE2 · Espacio para familias · V35.00'},
+  'Progressions CE2 · Espace Parents · V35.01':{es:'Progressions CE2 · Espacio para familias · V35.01'},
+  'Pour t’aider :':{es:'Para ayudarte:'},
+  'Pour se préparer :':{es:'Para prepararse:'},
+  'Nouvelles compétences évaluées':{es:'Nuevas competencias evaluadas'},
+  'Déjà vu — rebrassage':{es:'Ya trabajado — repaso'},
+  'Cette partie a déjà été travaillée : elle sert seulement à vérifier que l’acquis est bien consolidé.':{es:'Esta parte ya se ha trabajado: solo sirve para comprobar que el aprendizaje está bien consolidado.'},
+  'Aucun devoir supplémentaire aujourd’hui. Cette information rappelle simplement l’évaluation prévue.':{es:'Hoy no hay deberes adicionales. Esta información solo recuerda la evaluación prevista.'},
+  'Rappels pratiques':{es:'Recordatorios prácticos'},
+  'Ne comptent pas comme devoirs':{es:'No cuentan como deberes'},
+  'lundi (rappel du week-end)':{es:'lunes (recordatorio del fin de semana)'},
+  'Pense à prévoir une tenue adaptée pour l’activité physique.':{es:'Recuerda llevar ropa adecuada para la actividad física.'},
+  'Pense à préparer une tenue de sport adaptée pour la séance à Domec.':{es:'Recuerda preparar ropa deportiva adecuada para la sesión en Domec.'},
+  'Pense à préparer ton maillot, ta serviette et les affaires demandées pour la piscine.':{es:'Recuerda preparar el bañador, la toalla y el material necesario para la piscina.'},
+  'Je découvre les mots de la semaine':{es:'Descubro las palabras de la semana'},
+  'Je revois les mots de la semaine':{es:'Repaso las palabras de la semana'},
+  'Je commence à préparer ma dictée':{es:'Empiezo a preparar mi dictado'},
+  'Mots :':{es:'Palabras:'},
+  'Prioritaires :':{es:'Prioritarias:'},
+  'Lis, épelle et mémorise les mots. Le cahier n’est pas indispensable : la liste est ici.':{es:'Lee, deletrea y memoriza las palabras. El cuaderno no es indispensable: la lista está aquí.'},
+  'Installer le rituel de dictée':{es:'Instalar la rutina del dictado'},
+  'Si tu as le petit texte travaillé lundi, relis-le à voix haute pendant quelques minutes. Sans le texte, raconte oralement ce dont tu te souviens : qui ? où ? que se passe-t-il ?':{es:'Si tienes el pequeño texto trabajado el lunes, vuelve a leerlo en voz alta durante unos minutos. Sin el texto, cuenta oralmente lo que recuerdes: ¿quién?, ¿dónde?, ¿qué ocurre?'},
+  'Cherche surtout à lire sans hésiter et à respecter les points. Sans cahier ni feuille, le rappel oral suffit.':{es:'Intenta sobre todo leer sin dudar y respetar los puntos. Sin cuaderno ni hoja, basta con recordarlo oralmente.'},
+  'Lis les mots affichés ci-dessous, épelle les 5 mots prioritaires puis essaie d’en employer deux oralement dans une phrase.':{es:'Lee las palabras que aparecen abajo, deletrea las 5 palabras prioritarias e intenta utilizar dos de ellas oralmente en una frase.'},
+  'Facultatif':{es:'Opcional'},
+  'Mes petites révisions — si j’en ai envie':{es:'Mis pequeños repasos — si me apetece'},
+  'Deux fiches sont proposées pour réactiver tranquillement quelques notions travaillées en classe :':{es:'Se proponen dos fichas para repasar tranquilamente algunas nociones trabajadas en clase:'},
+  'une page de révisions et une page de jeux.':{es:'una página de repaso y una página de juegos.'},
+  'Il n’est pas nécessaire de tout faire.':{es:'No es necesario hacerlo todo.'},
+  'Votre enfant peut choisir quelques activités, à son rythme et selon ses envies.':{es:'Su hijo/a puede elegir algunas actividades, a su ritmo y según sus ganas.'},
+  'L’objectif est simplement de garder quelques acquis en mémoire,':{es:'El objetivo es simplemente mantener algunos aprendizajes en la memoria,'},
+  'sans transformer les vacances en temps scolaire':{es:'sin convertir las vacaciones en tiempo escolar'},
+  'Lire, jouer, sortir, découvrir et se reposer restent essentiels pendant les vacances.':{es:'Leer, jugar, salir, descubrir y descansar siguen siendo esenciales durante las vacaciones.'},
+  'Je vous souhaite de très belles vacances de la Toussaint !':{es:'¡Les deseo unas muy buenas vacaciones de Todos los Santos!'},
+  'Je vous souhaite de très belles vacances et un joyeux Noël en famille !':{es:'¡Les deseo unas muy buenas vacaciones y una feliz Navidad en familia!'},
+  'Page 1 — Je révise tranquillement':{es:'Página 1 — Repaso tranquilamente'},
+  'Page 2 — Je joue et je réfléchis':{es:'Página 2 — Juego y pienso'},
+  'Lecture · Français · Mathématiques':{es:'Lectura · Francés · Matemáticas'},
+  'Coloriages · code secret · défi logique':{es:'Colorear · código secreto · reto lógico'},
+  'Labyrinthe de calcul · code secret · intrus · défi logique':{es:'Laberinto de cálculo · código secreto · intruso · reto lógico'},
+  'Observation en situation — 2 nouvelles compétences':{es:'Observación en situación — 2 competencias nuevas'},
+  'Petite évaluation — 2 nouvelles compétences':{es:'Pequeña evaluación — 2 competencias nuevas'},
+  'observer précisément les résultats d’une expérience':{es:'observar con precisión los resultados de un experimento'},
+  'tirer une conclusion à partir des résultats':{es:'sacar una conclusión a partir de los resultados'},
+  'localiser la France à différentes échelles':{es:'localizar Francia a diferentes escalas'},
+  'lire une carte simple de répartition de la population':{es:'leer un mapa sencillo de distribución de la población'},
+  'Aucune fiche à apprendre : réexplique simplement une expérience réellement menée en classe suffit.':{es:'No hay ninguna ficha que aprender: basta con volver a explicar de forma sencilla un experimento realizado realmente en clase.'},
+  'Revoir seulement les cartes utilisées en classe et les deux compétences annoncées.':{es:'Repasar únicamente los mapas utilizados en clase y las dos competencias anunciadas.'}
 });
 
 const REPLACEMENTS={
@@ -506,6 +553,18 @@ function translateFallback(text,lang){
   if(lang==='es'){
     out=out.replace(/(\d+) grand(s?) apprentissage(s?) à retenir pendant cette période\./gi,(_,n)=>`${n} aprendizaje${Number(n)>1?'s':''} importante${Number(n)>1?'s':''} para este periodo.`);
     out=out.replace(/Semaine\s+(\d+)/gi,'Semana $1');
+    out=out.replace(/Cette semaine\s*:\s*(\d+) évaluations? prévues?/gi,(_,n)=>`Esta semana: ${n} evaluación${Number(n)>1?'es':''} prevista${Number(n)>1?'s':''}`);
+    out=out.replace(/Évaluations? prévues? cette semaine/gi,'Evaluaciones previstas esta semana');
+    out=out.replace(/Aujourd’hui\s*:\s*évaluation de\s+(.+)/gi,'Hoy: evaluación de $1');
+    out=out.replace(/Aujourd’hui\s*:\s*bilan oral d[’'](.+)/gi,'Hoy: evaluación oral de $1');
+    out=out.replace(/Semaine du\s+(.+)\s+au\s+(.+)/gi,'Semana del $1 al $2');
+    out=out.replace(/\bmin environ\b/gi,'min aprox.');
+    out=out.replace(/\bEn classe\s*:/gi,'En clase:');
+    out=out.replace(/\bPour t[’']aider\s*:/gi,'Para ayudarte:');
+    out=out.replace(/\bPour se préparer\s*:/gi,'Para prepararse:');
+    out=out.replace(/\brappel du week-end\b/gi,'recordatorio del fin de semana');
+    out=out.replace(/\bNouvelles compétences évaluées\b/gi,'Nuevas competencias evaluadas');
+    out=out.replace(/Aucun devoir supplémentaire aujourd’hui\. Cette information rappelle simplement l’évaluation prévue\./gi,'Hoy no hay deberes adicionales. Esta información solo recuerda la evaluación prevista.');
   }
   if(lang==='ar'){
     out=out.replace(/(\d+) grand(s?) apprentissage(s?) à retenir pendant cette période\./gi,(_,n)=>`${n} من التعلمات الأساسية لهذه الفترة.`);

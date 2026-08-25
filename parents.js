@@ -1,4 +1,4 @@
-// V35.00 — Espace Parents : audit espagnol complet P1→P5 + EMC.
+// V35.01 — Espace Parents : audit espagnol complet P1→P5 + EMC.
 // Base fonctionnelle V34.93 conservée ; seules les sorties dynamiques concernées sont ajustées.
 // Le référentiel enseignant reste inchangé : seule la présentation destinée aux familles est simplifiée.
 // Les repères annuels transversaux Arts / éducation musicale sont affichés pour chaque période.
