@@ -1,4 +1,4 @@
-// V34.92 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
+// V34.93 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
 // Le référentiel enseignant reste inchangé : seule la présentation destinée aux familles est simplifiée.
 // Les repères annuels transversaux Arts / éducation musicale sont affichés pour chaque période.
 (function(){
@@ -678,7 +678,7 @@ function plannedFamilyEvents(){
   const weeks=raw[`${key}DetailedWeeks`];
   if(!Array.isArray(weeks))return [];
   const today=new Date();today.setHours(0,0,0,0);
-  const familyRx=/(sortie|visite|mus[ée]e|piscine|spectacle|rencontre|intervenant|tournoi|présentation du chant|journ[ée]e exceptionnelle|classe découverte|biblioth[èe]que|cin[ée]ma|photo de classe)/i;
+  const familyRx=/(sortie|visite|mus[ée]e|piscine|natation|spectacle|rencontre|intervenant|journ[ée]e exceptionnelle|classe découverte|biblioth[èe]que|cin[ée]ma|photo de classe|cavay[èe]re|domec|gdvb)/i;
   const out=[];
   weeks.forEach(w=>(w.days||[]).forEach(([dayLabel,rows])=>{
     const date=frenchDateFromLabel(dayLabel);

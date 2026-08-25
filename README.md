@@ -30,3 +30,5 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - V34.91 : « Infos de la classe → À venir » change automatiquement selon P1 à P5. Appui long (1,2 s) sur l’icône 📅 du titre « À venir » : barre enseignant pour parcourir P1 → P5 et vérifier les messages, avec bouton « Retour auto ».
 
 - V34.92 : nettoyage de « Infos de la classe → À venir ». Suppression de l’extraction automatique des séances ordinaires de l’emploi du temps (ex. tournoi régulé, présentation du chant). « À venir » affiche désormais uniquement les messages dédiés par période et les éventuels `upcomingItems` explicitement publiés.
+
+- V34.93 : étape 1 multilingue appliquée sur la vraie base V34.92. Ajout du bouton discret 🌐 entre l’icône familles et « Espace Parents », ordre 🇫🇷 Français · 🇦🇪 العربية · 🇪🇸 Español · 🇬🇧 English, mémorisation locale du choix, affichage RTL pour l’arabe et traduction des contenus rendus à l’écran. Le français reste la source et le repli de sécurité. Le filtre « À venir » exclut désormais les séances ordinaires comme « tournoi régulé » ou « présentation du chant ».
