@@ -1522,3 +1522,33 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
   html[dir="rtl"] .parents-language-menu{left:48px;right:auto}
   .parents-language-menu button{min-height:30px;padding:5px 7px}
 }
+/* V34.95 - correction clipping menu langues PC */
+/* Le menu peut sortir du bandeau sans etre coupe par ses conteneurs parents. */
+.parents-dashboard,
+.parents-dashboard__hero,
+.parents-dashboard__copy,
+.parents-dashboard__title-row,
+.parents-title-with-language,
+.parents-language-wrap{
+  overflow:visible!important;
+}
+
+.parents-dashboard__copy,
+.parents-dashboard__title-row,
+.parents-title-with-language,
+.parents-language-wrap{
+  position:relative;
+  z-index:120!important;
+}
+
+.parents-language-menu{
+  z-index:10000!important;
+}
+
+@media(max-width:620px){
+  .parents-language-menu{
+    position:fixed;
+    z-index:10000!important;
+  }
+}
+/* /V34.95 - correction clipping menu langues PC */
