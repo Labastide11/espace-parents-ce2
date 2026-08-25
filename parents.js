@@ -1,5 +1,4 @@
-// V35.10 — Refonte traduction espagnole : rendu dynamique avant insertion via clés stables.
-// Base fonctionnelle V34.93 conservée ; seules les sorties dynamiques concernées sont ajustées.
+// V34.93 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
 // Le référentiel enseignant reste inchangé : seule la présentation destinée aux familles est simplifiée.
 // Les repères annuels transversaux Arts / éducation musicale sont affichés pour chaque période.
 (function(){
@@ -7,73 +6,6 @@
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const EDT=window.PUBLIC_EDT,PROG=window.PROGRESSIONS||{},W=window.PARENTS_SEMAINE||{},H=window.PARENTS_TRAVAIL||{},L=window.PARENTS_VIE_CLASSE||{},I=window.PARENTS_INFOS||{},D1=window.DEVOIRS_P1||{weeks:[]},D2=window.DEVOIRS_P2||{weeks:[]},D3=window.DEVOIRS_P3||{weeks:[]},D4=window.DEVOIRS_P4||{weeks:[]},D5=window.DEVOIRS_P5||{weeks:[]},D={weeks:[...(D1.weeks||[]).map(w=>({...w,__period:'p1'})),...(D2.weeks||[]).map(w=>({...w,__period:'p2'})),...(D3.weeks||[]).map(w=>({...w,__period:'p3'})),...(D4.weeks||[]).map(w=>({...w,__period:'p4'})),...(D5.weeks||[]).map(w=>({...w,__period:'p5'}))].sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')))};
 const CAL=window.CALENDRIER_SCOLAIRE_2026_2027||{daysOff:[],breaks:[]};
-
-// V35.10 — traduction dynamique AVANT insertion.
-// Les libellés structurels reposent sur des clés stables. Les textes venant des
-// données partagées sont traduits en phrase complète avant d'être injectés.
-const DYNAMIC_COPY={
-  fr:{
-    help:'Pour t’aider :',inClass:'En classe :',approx:'{n} min environ',family:'Défi famille',optional:'facultatif',
-    smallChallenge:'Petit défi',review:'Je revois',none:'Aucun devoir programmé.',noneWeek:'Aucun devoir cette semaine.',
-    classDay:'Classe',holidays:'Vacances scolaires',noClass:'Pas de classe',weekend:'Week-end',
-    evalAnnouncement:'Annonce des évaluations',smallWork:'Petit travail prévu',nothing:'Classe · rien à préparer',
-    weekOverview:'La semaine en un coup d’œil',newSkills:'Nouvelles compétences évaluées',
-    reviewSkills:'Déjà vu — rebrassage',reviewNote:'Cette partie a déjà été travaillée : elle sert seulement à vérifier que l’acquis est bien consolidé.',
-    prepare:'Pour se préparer :',evaluation:'Évaluation',todayNote:'Aucun devoir supplémentaire aujourd’hui. Cette information rappelle simplement l’évaluation prévue.',
-    dictFirstFinal:'Je commence à préparer ma dictée',dictFirstWords:'Je découvre les mots de la semaine',
-    dictReviewFinal:'Je prépare ma dictée',dictReviewWords:'Je revois les mots de la semaine',
-    words:'Mots :',priority:'Prioritaires :',dictTip:'Lis, épelle et mémorise les mots. Le cahier n’est pas indispensable : la liste est ici.',
-    physicalWeekend:'lundi (rappel du week-end)',physicalReminders:'Rappels pratiques',notHomework:'Ne comptent pas comme devoirs',
-    eps:'EPS',epsDomec:'EPS — Domec',swimming:'Natation'
-  },
-  es:{
-    help:'Para ayudarte:',inClass:'En clase:',approx:'{n} min aprox.',family:'Reto en familia',optional:'opcional',
-    smallChallenge:'Pequeño reto',review:'Repaso',none:'No hay deberes programados.',noneWeek:'No hay deberes esta semana.',
-    classDay:'Clase',holidays:'Vacaciones escolares',noClass:'No hay clase',weekend:'Fin de semana',
-    evalAnnouncement:'Anuncio de evaluaciones',smallWork:'Pequeño trabajo previsto',nothing:'Clase · nada que preparar',
-    weekOverview:'La semana de un vistazo',newSkills:'Nuevas competencias evaluadas',
-    reviewSkills:'Ya trabajado — repaso',reviewNote:'Esta parte ya se ha trabajado: solo sirve para comprobar que el aprendizaje está bien consolidado.',
-    prepare:'Para prepararse:',evaluation:'Evaluación',todayNote:'Hoy no hay deberes adicionales. Esta información solo recuerda la evaluación prevista.',
-    dictFirstFinal:'Empiezo a preparar mi dictado',dictFirstWords:'Descubro las palabras de la semana',
-    dictReviewFinal:'Preparo mi dictado',dictReviewWords:'Repaso las palabras de la semana',
-    words:'Palabras:',priority:'Prioritarias:',dictTip:'Lee, deletrea y memoriza las palabras. No hace falta el cuaderno: la lista está aquí.',
-    physicalWeekend:'lunes (recordatorio del fin de semana)',physicalReminders:'Recordatorios prácticos',notHomework:'No cuentan como deberes',
-    eps:'EDUCACIÓN FÍSICA',epsDomec:'EDUCACIÓN FÍSICA — Domec',swimming:'Natación'
-  }
-};
-const DYNAMIC_ES_EXACT=new Map([
- ['Si vous avez envie : le nombre mystère. Un adulte choisit un nombre entre 1 000 et 10 000 et donne trois indices ; puis on échange les rôles.','Si os apetece: el número misterioso. Un adulto elige un número entre 1 000 y 10 000 y da tres pistas; después se intercambian los papeles.'],
- ['Revois tous les mots de la dictée affichés ci-dessous. Épelle surtout les 5 mots prioritaires puis demande à quelqu’un de t’en faire retrouver 3 ou 4.','Repasa todas las palabras del dictado que aparecen a continuación. Deletrea sobre todo las 5 palabras prioritarias y después pide a alguien que te haga recordar 3 o 4.'],
- ['Tu peux lire le mot, le cacher, l’épeler puis vérifier. La liste est ici : pas besoin du cahier.','Puedes leer la palabra, taparla, deletrearla y después comprobarla. La lista está aquí: no hace falta el cuaderno.'],
- ['Explique oralement la différence entre un verbe conjugué et son infinitif.','Explica oralmente la diferencia entre un verbo conjugado y su infinitivo.'],
- ['Essaie avec : il chante → chanter · nous regardons → regarder · elles jouent → jouer.','Prueba con: il chante → chanter · nous regardons → regarder · elles jouent → jouer.'],
- ['Si vous avez envie : la machine à verbes. Un adulte dit « nous chantons », tu réponds « chanter », puis échangez les rôles.','Si os apetece: la máquina de verbos. Un adulto dice « nous chantons », tú respondes « chanter » y después intercambiáis los papeles.'],
- ['Apprends seulement la première partie indiquée en classe. Lis-la plusieurs fois à voix haute puis essaie de la réciter sans regarder.','Aprende solo la primera parte indicada en clase. Léela varias veces en voz alta y después intenta recitarla sin mirar.'],
- ['Si le cahier n’est pas disponible, récite simplement de mémoire la partie déjà apprise : aucun nouveau vers n’est exigé.','Si no tienes el cuaderno, recita simplemente de memoria la parte ya aprendida: no se pide ningún verso nuevo.'],
- ['Si vous avez envie : le mot disparu. Pendant la récitation, quelqu’un t’arrête et demande quel mot venait juste après.','Si os apetece: la palabra desaparecida. Durante la recitación, alguien te para y te pregunta qué palabra venía justo después.'],
- ['Pense à prévoir une tenue adaptée pour l’activité physique.','Recuerda llevar ropa adecuada para la actividad física.'],
- ['Pense à préparer une tenue de sport adaptée pour la séance à Domec.','Recuerda preparar ropa deportiva adecuada para la sesión en Domec.'],
- ['Pense à préparer ton maillot, ta serviette et les affaires demandées pour la piscine.','Recuerda preparar el bañador, la toalla y el material solicitado para la piscina.']
-]);
-function dynamicLang(){return window.PARENTS_I18N?.lang||document.documentElement.lang||'fr'}
-function copy(key,vars={}){
-  const lang=dynamicLang(),dict=DYNAMIC_COPY[lang]||DYNAMIC_COPY.fr;
-  let s=String(dict[key]??DYNAMIC_COPY.fr[key]??key);
-  Object.entries(vars).forEach(([k,v])=>{s=s.replaceAll(`{${k}}`,String(v??''))});
-  return s;
-}
-function dynamicText(value){
-  const raw=String(value??''); if(!raw)return raw;
-  const lang=dynamicLang(); if(lang==='fr')return raw;
-  if(lang==='es'){const exact=DYNAMIC_ES_EXACT.get(raw.trim());if(exact)return exact}
-  return window.PARENTS_I18N?.translate ? window.PARENTS_I18N.translate(raw,lang) : raw;
-}
-function localizedDate(d,options){
-  const lang=dynamicLang();
-  const locale=window.PARENTS_I18N?.meta?.[lang]?.locale || (lang==='es'?'es-ES':'fr-FR');
-  return new Intl.DateTimeFormat(locale,options).format(d);
-}
-
 let upcomingTestPeriod=null;
 function currentParentsDictations(){
   return window.PARENTS_DICTEES_CE2||{periods:{}};
@@ -388,7 +320,7 @@ function renderPublished(){$('weekMessage').textContent=W.message||'Aucune infor
 
 function isoLocal(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
 function dateFromIso(s){const [y,m,d]=String(s).split('-').map(Number);return new Date(y,m-1,d)}
-function dueLabel(s){return localizedDate(dateFromIso(s),{weekday:'long',day:'numeric',month:'long'})}
+function dueLabel(s){return frDate(dateFromIso(s),{weekday:'long',day:'numeric',month:'long'})}
 function noSchoolDateSet(){return new Set((CAL.daysOff||[]).map(x=>String(x&&x.date||'')).filter(Boolean))}
 function schoolCalendarEventsForWeek(week){
   if(!week)return [];
@@ -493,17 +425,17 @@ function homeworkWeekCalendarHtml(week,sourceItems=[]){
     const br=schoolBreakForDate(iso),off=schoolDayOffForDate(iso);
     const dayItems=items.filter(it=>String(it&&it.due||'')===iso);
     const dayEvals=evals.filter(ev=>String(ev&&ev.date||'')===iso);
-    let kind='class',icon='🏫',status=copy('classDay');
-    if(br){kind='holiday';icon='🏖️';status=dynamicText(br.label||copy('holidays'));}
-    else if(off){kind='dayoff';icon=off.icon||'📅';status=dynamicText(off.label||copy('noClass'));}
-    else if(dow===0||dow===6){kind='weekend';icon='☕';status=copy('weekend');}
-    else if(dow===3){kind='noclass';icon='🌿';status=copy('noClass');}
-    else if(dayEvals.length){kind='evaluation';icon='📅';const subjects=[...new Set(dayEvals.map(x=>x.subject).filter(Boolean))].map(dynamicText);status=dynamicLang()==='es'?`${dayEvals.length} evaluación${dayEvals.length>1?'es':''}${subjects.length?` · ${subjects.join(' / ')}`:''}`:`${dayEvals.length} évaluation${dayEvals.length>1?'s':''}${subjects.length?` · ${subjects.join(' / ')}`:''}`;}
-    else if(dayItems.length){kind='homework';icon='📚';status=dayItems.some(x=>x.evaluations?.length)?copy('evalAnnouncement'):copy('smallWork');}
-    else {status=copy('nothing');}
-    return `<div class="homework-week-calendar__day homework-week-calendar__day--${kind}"><div class="homework-week-calendar__date"><strong>${esc(localizedDate(d,{weekday:'long'}))}</strong><span>${esc(localizedDate(d,{day:'numeric',month:'short'}))}</span></div><div class="homework-week-calendar__status"><span aria-hidden="true">${icon}</span><small>${esc(status)}</small></div></div>`;
+    let kind='class',icon='🏫',status='Classe';
+    if(br){kind='holiday';icon='🏖️';status=br.label||'Vacances scolaires';}
+    else if(off){kind='dayoff';icon=off.icon||'📅';status=off.label||'Pas de classe';}
+    else if(dow===0||dow===6){kind='weekend';icon='☕';status='Week-end';}
+    else if(dow===3){kind='noclass';icon='🌿';status='Pas de classe';}
+    else if(dayEvals.length){kind='evaluation';icon='📅';const subjects=[...new Set(dayEvals.map(x=>x.subject).filter(Boolean))];status=`${dayEvals.length} évaluation${dayEvals.length>1?'s':''}${subjects.length?` · ${subjects.join(' / ')}`:''}`;}
+    else if(dayItems.length){kind='homework';icon='📚';status=dayItems.some(x=>x.evaluations?.length)?'Annonce des évaluations':'Petit travail prévu';}
+    else {status='Classe · rien à préparer';}
+    return `<div class="homework-week-calendar__day homework-week-calendar__day--${kind}"><div class="homework-week-calendar__date"><strong>${esc(frDate(d,{weekday:'long'}))}</strong><span>${esc(frDate(d,{day:'numeric',month:'short'}))}</span></div><div class="homework-week-calendar__status"><span aria-hidden="true">${icon}</span><small>${esc(status)}</small></div></div>`;
   }).join('');
-  return `<section class="homework-week-calendar" aria-label="Calendrier de la semaine"><div class="homework-week-calendar__title">🗓️ ${esc(copy('weekOverview'))}</div><div class="homework-week-calendar__grid">${cells}</div></section>`;
+  return `<section class="homework-week-calendar" aria-label="Calendrier de la semaine"><div class="homework-week-calendar__title">🗓️ La semaine en un coup d’œil</div><div class="homework-week-calendar__grid">${cells}</div></section>`;
 }
 function evaluationWeekLabel(it){
   const evaluations=Array.isArray(it&&it.evaluations)?it.evaluations:[];
@@ -556,15 +488,20 @@ function dictationReviewHtml(week,item){
   const d=parentDictationForWeek(week); if(!d)return '';
   const stage=String(item.dictationStage||'');
   if(!stage && String(item.due||'')!==String(d.reviewDue||''))return '';
+
   const words=String(d.words||'').trim(),priority=String(d.priority||'').trim();
   if(!words||/pas de banque à mémoriser/i.test(words))return '';
-  const key=stage==='first'?(d.hasFinal?'dictFirstFinal':'dictFirstWords'):(d.hasFinal?'dictReviewFinal':'dictReviewWords');
+
+  const title=stage==='first'
+    ? (d.hasFinal?'📝 Je commence à préparer ma dictée':'📝 Je découvre les mots de la semaine')
+    : (d.hasFinal?'📝 Je prépare ma dictée':'📝 Je revois les mots de la semaine');
+
   return `<div class="homework-block homework-dictation-review">
-    <b>📝 ${esc(copy(key))}</b>
-    ${d.theme?`<p class="homework-dictation-theme">${esc(dynamicText(d.theme))}</p>`:''}
-    <p><strong>${esc(copy('words'))}</strong> ${esc(words)}</p>
-    ${priority?`<p><strong>⭐ ${esc(copy('priority'))}</strong> ${esc(priority)}</p>`:''}
-    <small>${esc(copy('dictTip'))}</small>
+    <b>${title}</b>
+    ${d.theme?`<p class="homework-dictation-theme">${esc(d.theme)}</p>`:''}
+    <p><strong>Mots :</strong> ${esc(words)}</p>
+    ${priority?`<p><strong>⭐ Prioritaires :</strong> ${esc(priority)}</p>`:''}
+    <small>Lis, épelle et mémorise les mots. Le cahier n’est pas indispensable : la liste est ici.</small>
   </div>`;
 }
 function homeworkHibouHtml(value){
@@ -572,45 +509,40 @@ function homeworkHibouHtml(value){
   const list=Array.isArray(value)?value:[value];
   const valid=list.filter(x=>x&&(typeof x==='string'||x.url));
   if(!valid.length)return'';
-  const intro=dynamicText((!Array.isArray(value)&&typeof value==='object'&&value.intro)?value.intro:'Leçons utiles dans Maître Hibou :');
+  const intro=(!Array.isArray(value)&&typeof value==='object'&&value.intro)?value.intro:'Leçons utiles dans Maître Hibou :';
   const links=valid.map(x=>{
-    if(typeof x==='string')return `<span><b>${esc(dynamicText(x))}</b></span>`;
-    return `<a class="homework-hibou-link" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer"><b>${esc(dynamicText(x.label||'Ouvrir la leçon'))}</b> ↗</a>`;
+    if(typeof x==='string')return `<span><b>${esc(x)}</b></span>`;
+    return `<a class="homework-hibou-link" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer"><b>${esc(x.label||'Ouvrir la leçon')}</b> ↗</a>`;
   }).join(' <span aria-hidden="true">·</span> ');
   return `<div class="homework-hibou">🦉 ${esc(intro)} ${links}</div>`;
 }
 function homeworkEvaluationsHtml(list,periodTag=''){
   const evaluations=Array.isArray(list)?list:[];
   if(!evaluations.length)return '';
-  const showCountBanner=['p1','p2','p4','p5'].includes(periodTag),count=evaluations.length;
-  let title='';
-  if(periodTag==='p5'&&evaluations[0]?.date){
-    const first=dateFromIso([...evaluations].map(e=>e.date).filter(Boolean).sort()[0]);
-    const day=(first.getDay()+6)%7,monday=new Date(first);monday.setDate(first.getDate()-day);
-    const friday=new Date(monday);friday.setDate(monday.getDate()+4);
-    const a=localizedDate(monday,{day:'numeric',month:'long'}),b=localizedDate(friday,{day:'numeric',month:'long'});
-    const range=dynamicLang()==='es'?`Semana del ${a} al ${b}`:`Semaine du ${a} au ${b}`;
-    title=dynamicLang()==='es'?`📅 ${range}: ${count} evaluación${count>1?'es':''} prevista${count>1?'s':''}`:`📅 ${range} : ${count} évaluation${count>1?'s':''} prévue${count>1?'s':''}`;
-  }else if(showCountBanner){
-    title=dynamicLang()==='es'?`📅 Esta semana: ${count} evaluación${count>1?'es':''} prevista${count>1?'s':''}`:`📅 Cette semaine : ${count} évaluation${count>1?'s':''} prévue${count>1?'s':''}`;
-  }else{
-    title=dynamicLang()==='es'?`📅 Evaluación${count>1?'es':''} prevista${count>1?'s':''} esta semana`:`📅 Évaluation${count>1?'s':''} prévue${count>1?'s':''} cette semaine`;
-  }
+  const showCountBanner=['p1','p2','p4','p5'].includes(periodTag);
+  const count=evaluations.length;
+  const weekRange=periodTag==='p5'&&evaluations[0]?.date?(()=>{const first=dateFromIso([...evaluations].map(e=>e.date).filter(Boolean).sort()[0]);const day=(first.getDay()+6)%7;const monday=new Date(first);monday.setDate(first.getDate()-day);const friday=new Date(monday);friday.setDate(monday.getDate()+4);const same=monday.getMonth()===friday.getMonth();const a=frDate(monday,same?{day:'numeric'}:{day:'numeric',month:'long'});const b=frDate(friday,{day:'numeric',month:'long'});return `Semaine du ${a} au ${b}`;})():'';
+  const title=periodTag==='p5'&&weekRange
+    ? `📅 ${weekRange} : ${count} évaluation${count>1?'s':''} prévue${count>1?'s':''}`
+    : showCountBanner
+      ? `📅 Cette semaine : ${count} évaluation${count>1?'s':''} prévue${count>1?'s':''}`
+      : `📅 Évaluation${count>1?'s':''} prévue${count>1?'s':''} cette semaine`;
   const titleClass=`homework-evaluations-title${showCountBanner?' homework-evaluations-title--count':''}`;
-  return `<div class="homework-evaluations"><div class="${titleClass}">${esc(title)}</div>${evaluations.map(ev=>{
-    const newSkills=Array.isArray(ev.newSkills)&&ev.newSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--new"><b>🎯 ${esc(copy('newSkills'))}</b><ul>${ev.newSkills.map(x=>`<li>${esc(dynamicText(x))}</li>`).join('')}</ul></div>`:'';
-    const reviewSkills=Array.isArray(ev.reviewSkills)&&ev.reviewSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--review"><b>🔁 ${esc(copy('reviewSkills'))}</b><p>${esc(copy('reviewNote'))}</p><ul>${ev.reviewSkills.map(x=>`<li>${esc(dynamicText(x))}</li>`).join('')}</ul></div>`:'';
-    const scope=(!newSkills&&!reviewSkills&&Array.isArray(ev.scope)&&ev.scope.length)?`<ul>${ev.scope.map(x=>`<li>${esc(dynamicText(x))}</li>`).join('')}</ul>`:'';
-    const prep=ev.preparation?`<p class="homework-evaluation-prep"><b>${esc(copy('prepare'))}</b> ${esc(dynamicText(ev.preparation))}</p>`:'';
+  return `<div class="homework-evaluations"><div class="${titleClass}">${title}</div>${evaluations.map(ev=>{
+    const newSkills=Array.isArray(ev.newSkills)&&ev.newSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--new"><b>🎯 Nouvelles compétences évaluées</b><ul>${ev.newSkills.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
+    const reviewSkills=Array.isArray(ev.reviewSkills)&&ev.reviewSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--review"><b>🔁 Déjà vu — rebrassage</b><p>Cette partie a déjà été travaillée : elle sert seulement à vérifier que l’acquis est bien consolidé.</p><ul>${ev.reviewSkills.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
+    const scope=(!newSkills&&!reviewSkills&&Array.isArray(ev.scope)&&ev.scope.length)?`<ul>${ev.scope.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'';
+    const prep=ev.preparation?`<p class="homework-evaluation-prep"><b>Pour se préparer :</b> ${esc(ev.preparation)}</p>`:'';
     const hibou=homeworkHibouHtml(ev.hibou);
-    return `<section class="homework-evaluation"><div class="homework-evaluation-head"><strong>${esc(dynamicText(ev.subject||copy('evaluation')))}</strong><span>${esc(dueLabel(ev.date))}</span></div>${ev.title?`<h4>${esc(dynamicText(ev.title))}</h4>`:''}${newSkills}${reviewSkills}${scope}${prep}${hibou}</section>`;
+    return `<section class="homework-evaluation"><div class="homework-evaluation-head"><strong>${esc(ev.subject||'Évaluation')}</strong><span>${esc(dueLabel(ev.date))}</span></div>${ev.title?`<h4>${esc(ev.title)}</h4>`:''}${newSkills}${reviewSkills}${scope}${prep}${hibou}</section>`;
   }).join('')}</div>`;
 }
 function homeworkEvaluationTodayHtml(ev){
   if(!ev)return '';
-  const subject=dynamicText(ev.subject||copy('evaluation')),oral=/oral/i.test(String(ev.title||''));
-  const label=dynamicLang()==='es'?(oral?`Hoy: evaluación oral de ${subject}`:`Hoy: evaluación de ${subject}`):(oral?`Aujourd’hui : bilan oral de ${subject}`:`Aujourd’hui : évaluation de ${subject}`);
-  return `<article class="homework-card homework-card--today"><div class="homework-date">${esc(dueLabel(ev.date))}</div><div class="homework-today"><b>⭐ ${esc(label)}</b><p>${esc(copy('todayNote'))}</p></div></article>`;
+  const subject=ev.subject||'Évaluation';
+  const oral=/oral/i.test(String(ev.title||''));
+  const label=oral?`Aujourd’hui : bilan oral d’${subject}`:`Aujourd’hui : évaluation de ${subject}`;
+  return `<article class="homework-card homework-card--today"><div class="homework-date">${esc(dueLabel(ev.date))}</div><div class="homework-today"><b>⭐ ${esc(label)}</b><p>Aucun devoir supplémentaire aujourd’hui. Cette information rappelle simplement l’évaluation prévue.</p></div></article>`;
 }
 function homeworkSubjectMeta(task){
   const engine=window.DEVOIRS_ENGINE_CE2||{};
@@ -620,42 +552,35 @@ function homeworkSubjectMeta(task){
 function homeworkStructuredBlock(task,extraClass=''){
   if(!task)return '';
   const meta=homeworkSubjectMeta(task);
-  const title=dynamicText(String(task.title||`${meta.label} — ${task.action||copy('review')}`));
-  const instruction=dynamicText(String(task.instruction||task.routine||''));
-  const help=dynamicText(String(task.help||'')),duration=Number(task.duration||0);
-  const classLink=dynamicText(String(task.classLink||task.notion||''));
+  const title=String(task.title||`${meta.label} — ${task.action||'Je revois'}`);
+  const instruction=String(task.instruction||task.routine||'');
+  const help=String(task.help||'');
+  const duration=Number(task.duration||0);
+  const classLink=String(task.classLink||task.notion||'');
   return `<div class="homework-block homework-task homework-task--${esc(meta.tone||'neutral')} ${extraClass}">
     <b>${esc(meta.icon||'📚')} ${esc(title)}</b>
     <p>${esc(instruction)}</p>
-    ${help?`<div class="homework-help"><strong>💡 ${esc(copy('help'))}</strong> ${esc(help)}</div>`:''}
+    ${help?`<div class="homework-help"><strong>💡 Pour t’aider :</strong> ${esc(help)}</div>`:''}
     <div class="homework-task-meta">
-      ${duration?`<span>⏱️ ${esc(copy('approx',{n:duration}))}</span>`:''}
-      ${classLink?`<span>↪ ${esc(copy('inClass'))} ${esc(classLink)}</span>`:''}
+      ${duration?`<span>⏱️ ${duration} min environ</span>`:''}
+      ${classLink?`<span>↪ En classe : ${esc(classLink)}</span>`:''}
     </div>
   </div>`;
 }
-function homeworkItemCard(it,compact=false,periodTag='',lightWeek=false,week=null){
-  if(it&&it.evaluationToday)return homeworkEvaluationTodayHtml(it.evaluationToday);
-  const evaluations=homeworkEvaluationsHtml(it.evaluations,periodTag),structured=Boolean(it&&(it.subject||it.instruction||it.action));
-  const main=structured?homeworkStructuredBlock(it,'homework-task--main'):`<div class="homework-block homework-routine"><b>${esc(it.routineIcon||'📚')} ${esc(dynamicText(it.routineTitle||copy('review')))}</b><p>${esc(dynamicText(it.routine||''))}</p></div>`;
-  const secondary=structured&&it.secondary?homeworkStructuredBlock(it.secondary,'homework-task--secondary'):'';
-  const challenge=(!structured&&!lightWeek&&it.challenge)?`<div class="homework-block homework-challenge"><b>🎯 ${esc(copy('smallChallenge'))}</b><p>${esc(dynamicText(it.challenge))}</p></div>`:'';
-  const family=(!lightWeek&&it.family)?`<div class="homework-block homework-family"><b>👨‍👩‍👧 ${esc(copy('family'))} <span>${esc(copy('optional'))}</span></b><p>${esc(dynamicText(it.family))}</p></div>`:'';
-  const hibou=homeworkHibouHtml(it.hibou),dictation=dictationReviewHtml(week,it),dateTitle=dynamicText(evaluationWeekLabel(it));
-  return `<article class="homework-card${compact?' homework-card--compact':''}"><div class="homework-date">${esc(dateTitle)}</div>${evaluations}${main}${dictation}${secondary}${family}${hibou}</article>`;
-}
+function homeworkItemCard(it,compact=false,periodTag='',lightWeek=false,week=null){if(it&&it.evaluationToday)return homeworkEvaluationTodayHtml(it.evaluationToday);const evaluations=homeworkEvaluationsHtml(it.evaluations,periodTag);const structured=Boolean(it&&(it.subject||it.instruction||it.action));const main=structured?homeworkStructuredBlock(it,'homework-task--main'):`<div class="homework-block homework-routine"><b>${esc(it.routineIcon||'📚')} ${esc(it.routineTitle||'Je revois')}</b><p>${esc(it.routine||'')}</p></div>`;const secondary=structured&&it.secondary?homeworkStructuredBlock(it.secondary,'homework-task--secondary'):'';const challenge=(!structured&&!lightWeek&&it.challenge)?`<div class="homework-block homework-challenge"><b>🎯 Petit défi</b><p>${esc(it.challenge)}</p></div>`:'';const family=(!lightWeek&&it.family)?`<div class="homework-block homework-family"><b>👨‍👩‍👧 Défi famille <span>facultatif</span></b><p>${esc(it.family)}</p></div>`:'';const hibou=homeworkHibouHtml(it.hibou);const dictation=dictationReviewHtml(week,it);const dateTitle=evaluationWeekLabel(it);return `<article class="homework-card${compact?' homework-card--compact':''}"><div class="homework-date">${esc(dateTitle)}</div>${evaluations}${main}${dictation}${secondary}${family}${hibou}</article>`}
+
 function physicalActivityReminderMeta(rows){
   const subjects=(Array.isArray(rows)?rows:[]).map(r=>String(r?.[1]||'')).filter(Boolean);
   const joined=subjects.join(' · ').toLowerCase();
   if(!joined)return null;
   if(/\b(natation|piscine)\b/.test(joined)){
-    return {icon:'🏊',title:copy('swimming'),message:dynamicText('Pense à préparer ton maillot, ta serviette et les affaires demandées pour la piscine.')};
+    return {icon:'🏊',title:'Natation',message:'Pense à préparer ton maillot, ta serviette et les affaires demandées pour la piscine.'};
   }
   if(/\bdomec\b/.test(joined)){
-    return {icon:'🏟️',title:copy('epsDomec'),message:dynamicText('Pense à préparer une tenue de sport adaptée pour la séance à Domec.')};
+    return {icon:'🏟️',title:'EPS — Domec',message:'Pense à préparer une tenue de sport adaptée pour la séance à Domec.'};
   }
   if(/\beps\b/.test(joined)){
-    return {icon:'🏃',title:copy('eps'),message:dynamicText('Pense à prévoir une tenue adaptée pour l’activité physique.')};
+    return {icon:'🏃',title:'EPS',message:'Pense à prévoir une tenue adaptée pour l’activité physique.'};
   }
   return null;
 }
@@ -683,8 +608,8 @@ function homeworkPhysicalReminders(week){
     const activityIso=isoLocal(d),key=`${activityIso}|${meta.title}`;
     if(seen.has(key))continue;
     seen.add(key);
-    const activityLabel=localizedDate(d,{weekday:'long',day:'numeric',month:'long'});
-    const when=d.getDay()===1?copy('physicalWeekend'):activityLabel;
+    const activityLabel=frDate(d,{weekday:'long',day:'numeric',month:'long'});
+    const when=d.getDay()===1?'lundi (rappel du week-end)':activityLabel;
     reminders.push({...meta,activityDate:activityIso,reminderDate:reminderIso,when});
   }
   return reminders.sort((a,b)=>a.reminderDate.localeCompare(b.reminderDate));
@@ -693,7 +618,7 @@ function homeworkPhysicalRemindersHtml(week){
   const reminders=homeworkPhysicalReminders(week);
   if(!reminders.length)return '';
   return `<section class="homework-practical-reminders" aria-label="Rappels pratiques pour les activités physiques">
-    <div class="homework-practical-reminders__head"><strong>🎒 ${esc(copy('physicalReminders'))}</strong><span>${esc(copy('notHomework'))}</span></div>
+    <div class="homework-practical-reminders__head"><strong>🎒 Rappels pratiques</strong><span>Ne comptent pas comme devoirs</span></div>
     ${reminders.map(r=>`<div class="homework-practical-reminder">
       <span class="homework-practical-reminder__icon" aria-hidden="true">${esc(r.icon)}</span>
       <div><strong>${esc(r.title)} ${esc(r.when)}</strong><p>${esc(r.message)}</p></div>
@@ -701,7 +626,7 @@ function homeworkPhysicalRemindersHtml(week){
   </section>`;
 }
 function allEvaluationDates(){return [...new Set(allEvaluations().map(ev=>String(ev.date||'')).filter(Boolean))]}
-function renderHomework(){const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');if(!cur)return;if(!week){cur.innerHTML=`<div class="homework-empty">${esc(copy('none'))}</div>`;return}const sourceItems=Array.isArray(week.items)?week.items:[];let items=[...sourceItems];const periodTag=week.__period||'';const noSchool=noSchoolDateSet();items=items.filter(it=>!noSchool.has(String(it&&it.due||'')));const evalDates=allEvaluationDates();const weekEvalDates=evalDates.filter(d=>d>=week.start&&d<=week.end);const lightWeek=['p1','p2','p3','p4','p5'].includes(periodTag)&&weekEvalDates.length>0;if(lightWeek){items=items.filter(it=>{const hasOwnEvaluations=Array.isArray(it.evaluations)&&it.evaluations.length>0;return hasOwnEvaluations||!weekEvalDates.includes(String(it.due||''))})}const dayJItems=allEvaluations().filter(ev=>String(ev.date||'')>=week.start&&String(ev.date||'')<=week.end).map(ev=>({due:String(ev.date),evaluationToday:ev}));items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));const dates=dynamicLang()==='es'?`${esc(localizedDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} – ${esc(localizedDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`:`${esc(localizedDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(localizedDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;const head=`<div class="homework-week-head"><div><span>${esc(dynamicText(week.label||'Semaine en cours'))}</span><h3>${dates}</h3>${week.theme?`<p class="homework-theme">${esc(dynamicText(week.theme))}</p>`:''}</div></div>`;const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);const calendar=schoolCalendarHtml(week);const practicalReminders=homeworkPhysicalRemindersHtml(week);const holidayRevisions=holidayRevisionHtml(week);if(!items.length){cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}<div class="homework-empty">🌱 ${esc(dynamicText(week.note||copy('noneWeek')))}</div>${week.holiday?`<div class="homework-holiday">🏖️ ${esc(dynamicText(week.holiday))}</div>`:''}${holidayRevisions}`;return}cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${week.note?`<div class="homework-empty">${esc(dynamicText(week.note))}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(dynamicText(week.holiday))}</div>`:''}${holidayRevisions}`}
+function renderHomework(){const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');if(!cur)return;if(!week){cur.innerHTML='<div class="homework-empty">Aucun devoir programmé.</div>';return}const sourceItems=Array.isArray(week.items)?week.items:[];let items=[...sourceItems];const periodTag=week.__period||'';const noSchool=noSchoolDateSet();items=items.filter(it=>!noSchool.has(String(it&&it.due||'')));const evalDates=allEvaluationDates();const weekEvalDates=evalDates.filter(d=>d>=week.start&&d<=week.end);const lightWeek=['p1','p2','p3','p4','p5'].includes(periodTag)&&weekEvalDates.length>0;if(lightWeek){items=items.filter(it=>{const hasOwnEvaluations=Array.isArray(it.evaluations)&&it.evaluations.length>0;return hasOwnEvaluations||!weekEvalDates.includes(String(it.due||''))})}const dayJItems=allEvaluations().filter(ev=>String(ev.date||'')>=week.start&&String(ev.date||'')<=week.end).map(ev=>({due:String(ev.date),evaluationToday:ev}));items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));const dates=`${esc(frDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(frDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;const head=`<div class="homework-week-head"><div><span>${esc(week.label||'Semaine en cours')}</span><h3>${dates}</h3>${week.theme?`<p class="homework-theme">${esc(week.theme)}</p>`:''}</div></div>`;const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);const calendar=schoolCalendarHtml(week);const practicalReminders=homeworkPhysicalRemindersHtml(week);const holidayRevisions=holidayRevisionHtml(week);if(!items.length){cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`;return}cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`}
 
 function setupHomeworkTest(){
   const btn=$('homeworkTestHotspot'),bar=$('homeworkTestBar'),label=$('homeworkTestLabel'),prev=$('homeworkTestPrev'),next=$('homeworkTestNext'),reset=$('homeworkTestReset');
@@ -812,10 +737,10 @@ function renderClassInfo(){
     testLabel.textContent=`${LEARNING_PERIOD_DATES[key]?.label||key.toUpperCase()}${upcomingTestPeriod?' · mode test':' · affichage automatique'}`;
   }
 
+  // V35.20 — ne plus afficher l'ancien lien « mots aux parents » devenu obsolète.
   const docs=(Array.isArray(I.documents)?I.documents:[]).filter(d=>{
-    const raw=typeof d==='string'?d:String(d?.label||d?.title||'');
-    // V34.99 : ancien lien « Espace Parents & Maître Hibou » retiré car destination obsolète/morte.
-    return !/Espace Parents\s*&\s*Ma[îi]tre Hibou/i.test(raw);
+    const label=String(typeof d==='string'?d:(d?.label||d?.title||''));
+    return !/(mots|palabras)\s+aux\s+parents|espace\s+parents\s*&\s*ma[iî]tre\s+hibou/i.test(label);
   });
   $('parentsDocumentsUseful').innerHTML=docs.length
     ? docs.map(d=>{
@@ -870,6 +795,11 @@ function setupUpcomingTest(){
   });
 }
 function frDate(d,opts={weekday:'long',day:'numeric',month:'long',year:'numeric'}){return new Intl.DateTimeFormat('fr-FR',opts).format(d).replace(/^./,c=>c.toUpperCase())}
+// V35.21 — emploi du temps cible : structure + matieres, descriptions detaillees en francais.
+function scheduleTr(text){
+  const i18n=window.PARENTS_I18N;
+  return i18n&&typeof i18n.translateSchedule==='function'?i18n.translateSchedule(String(text??''),i18n.lang):String(text??'');
+}
 function scheduleTargetDate(){
   const now=new Date();now.setHours(12,0,0,0);
   const todayData=EDT.rowsForDate(now);
@@ -878,44 +808,44 @@ function scheduleTargetDate(){
 }
 function noClassHtml(d){
   const data=EDT.rowsForDate(d),info=data.noClass||EDT.noClassInfo?.(d);
-  if(!info)return '<div class="homework-empty">Pas de classe prévue ce jour-là.</div>';
+  if(!info)return `<div class="homework-empty">${esc(scheduleTr('Pas de classe prévue ce jour-là.'))}</div>`;
   const detail=info.type==='ferie'||info.type==='pont' ? `${info.label} — pas de classe` : (info.message||info.label);
-  return `<div class="schedule-no-class schedule-no-class--${esc(info.type||'none')}"><span>${esc(info.icon||'📅')}</span><div><strong>${esc(detail)}</strong>${info.type==='vacances'?'<small>Les élèves ne sont pas attendus à l’école.</small>':''}</div></div>`;
+  return `<div class="schedule-no-class schedule-no-class--${esc(info.type||'none')}"><span>${esc(info.icon||'📅')}</span><div><strong>${esc(scheduleTr(detail))}</strong>${info.type==='vacances'?`<small>${esc(scheduleTr('Les élèves ne sont pas attendus à l’école.'))}</small>`:''}</div></div>`;
 }
 function scheduleRowsHtml(d){
   const data=EDT.rowsForDate(d);
   if(!data.rows.length)return noClassHtml(d);
-  return data.rows.map(r=>`<div class="schedule-row"><time>${esc(r[0])}</time><div><strong>${esc(r[1])}</strong>${r[2]?`<small>${esc(r[2])}</small>`:''}</div></div>`).join('');
+  return data.rows.map(r=>`<div class="schedule-row"><time>${esc(r[0])}</time><div><strong>${esc(scheduleTr(r[1]))}</strong>${r[2]?`<small>${esc(r[2])}</small>`:''}</div></div>`).join('');
 }
 function renderSchedule(){
   const today=new Date();today.setHours(12,0,0,0);
   const todayData=EDT.rowsForDate(today),todayInfo=todayData.noClass||null;
   const target=scheduleTargetDate();
   const periodTarget=target||today;
-  $('schedulePeriod').textContent=EDT.periodLabel(EDT.periodForDate(periodTarget));
+  $('schedulePeriod').textContent=scheduleTr(EDT.periodLabel(EDT.periodForDate(periodTarget)));
   if(!target){
-    $('scheduleEyebrow').textContent='Calendrier scolaire';
-    $('scheduleQuickHint').textContent=todayInfo?.label||'Pas de classe';
-    $('scheduleViewMessage').textContent=todayInfo?.message||'Aucune prochaine journée de classe n’est encore programmée.';
-    $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(frDate(today,{weekday:'long',day:'numeric',month:'long'}))}</h3>${noClassHtml(today)}</article>`;
+    $('scheduleEyebrow').textContent=scheduleTr('Calendrier scolaire');
+    $('scheduleQuickHint').textContent=scheduleTr(todayInfo?.label||'Pas de classe');
+    $('scheduleViewMessage').textContent=scheduleTr(todayInfo?.message||'Aucune prochaine journée de classe n’est encore programmée.');
+    $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(scheduleTr(frDate(today,{weekday:'long',day:'numeric',month:'long'})))}</h3>${noClassHtml(today)}</article>`;
     $('parentsScheduleWeek').innerHTML='';
     return;
   }
   const isToday=isoLocal(target)===isoLocal(today);
-  $('scheduleEyebrow').textContent=isToday?'Aujourd’hui':'Prochain jour de classe';
-  $('scheduleQuickHint').textContent=isToday?frDate(target,{weekday:'long'}):`Prochain : ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}`;
+  $('scheduleEyebrow').textContent=scheduleTr(isToday?'Aujourd’hui':'Prochain jour de classe');
+  $('scheduleQuickHint').textContent=isToday?scheduleTr(frDate(target,{weekday:'long'})):scheduleTr(`Prochain : ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}`);
+  const targetLabel=scheduleTr(frDate(target,{weekday:'long',day:'numeric',month:'long'}));
   if(isToday){
-    $('scheduleViewMessage').textContent=`Voici l’emploi du temps réel de ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}.`;
+    $('scheduleViewMessage').textContent=`${scheduleTr('Voici l’emploi du temps réel de')} ${targetLabel}.`;
   }else if(todayInfo){
     const reason=todayInfo.type==='ferie'||todayInfo.type==='pont'?`${todayInfo.label} — pas de classe`:todayInfo.label;
-    $('scheduleViewMessage').textContent=`${reason}. Prochain jour de classe : ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}.`;
+    $('scheduleViewMessage').textContent=`${scheduleTr(reason)}. ${scheduleTr('Prochain jour de classe')} : ${targetLabel}.`;
   }else{
-    $('scheduleViewMessage').textContent=`Pas de classe aujourd’hui. Prochain jour de classe : ${frDate(target,{weekday:'long',day:'numeric',month:'long'})}.`;
+    $('scheduleViewMessage').textContent=`${scheduleTr('Pas de classe aujourd’hui.')} ${scheduleTr('Prochain jour de classe')} : ${targetLabel}.`;
   }
-  $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(frDate(target,{weekday:'long',day:'numeric',month:'long'}))}</h3>${scheduleRowsHtml(target)}</article>`;
+  $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(scheduleTr(frDate(target,{weekday:'long',day:'numeric',month:'long'})))}</h3>${scheduleRowsHtml(target)}</article>`;
   const monday=EDT.mondayOf(target),days=[0,1,3,4].map(n=>EDT.addDays(monday,n));
-  $('parentsScheduleWeek').innerHTML=days.map(d=>`<article class="schedule-day${isoLocal(d)===isoLocal(target)?' schedule-day--selected':''}"><h3>${esc(frDate(d,{weekday:'long',day:'numeric',month:'long'}))}</h3>${scheduleRowsHtml(d)}</article>`).join('');
-  if(window.PARENTS_I18N)window.PARENTS_I18N.refresh();
+  $('parentsScheduleWeek').innerHTML=days.map(d=>`<article class="schedule-day${isoLocal(d)===isoLocal(target)?' schedule-day--selected':''}"><h3>${esc(scheduleTr(frDate(d,{weekday:'long',day:'numeric',month:'long'})))}</h3>${scheduleRowsHtml(d)}</article>`).join('');
 }
 function showParentInfoPanel(target){
   const menu=$('parentsInfoMenu');
@@ -1013,13 +943,10 @@ function init(){
   bindHolidayRevisionPreviews();
   setupHomeworkTest();
   setupUpcomingTest();
-  window.addEventListener('parentslanguagechange',()=>{
-    renderSchedule();
-    renderHomework();
-    renderLearning();
-    renderTogether();
-    if(document.querySelector('[data-parent-panel="info"]:not([hidden])'))renderClassInfo();
-  });
 }
+// V35.20 — régénérer uniquement l'emploi du temps lors d'un changement de langue.
+window.addEventListener('parentslanguagechange',()=>{
+  try{renderSchedule()}catch(e){console.warn('V35.20: rafraîchissement emploi du temps impossible',e)}
+});
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 })();
