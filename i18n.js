@@ -1,5 +1,5 @@
 // V34.94 — Couche multilingue Espace Parents (FR / AR / ES / EN)
-// V34.97 - traduction complète : textes statiques + fragments HTML structurés
+// V34.98 - finition traduction : décorations, retours, bandeau, pied de page et chaînes restantes
 (function(){
 'use strict';
 const LANGS=['fr','ar','es','en'];
@@ -169,6 +169,19 @@ Object.assign(EXACT,{
   'Directeur : Gilles Maigron':{ar:'المدير: Gilles Maigron',es:'Director: Gilles Maigron',en:'Headteacher: Gilles Maigron'}
 });
 
+// V34.98 - finition des chaînes qui apparaissent avec une icône/flèche ou dans les zones communes.
+Object.assign(EXACT,{
+  'École primaire La Gravette — Carcassonne':{ar:'مدرسة La Gravette الابتدائية — Carcassonne',es:'Escuela primaria La Gravette — Carcassonne',en:'La Gravette Primary School — Carcassonne'},
+  'Fiches de renseignement + assurance à remplir':{ar:'استمارات المعلومات + التأمين المطلوب استكمالهما',es:'Fichas de información + seguro por completar',en:'Information forms + insurance to complete'},
+  'Information de dernière minute':{ar:'معلومة عاجلة',es:'Información de última hora',en:'Latest information'},
+  'Ouvrir les infos de la classe.':{ar:'فتح معلومات الصف.',es:'Abrir la información de la clase.',en:'Open class information.'},
+  'Coordonnées de l’école':{ar:'بيانات الاتصال بالمدرسة',es:'Datos de contacto de la escuela',en:'School contact details'},
+  'Rubriques de l’espace Parents':{ar:'أقسام فضاء أولياء الأمور',es:'Secciones del espacio para familias',en:'Parent Space sections'},
+  'Rubriques des informations de la classe':{ar:'أقسام معلومات الصف',es:'Secciones de la información de la clase',en:'Class information sections'},
+  'Choisir la langue':{ar:'اختيار اللغة',es:'Elegir idioma',en:'Choose language'},
+  'Progressions CE2 · Espace Parents · V34.98':{ar:'Progressions CE2 · فضاء أولياء الأمور · V34.98',es:'Progressions CE2 · Espacio para familias · V34.98',en:'Progressions CE2 · Parent Space · V34.98'}
+});
+
 const REPLACEMENTS={
   en:[
     ['Lundi','Monday'],['Mardi','Tuesday'],['Mercredi','Wednesday'],['Jeudi','Thursday'],['Vendredi','Friday'],['Samedi','Saturday'],['Dimanche','Sunday'],
@@ -220,8 +233,25 @@ function translateText(text,lang){
   if(!text||lang==='fr')return text;
   const raw=String(text),trim=raw.trim();
   if(!trim)return raw;
-  const exact=EXACT[trim]?.[lang];
-  let translated=exact||translateFallback(trim,lang);
+
+  // 1. Correspondance exacte normale.
+  let translated=EXACT[trim]?.[lang];
+
+  // 2. De nombreux titres/boutons portent une icône ou une flèche dans le même nœud texte
+  //    (ex. « ← Accueil Parents », « 📣 Infos de la classe »). On traduit le cœur du texte
+  //    tout en conservant la décoration telle quelle.
+  if(!translated){
+    const m=trim.match(/^([\s←→›•·⚡📚📣📌📅✏️🔄📱📎🗓️🎒🏫☎🧪🌐👨‍👩‍👧]*)?(.*?)([\s←→›•·]*)$/u);
+    if(m){
+      const lead=m[1]||'', core=(m[2]||'').trim(), tail=m[3]||'';
+      const coreExact=EXACT[core]?.[lang];
+      if(coreExact)translated=lead+coreExact+tail;
+    }
+  }
+
+  // 3. Repli lexical pour les contenus dynamiques venant des données partagées.
+  if(!translated)translated=translateFallback(trim,lang);
+
   const prefix=raw.match(/^\s*/)?.[0]||'',suffix=raw.match(/\s*$/)?.[0]||'';
   return prefix+translated+suffix;
 }
