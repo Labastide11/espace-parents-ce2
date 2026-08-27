@@ -7,6 +7,7 @@ const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,
 const EDT=window.PUBLIC_EDT,PROG=window.PROGRESSIONS||{},W=window.PARENTS_SEMAINE||{},H=window.PARENTS_TRAVAIL||{},L=window.PARENTS_VIE_CLASSE||{},I=window.PARENTS_INFOS||{},D1=window.DEVOIRS_P1||{weeks:[]},D2=window.DEVOIRS_P2||{weeks:[]},D3=window.DEVOIRS_P3||{weeks:[]},D4=window.DEVOIRS_P4||{weeks:[]},D5=window.DEVOIRS_P5||{weeks:[]},D={weeks:[...(D1.weeks||[]).map(w=>({...w,__period:'p1'})),...(D2.weeks||[]).map(w=>({...w,__period:'p2'})),...(D3.weeks||[]).map(w=>({...w,__period:'p3'})),...(D4.weeks||[]).map(w=>({...w,__period:'p4'})),...(D5.weeks||[]).map(w=>({...w,__period:'p5'}))].sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')))};
 const CAL=window.CALENDRIER_SCOLAIRE_2026_2027||{daysOff:[],breaks:[]};
 let upcomingTestPeriod=null;
+let remindersTestMode=false;
 function currentParentsDictations(){
   return window.PARENTS_DICTEES_CE2||{periods:{}};
 }
@@ -715,11 +716,30 @@ function renderFlashTicker(){
   ticker.setAttribute('aria-label',`Information de dernière minute : ${msg}. Ouvrir les infos de la classe.`);
 }
 
+// V35.24 — rappels datés + mode test enseignant par appui long sur 📌.
+function isoToday(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function activeImportantItems(){
+  const raw=Array.isArray(I.importantItems)&&I.importantItems.length?I.importantItems:infoLines(W.items);
+  const today=isoToday();
+  return raw.map(item=>{
+    if(typeof item==='string')return {text:item,start:'',end:''};
+    return {text:String(item?.text||item?.label||'').trim(),start:String(item?.start||'').trim(),end:String(item?.end||'').trim()};
+  }).filter(item=>{
+    if(!item.text)return false;
+    if(remindersTestMode)return true;
+    if(item.start&&today<item.start)return false;
+    if(item.end&&today>item.end)return false;
+    return true;
+  });
+}
 // V34.92 — « À venir » : plus d’extraction automatique des séances ordinaires de l’emploi du temps.
 function renderClassInfo(){
-  const important=infoLines(I.importantItems?.length?I.importantItems:W.items);
+  const important=activeImportantItems();
   $('parentsImportantList').innerHTML=important.length
-    ? `<ul class="parents-info-list">${important.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`
+    ? `<ul class="parents-info-list">${important.map(x=>`<li>${esc(x.text)}</li>`).join('')}</ul>`
     : '<div class="parents-info-empty">Aucun rappel important publié pour le moment.</div>';
 
   const automatic=plannedFamilyEvents();
@@ -751,6 +771,37 @@ function renderClassInfo(){
     : '<div class="parents-info-empty">Aucun document utile publié pour le moment.</div>';
 }
 
+
+function setupRemindersTest(){
+  const btn=$('remindersTestHotspot'),bar=$('remindersTestBar'),label=$('remindersTestLabel'),reset=$('remindersTestReset');
+  if(!btn||!bar)return;
+  let timer=null;
+  let fired=false;
+  function refresh(){
+    if(label)label.textContent=remindersTestMode?'Tous les rappels · mode test':'Affichage automatique';
+    bar.hidden=!remindersTestMode;
+    btn.setAttribute('aria-expanded',remindersTestMode?'true':'false');
+    renderClassInfo();
+  }
+  function activate(){
+    fired=true;
+    remindersTestMode=true;
+    refresh();
+  }
+  function start(e){
+    fired=false;
+    clearTimeout(timer);
+    timer=setTimeout(activate,3000);
+  }
+  function cancel(e){
+    clearTimeout(timer);
+    if(fired){e?.preventDefault?.();fired=false;}
+  }
+  btn.addEventListener('pointerdown',start);
+  ['pointerup','pointercancel','pointerleave'].forEach(ev=>btn.addEventListener(ev,cancel));
+  btn.addEventListener('click',e=>{if(remindersTestMode||fired)e.preventDefault();});
+  reset?.addEventListener('click',()=>{remindersTestMode=false;refresh();});
+}
 
 function setupUpcomingTest(){
   const btn=$('upcomingTestHotspot'),bar=$('upcomingTestBar'),label=$('upcomingTestLabel'),prev=$('upcomingTestPrev'),next=$('upcomingTestNext'),reset=$('upcomingTestReset');
@@ -942,6 +993,7 @@ function init(){
   bindParentNavigation();
   bindHolidayRevisionPreviews();
   setupHomeworkTest();
+  setupRemindersTest();
   setupUpcomingTest();
 }
 // V35.20 — régénérer uniquement l'emploi du temps lors d'un changement de langue.

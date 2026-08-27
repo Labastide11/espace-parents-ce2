@@ -1552,3 +1552,15 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
   }
 }
 /* /V34.95 - correction clipping menu langues PC */
+
+
+/* V35.24 — test enseignant caché des rappels (appui long 3 s sur 📌) */
+.reminders-test-icon{appearance:none;border:0;background:transparent;padding:0;margin:0;font:inherit;line-height:1;cursor:default;color:inherit;vertical-align:baseline}
+.reminders-test-icon:focus{outline:none}
+.reminders-test-icon:focus-visible{outline:2px dotted rgba(83,49,126,.28);outline-offset:3px;border-radius:5px}
+.reminders-test-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 12px;padding:9px 10px;border:1px dashed #b9c9d4;border-radius:12px;background:#f6f9fb;font-size:12px}
+.reminders-test-bar[hidden]{display:none!important}
+.reminders-test-bar strong{color:#45616f}
+.reminders-test-bar span{font-weight:800;color:#334f5d;min-width:190px;text-align:center}
+.reminders-test-bar button{border:1px solid #cedbe2;background:#fff;border-radius:9px;padding:6px 9px;font-weight:800;cursor:pointer}
+@media(max-width:620px){.reminders-test-bar span{min-width:0;flex:1 1 160px}.reminders-test-bar{gap:6px}}
