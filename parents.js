@@ -1,4 +1,5 @@
-// V34.93 — Espace Parents : synthèse des apprentissages par période, 5 essentiels maximum par matière.
+// V35.25 — Espace Parents : Info Flash, Rappels et À venir alimentés par l’API V2.9.
+// V34.93 — synthèse des apprentissages par période, 5 essentiels maximum par matière.
 // Le référentiel enseignant reste inchangé : seule la présentation destinée aux familles est simplifiée.
 // Les repères annuels transversaux Arts / éducation musicale sont affichés pour chaque période.
 (function(){
@@ -8,6 +9,13 @@ const EDT=window.PUBLIC_EDT,PROG=window.PROGRESSIONS||{},W=window.PARENTS_SEMAIN
 const CAL=window.CALENDRIER_SCOLAIRE_2026_2027||{daysOff:[],breaks:[]};
 let upcomingTestPeriod=null;
 let remindersTestMode=false;
+
+// V35.25 — Informations familles dynamiques via API Apps Script V2.9.
+// Lecture publique uniquement : aucune clé professionnelle n’est exposée dans le site Parents.
+const PARENTS_INFO_API_URL='https://script.google.com/macros/s/AKfycbydzPTQ9ZLEPYezHou2-O4IK24ip51sLTpe9qdi2xREuQvDBKRlVqsYYDiKLrzAODc/exec';
+let parentsApiLoaded=false;
+let parentsApiMessages=[];
+
 function currentParentsDictations(){
   return window.PARENTS_DICTEES_CE2||{periods:{}};
 }
@@ -704,10 +712,61 @@ function infoLines(v){
   return String(v||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 }
 
+function parentApiText(item){
+  const title=String(item?.titre||'').trim();
+  const message=String(item?.message||'').trim();
+  if(title&&message)return `${title} — ${message}`;
+  return message||title;
+}
+function parentApiItems(type){
+  if(!parentsApiLoaded)return null;
+  return parentsApiMessages.filter(item=>String(item?.type||'').toLowerCase()===type);
+}
+function loadParentsInfoApi(){
+  return new Promise(resolve=>{
+    const callback=`__parentsInfoV3525_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const script=document.createElement('script');
+    let finished=false;
+    const cleanup=()=>{
+      try{delete window[callback]}catch(e){window[callback]=undefined}
+      script.remove();
+    };
+    const finish=ok=>{
+      if(finished)return;
+      finished=true;
+      clearTimeout(timer);
+      cleanup();
+      resolve(ok);
+    };
+    window[callback]=data=>{
+      if(data&&data.ok===true&&Array.isArray(data.messages)){
+        parentsApiMessages=data.messages;
+        parentsApiLoaded=true;
+        finish(true);
+      }else{
+        console.warn('V35.25 : réponse API Infos Parents invalide',data);
+        finish(false);
+      }
+    };
+    script.onerror=()=>{
+      console.warn('V35.25 : API Infos Parents indisponible, maintien des données de secours.');
+      finish(false);
+    };
+    const sep=PARENTS_INFO_API_URL.includes('?')?'&':'?';
+    script.src=`${PARENTS_INFO_API_URL}${sep}action=infos_parents&callback=${encodeURIComponent(callback)}&_=${Date.now()}`;
+    script.async=true;
+    document.head.appendChild(script);
+    const timer=setTimeout(()=>finish(false),8000);
+  });
+}
+
 function renderFlashTicker(){
   const ticker=$('parentsFlashTicker');
   if(!ticker)return;
-  const msg=String(I.urgentMessage||'').trim();
+  const remote=parentApiItems('flash');
+  const msg=remote===null
+    ? String(I.urgentMessage||'').trim()
+    : remote.map(parentApiText).filter(Boolean).join(' • ');
   ticker.hidden=!msg;
   if(!msg)return;
   const a=$('parentsFlashTickerText'),b=$('parentsFlashTickerTextCopy');
@@ -722,6 +781,17 @@ function isoToday(){
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function activeImportantItems(){
+  // En mode normal, le Google Sheet devient la source prioritaire dès que l’API a répondu.
+  // Le mode test enseignant historique reste disponible sur les données de secours locales.
+  const remote=parentApiItems('rappel');
+  if(remote!==null&&!remindersTestMode){
+    return remote.map(item=>({
+      text:parentApiText(item),
+      start:String(item?.date_debut||''),
+      end:String(item?.date_fin||''),
+      priority:String(item?.priorite||'Normal')
+    })).filter(item=>item.text);
+  }
   const raw=Array.isArray(I.importantItems)&&I.importantItems.length?I.importantItems:infoLines(W.items);
   const today=isoToday();
   return raw.map(item=>{
@@ -742,14 +812,19 @@ function renderClassInfo(){
     ? `<ul class="parents-info-list">${important.map(x=>`<li>${esc(x.text)}</li>`).join('')}</ul>`
     : '<div class="parents-info-empty">Aucun rappel important publié pour le moment.</div>';
 
-  const automatic=plannedFamilyEvents();
-  const activeUpcomingPeriod=upcomingTestPeriod||periodKey();
-  const periodItems=I.upcomingByPeriod&&Array.isArray(I.upcomingByPeriod[activeUpcomingPeriod])?I.upcomingByPeriod[activeUpcomingPeriod]:[];
-  const manual=infoLines(periodItems.length?periodItems:(I.upcomingItems?.length?I.upcomingItems:L.items));
-  const autoHtml='';
+  let manual=[];
+  const remoteUpcoming=parentApiItems('avenir');
+  if(remoteUpcoming!==null&&!upcomingTestPeriod){
+    manual=remoteUpcoming.map(parentApiText).filter(Boolean);
+  }else{
+    // Mode test historique : navigation P1→P5 conservée sur les données locales.
+    const activeUpcomingPeriod=upcomingTestPeriod||periodKey();
+    const periodItems=I.upcomingByPeriod&&Array.isArray(I.upcomingByPeriod[activeUpcomingPeriod])?I.upcomingByPeriod[activeUpcomingPeriod]:[];
+    manual=infoLines(periodItems.length?periodItems:(I.upcomingItems?.length?I.upcomingItems:L.items));
+  }
   const manualHtml=manual.map(x=>`<article class="parents-upcoming-item parents-upcoming-item--manual"><span class="parents-upcoming-dot">•</span><div><span>${esc(x)}</span></div></article>`).join('');
-  $('parentsUpcomingList').innerHTML=(autoHtml||manualHtml)
-    ? `${autoHtml}${manualHtml}`
+  $('parentsUpcomingList').innerHTML=manualHtml
+    ? manualHtml
     : '<div class="parents-info-empty">Aucun temps fort particulier n’est encore annoncé pour cette période.</div>';
   const testLabel=$('upcomingTestLabel');
   if(testLabel){
@@ -995,6 +1070,11 @@ function init(){
   setupHomeworkTest();
   setupRemindersTest();
   setupUpcomingTest();
+  loadParentsInfoApi().then(ok=>{
+    if(!ok)return;
+    renderFlashTicker();
+    renderClassInfo();
+  });
 }
 // V35.20 — régénérer uniquement l'emploi du temps lors d'un changement de langue.
 window.addEventListener('parentslanguagechange',()=>{
