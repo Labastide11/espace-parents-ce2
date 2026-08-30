@@ -1,4 +1,4 @@
-# Espace Parents CE2 — V35.29
+# Espace Parents CE2 — V35.30
 
 Site public séparé de l'espace professionnel Progressions CE2.
 
@@ -46,3 +46,5 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - Le bandeau « Cette semaine » est désormais calculé sur la date réelle des évaluations, toutes matières confondues.
 - Une évaluation annoncée à l’avance mais prévue la semaine suivante est affichée séparément dans « À venir ».
 - Le rappel du jour reprend l’intitulé précis de l’évaluation.
+
+- V35.30 : calendrier des devoirs adapté à la semaine de classe sur 4 jours. Aucun devoir n’est affiché « Pour mercredi », samedi ou dimanche : une échéance du mercredi est rattachée au jeudi, et une échéance du week-end au lundi suivant. La règle est appliquée par le moteur à toutes les périodes P1 à P5, sans modifier les données pédagogiques sources.
