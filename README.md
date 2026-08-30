@@ -1,4 +1,4 @@
-# Espace Parents CE2 — V35.33
+# Espace Parents CE2 — V35.34
 
 Site public séparé de l'espace professionnel Progressions CE2.
 
@@ -55,3 +55,5 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - V35.32 : double badge sur les évaluations dans Devoirs. Le premier badge indique `📝 Évaluation`; le second précise la sous-matière (lecture/compréhension, dictée/mots appris, lexique, production d’écrits, calcul/opérations, problèmes, géométrie, mesures, histoire, etc.). Les compétences évaluées et le court texte de préparation restent inchangés. Le même double badge est affiché dans le rappel du jour J.
 
 - V35.33 : l’emploi du temps détaillé reprend le double badge visuel des évaluations. Seules les lignes réellement identifiées comme évaluation/bilan sont marquées : `📝 Évaluation` + sous-domaine précis, avec la couleur de matière existante. Les séances ordinaires restent sobres et inchangées.
+
+- V35.34 : emploi du temps détaillé harmonisé à l’identique avec la palette de Progressions CE2 : Français rose, mathématiques bleu, anglais violet, EPS vert, arts orange, sciences cyan, histoire jaune, EMC vert clair et CHAM mauve. Chaque séance reconnue reçoit aussi l’icône de matière correspondante. Les évaluations conservent la couleur de leur matière et les doubles badges V35.32/V35.33.

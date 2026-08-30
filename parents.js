@@ -1171,14 +1171,26 @@ function scheduleRowEvaluation(d,row){
   };
   return [...candidates].sort((a,b)=>score(b)-score(a))[0]||null;
 }
+// V35.34 — emploi du temps Parents : mêmes couleurs et mêmes icônes matières que Progressions CE2.
+function scheduleRowSubjectMeta(row){
+  const raw=`${row?.[1]||''} ${row?.[2]||''}`;
+  const key=weekGlanceSubjectKey(raw);
+  if(key&&WEEK_GLANCE_SUBJECTS[key])return {key,...WEEK_GLANCE_SUBJECTS[key]};
+  // Quelques libellés transversaux de l'EDT ne contiennent pas toujours le nom explicite de la matière.
+  if(/vie de classe|temps d[’']?[ée]change|conseil|r[èe]gles de vie/i.test(raw))return {key:'emc',...WEEK_GLANCE_SUBJECTS.emc};
+  if(/r[ée]cr[ée]ation|pause|cantine|accueil/i.test(raw))return {key:'break',label:'Pause',icon:'☕'};
+  return {key:'common',label:'Classe',icon:'🏫'};
+}
 function scheduleRowsHtml(d){
   const data=EDT.rowsForDate(d);
   if(!data.rows.length)return noClassHtml(d);
   return data.rows.map(r=>{
     const ev=scheduleRowEvaluation(d,r);
     const badges=ev?evaluationBadgesHtml(ev):'';
-    const cls=ev?' schedule-row--evaluation':'';
-    return `<div class="schedule-row${cls}"><time>${esc(r[0])}</time><div>${badges}<strong>${esc(scheduleTr(r[1]))}</strong>${r[2]?`<small>${esc(r[2])}</small>`:''}</div></div>`;
+    const meta=scheduleRowSubjectMeta(r);
+    const cls=` schedule-row--subject-${meta.key}${ev?' schedule-row--evaluation':''}`;
+    const icon=meta.key==='common'||meta.key==='break'?'':`<span class="schedule-subject-icon schedule-subject-icon--${meta.key}" aria-hidden="true">${meta.icon}</span>`;
+    return `<div class="schedule-row${cls}"><time>${esc(r[0])}</time><div>${badges}<strong class="schedule-subject-title">${icon}<span>${esc(scheduleTr(r[1]))}</span></strong>${r[2]?`<small>${esc(r[2])}</small>`:''}</div></div>`;
   }).join('');
 }
 function renderSchedule(){
