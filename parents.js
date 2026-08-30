@@ -1,3 +1,5 @@
+// V35.29 — Le bandeau « Cette semaine » affiche uniquement les évaluations dont la date réelle appartient à la semaine affichée.
+// Les évaluations annoncées à l’avance mais prévues la semaine suivante sont séparées dans un bloc « À venir ».
 // V35.26 — Synchronisation canonique des évaluations de français avec Progressions CE2 V35.63.
 // Les anciennes annonces de français présentes dans les fichiers de devoirs sont ignorées pour éviter les dates et contenus périmés.
 // V35.25 — Espace Parents : Info Flash, Rappels et À venir alimentés par l’API V2.9.
@@ -42,10 +44,19 @@ function stripStaleFrenchEvaluations(item){
   if(Array.isArray(clone.evaluations))clone.evaluations=clone.evaluations.filter(ev=>!isFrenchEvaluation(ev));
   return clone;
 }
-function canonicalFrenchAnnouncementsForWeek(week){
+function canonicalFrenchAdvanceAnnouncementsForWeek(week){
   if(!week)return [];
   const start=String(week.start||''),end=String(week.end||'');
-  return PARENTS_FRENCH_EVALUATIONS.filter(ev=>ev.announceOn&&ev.announceOn>=start&&ev.announceOn<=end);
+  return PARENTS_FRENCH_EVALUATIONS
+    .filter(ev=>ev.announceOn&&ev.announceOn>=start&&ev.announceOn<=end&&String(ev.date||'')>end)
+    .sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+}
+function evaluationsForDisplayedWeek(week){
+  if(!week)return [];
+  const start=String(week.start||''),end=String(week.end||'');
+  return allEvaluations()
+    .filter(ev=>String(ev&&ev.date||'')>=start&&String(ev&&ev.date||'')<=end)
+    .sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.subject||'').localeCompare(String(b.subject||''),'fr'));
 }
 
 let upcomingTestPeriod=null;
@@ -571,17 +582,17 @@ function homeworkHibouHtml(value){
   }).join(' <span aria-hidden="true">·</span> ');
   return `<div class="homework-hibou">🦉 ${esc(intro)} ${links}</div>`;
 }
-function homeworkEvaluationsHtml(list,periodTag=''){
+function homeworkEvaluationsHtml(list,periodTag='',titleOverride=''){
   const evaluations=Array.isArray(list)?list:[];
   if(!evaluations.length)return '';
   const showCountBanner=['p1','p2','p4','p5'].includes(periodTag);
   const count=evaluations.length;
   const weekRange=periodTag==='p5'&&evaluations[0]?.date?(()=>{const first=dateFromIso([...evaluations].map(e=>e.date).filter(Boolean).sort()[0]);const day=(first.getDay()+6)%7;const monday=new Date(first);monday.setDate(first.getDate()-day);const friday=new Date(monday);friday.setDate(monday.getDate()+4);const same=monday.getMonth()===friday.getMonth();const a=frDate(monday,same?{day:'numeric'}:{day:'numeric',month:'long'});const b=frDate(friday,{day:'numeric',month:'long'});return `Semaine du ${a} au ${b}`;})():'';
-  const title=periodTag==='p5'&&weekRange
+  const title=titleOverride || (periodTag==='p5'&&weekRange
     ? `📅 ${weekRange} : ${count} évaluation${count>1?'s':''} prévue${count>1?'s':''}`
     : showCountBanner
       ? `📅 Cette semaine : ${count} évaluation${count>1?'s':''} prévue${count>1?'s':''}`
-      : `📅 Évaluation${count>1?'s':''} prévue${count>1?'s':''} cette semaine`;
+      : `📅 Évaluation${count>1?'s':''} prévue${count>1?'s':''} cette semaine`);
   const titleClass=`homework-evaluations-title${showCountBanner?' homework-evaluations-title--count':''}`;
   return `<div class="homework-evaluations"><div class="${titleClass}">${title}</div>${evaluations.map(ev=>{
     const newSkills=Array.isArray(ev.newSkills)&&ev.newSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--new"><b>🎯 Nouvelles compétences évaluées</b><ul>${ev.newSkills.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
@@ -595,8 +606,11 @@ function homeworkEvaluationsHtml(list,periodTag=''){
 function homeworkEvaluationTodayHtml(ev){
   if(!ev)return '';
   const subject=ev.subject||'Évaluation';
-  const oral=/oral/i.test(String(ev.title||''));
-  const label=oral?`Aujourd’hui : bilan oral d’${subject}`:`Aujourd’hui : évaluation de ${subject}`;
+  const title=String(ev.title||'').trim();
+  const oral=/oral/i.test(title);
+  const label=title
+    ? `Aujourd’hui : ${subject} — ${title}`
+    : oral?`Aujourd’hui : bilan oral d’${subject}`:`Aujourd’hui : évaluation de ${subject}`;
   return `<article class="homework-card homework-card--today"><div class="homework-date">${esc(dueLabel(ev.date))}</div><div class="homework-today"><b>⭐ ${esc(label)}</b><p>Aucun devoir supplémentaire aujourd’hui. Cette information rappelle simplement l’évaluation prévue.</p></div></article>`;
 }
 function homeworkSubjectMeta(task){
@@ -681,7 +695,7 @@ function homeworkPhysicalRemindersHtml(week){
   </section>`;
 }
 function allEvaluationDates(){return [...new Set(allEvaluations().map(ev=>String(ev.date||'')).filter(Boolean))]}
-function renderHomework(){const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');if(!cur)return;if(!week){cur.innerHTML='<div class="homework-empty">Aucun devoir programmé.</div>';return}const sourceItems=(Array.isArray(week.items)?week.items:[]).map(stripStaleFrenchEvaluations);const frenchAnnouncements=canonicalFrenchAnnouncementsForWeek(week);let items=[...sourceItems];const periodTag=week.__period||'';const noSchool=noSchoolDateSet();items=items.filter(it=>!noSchool.has(String(it&&it.due||'')));const evalDates=allEvaluationDates();const weekEvalDates=evalDates.filter(d=>d>=week.start&&d<=week.end);const lightWeek=['p1','p2','p3','p4','p5'].includes(periodTag)&&weekEvalDates.length>0;if(lightWeek){items=items.filter(it=>{const hasOwnEvaluations=Array.isArray(it.evaluations)&&it.evaluations.length>0;return hasOwnEvaluations||!weekEvalDates.includes(String(it.due||''))})}const dayJItems=allEvaluations().filter(ev=>String(ev.date||'')>=week.start&&String(ev.date||'')<=week.end).map(ev=>({due:String(ev.date),evaluationToday:ev}));items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));const dates=`${esc(frDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(frDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;const head=`<div class="homework-week-head"><div><span>${esc(week.label||'Semaine en cours')}</span><h3>${dates}</h3>${week.theme?`<p class="homework-theme">${esc(week.theme)}</p>`:''}</div></div>`;const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);const calendar=schoolCalendarHtml(week);const practicalReminders=homeworkPhysicalRemindersHtml(week);const holidayRevisions=holidayRevisionHtml(week);const frenchAnnouncementsHtml=homeworkEvaluationsHtml(frenchAnnouncements,periodTag);if(!items.length){cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${frenchAnnouncementsHtml}<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`;return}cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${frenchAnnouncementsHtml}${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`}
+function renderHomework(){const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');if(!cur)return;if(!week){cur.innerHTML='<div class="homework-empty">Aucun devoir programmé.</div>';return}const sourceItems=(Array.isArray(week.items)?week.items:[]).map(stripStaleFrenchEvaluations);const weekEvaluations=evaluationsForDisplayedWeek(week);const advanceAnnouncements=canonicalFrenchAdvanceAnnouncementsForWeek(week);let items=[...sourceItems];const periodTag=week.__period||'';const noSchool=noSchoolDateSet();items=items.filter(it=>!noSchool.has(String(it&&it.due||'')));const evalDates=allEvaluationDates();const weekEvalDates=evalDates.filter(d=>d>=week.start&&d<=week.end);const lightWeek=['p1','p2','p3','p4','p5'].includes(periodTag)&&weekEvalDates.length>0;if(lightWeek){items=items.filter(it=>{const hasOwnEvaluations=Array.isArray(it.evaluations)&&it.evaluations.length>0;return hasOwnEvaluations||!weekEvalDates.includes(String(it.due||''))})}const dayJItems=allEvaluations().filter(ev=>String(ev.date||'')>=week.start&&String(ev.date||'')<=week.end).map(ev=>({due:String(ev.date),evaluationToday:ev}));items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));const dates=`${esc(frDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(frDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;const head=`<div class="homework-week-head"><div><span>${esc(week.label||'Semaine en cours')}</span><h3>${dates}</h3>${week.theme?`<p class="homework-theme">${esc(week.theme)}</p>`:''}</div></div>`;const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);const calendar=schoolCalendarHtml(week);const practicalReminders=homeworkPhysicalRemindersHtml(week);const holidayRevisions=holidayRevisionHtml(week);const weekEvaluationsHtml=homeworkEvaluationsHtml(weekEvaluations,periodTag);const advanceTitle=advanceAnnouncements.length?`📌 À venir : ${advanceAnnouncements.length} évaluation${advanceAnnouncements.length>1?'s':''} annoncée${advanceAnnouncements.length>1?'s':''} à l’avance`:'';const advanceAnnouncementsHtml=homeworkEvaluationsHtml(advanceAnnouncements,periodTag,advanceTitle);if(!items.length){cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${weekEvaluationsHtml}${advanceAnnouncementsHtml}<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`;return}cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${weekEvaluationsHtml}${advanceAnnouncementsHtml}${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`}
 
 function setupHomeworkTest(){
   const btn=$('homeworkTestHotspot'),bar=$('homeworkTestBar'),label=$('homeworkTestLabel'),prev=$('homeworkTestPrev'),next=$('homeworkTestNext'),reset=$('homeworkTestReset');

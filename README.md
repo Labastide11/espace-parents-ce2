@@ -1,4 +1,4 @@
-# Espace Parents CE2 — V35.28
+# Espace Parents CE2 — V35.29
 
 Site public séparé de l'espace professionnel Progressions CE2.
 
@@ -39,4 +39,10 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 
 - V35.27 : synchronisation de la projection publique des dictées avec `dictees-ce2.js` V35.62 ; le chargement de `data/parents-dictees.js` passe de V34.96 à V35.62. Les séries Grande Muraille, Île de Pâques, Opéra de Sydney et Angkor Vat sont désormais cohérentes avec les bilans annoncés.
 
-- V35.28 : alignement des cache-busters avec Progressions CE2 V35.66. Les cinq emplois du temps P1→P5 sont forcés en V35.66 et `data/devoirs-p3.js` passe en V35.66 afin de récupérer la correction Maths P3 (22 janvier Temps + Géométrie ; 4 février CAL-P3-01 + OPE-P3-01).
+- V35.29 : alignement des cache-busters avec Progressions CE2 V35.66. Les cinq emplois du temps P1→P5 sont forcés en V35.66 et `data/devoirs-p3.js` passe en V35.66 afin de récupérer la correction Maths P3 (22 janvier Temps + Géométrie ; 4 février CAL-P3-01 + OPE-P3-01).
+
+
+## V35.29 — cohérence des évaluations hebdomadaires
+- Le bandeau « Cette semaine » est désormais calculé sur la date réelle des évaluations, toutes matières confondues.
+- Une évaluation annoncée à l’avance mais prévue la semaine suivante est affichée séparément dans « À venir ».
+- Le rappel du jour reprend l’intitulé précis de l’évaluation.
