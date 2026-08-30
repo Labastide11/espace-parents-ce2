@@ -63,3 +63,11 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - Ajout de Semaine précédente / Choisir une semaine / Semaine suivante sous “Voir toute la semaine”.
 - Sélecteur construit à partir des semaines détaillées P1 à P5.
 - Navigation bornée aux semaines disponibles dans les données d’emploi du temps.
+
+
+## V35.36 — barre de navigation des semaines optimisée PC
+- Sur ordinateur, la navigation est organisée en trois blocs alignés : semaine précédente, sélecteur central, semaine suivante.
+- Les boutons et le sélecteur ont la même hauteur, des espacements réguliers et un rendu cohérent avec l’interface Parents.
+- Le menu de sélection est intégré visuellement au bloc central au lieu d’apparaître comme un contrôle natif isolé.
+- Le responsive mobile reste conservé.
+- Les cache-busters de `parents.css` et `parents.js` passent en V35.36 afin de forcer le chargement des nouveaux styles.
