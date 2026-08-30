@@ -1,3 +1,5 @@
+// V35.26 — Synchronisation canonique des évaluations de français avec Progressions CE2 V35.63.
+// Les anciennes annonces de français présentes dans les fichiers de devoirs sont ignorées pour éviter les dates et contenus périmés.
 // V35.25 — Espace Parents : Info Flash, Rappels et À venir alimentés par l’API V2.9.
 // V34.93 — synthèse des apprentissages par période, 5 essentiels maximum par matière.
 // Le référentiel enseignant reste inchangé : seule la présentation destinée aux familles est simplifiée.
@@ -7,6 +9,45 @@
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const EDT=window.PUBLIC_EDT,PROG=window.PROGRESSIONS||{},W=window.PARENTS_SEMAINE||{},H=window.PARENTS_TRAVAIL||{},L=window.PARENTS_VIE_CLASSE||{},I=window.PARENTS_INFOS||{},D1=window.DEVOIRS_P1||{weeks:[]},D2=window.DEVOIRS_P2||{weeks:[]},D3=window.DEVOIRS_P3||{weeks:[]},D4=window.DEVOIRS_P4||{weeks:[]},D5=window.DEVOIRS_P5||{weeks:[]},D={weeks:[...(D1.weeks||[]).map(w=>({...w,__period:'p1'})),...(D2.weeks||[]).map(w=>({...w,__period:'p2'})),...(D3.weeks||[]).map(w=>({...w,__period:'p3'})),...(D4.weeks||[]).map(w=>({...w,__period:'p4'})),...(D5.weeks||[]).map(w=>({...w,__period:'p5'}))].sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')))};
 const CAL=window.CALENDRIER_SCOLAIRE_2026_2027||{daysOff:[],breaks:[]};
+
+// V35.26 — Source canonique familles pour les évaluations de français.
+// Ce tableau reflète le planning validé dans Progressions CE2 V35.63.
+// Il remplace uniquement les anciennes annonces de français embarquées dans les fichiers devoirs.
+const PARENTS_FRENCH_EVALUATIONS=[
+  {date:'2026-10-06',announceOn:'2026-10-02',subject:'Français',title:'Compréhension P1 — Le carnet retrouvé',scope:['Identifier les personnages.','Retrouver une information explicite.'],preparation:'Relire tranquillement un petit texte et s’entraîner à retrouver les informations écrites clairement.'},
+  {date:'2026-10-09',announceOn:'2026-10-06',subject:'Français',title:'Lexique P1 — Classer des mots et ordre alphabétique',scope:['Classer des mots qui vont ensemble.','Ranger des mots dans l’ordre alphabétique.'],preparation:'Revoir les petits exercices de classement et d’ordre alphabétique faits en classe.'},
+  {date:'2026-10-12',announceOn:'2026-10-09',subject:'Français',title:'Bilan des mots appris — La Grande Muraille',scope:['Écrire correctement les 10 mots annoncés et travaillés.'],preparation:'Revoir : une frontière, une invasion, le nord, une structure, l’homme, une longueur, une tour de guet, important, contre, jamais.'},
+  {date:'2026-11-24',announceOn:'2026-11-20',subject:'Français',title:'Compréhension P2 — La balade au parc',scope:['Comprendre un mot grâce au contexte.','Identifier ce que remplace un pronom.'],preparation:'Lire un petit texte puis expliquer avec ses mots ce que l’on comprend.'},
+  {date:'2026-12-08',announceOn:'2026-12-04',subject:'Français',title:'Lexique P2 — Familles de mots et synonymes/contraires',scope:['Reconnaître des mots de la même famille.','Trouver des synonymes et des contraires.'],preparation:'Revoir les familles de mots, les synonymes et les contraires travaillés en classe.'},
+  {date:'2026-12-14',announceOn:'2026-12-07',subject:'Français',title:'Bilan des mots appris — L’Île de Pâques',scope:['Écrire correctement les 10 mots annoncés et travaillés.'],preparation:'Revoir : tailler, une paroi, un cratère, un volcan, l’intérieur, aligner, la côte, la mer, le long, un dos.'},
+  {date:'2026-12-15',announceOn:'2026-12-11',subject:'Français',title:'Production d’écrits 1 — Raconter dans l’ordre',scope:['Écrire 1 à 3 phrases compréhensibles.','Raconter les événements dans le bon ordre.'],preparation:'Aucune leçon à apprendre : relire simplement les connecteurs D’abord, Puis, Enfin.'},
+  {date:'2027-02-02',announceOn:'2027-01-29',subject:'Français',title:'Compréhension P3 — Le chat sous l’abri',scope:['Repérer l’idée importante.','Faire une inférence simple et la justifier avec le texte.'],preparation:'Lire attentivement et penser à chercher les indices dans le texte.'},
+  {date:'2027-02-04',announceOn:'2027-01-28',subject:'Français',title:'Bilan des mots appris — L’Opéra de Sydney',scope:['Écrire correctement les 10 mots annoncés et travaillés.'],preparation:'Revoir : accueillir, un magasin, un souvenir, un hall, une répétition, un studio, un spectacle, un théâtre, un coquillage, un restaurant.'},
+  {date:'2027-03-16',announceOn:'2027-03-12',subject:'Français',title:'Compréhension P4 — Le mystérieux sac bleu',scope:['Comprendre une information implicite.','Comprendre ce que ressent ou veut faire un personnage.'],preparation:'Lire attentivement et justifier ses réponses avec les indices du texte.'},
+  {date:'2027-03-30',announceOn:'2027-03-26',subject:'Français',title:'Production d’écrits 2 — Ajouter une précision et corriger',scope:['Écrire 1 à 3 phrases.','Ajouter une précision utile.','Corriger les erreurs signalées.'],preparation:'Aucune leçon à apprendre : penser à relire et à améliorer une phrase.'},
+  {date:'2027-04-01',announceOn:'2027-03-30',subject:'Français',title:'Lexique P4 — Sens des mots et expressions',scope:['Comprendre le sens d’un mot grâce à la phrase.','Comprendre une expression au sens figuré.'],preparation:'Revoir quelques mots et expressions rencontrés en classe.'},
+  {date:'2027-04-01',announceOn:'2027-03-25',subject:'Français',title:'Bilan des mots appris — Angkor Vat',scope:['Écrire correctement les 10 mots annoncés et travaillés.'],preparation:'Revoir : un tombeau, un chantier, un millier, un océan, un bassin, une paroi, un moine, le droit, un symbole, sculpter.'},
+  {date:'2027-05-20',announceOn:'2027-05-18',subject:'Français',title:'Compréhension P5 — Pourquoi les hérissons sortent-ils surtout la nuit ?',scope:['Rassembler plusieurs informations.','Relire pour vérifier et corriger sa compréhension.'],preparation:'Lire attentivement un petit documentaire et revenir au texte pour vérifier ses réponses.'},
+  {date:'2027-06-01',announceOn:'2027-05-28',subject:'Français',title:'Lexique P5 — Réseaux lexicaux et morphologie',scope:['Relier des mots selon leur sens ou leur famille.','Comprendre comment les mots sont construits.'],preparation:'Revoir les familles de mots et les regroupements de vocabulaire travaillés dans l’année.'},
+  {date:'2027-06-08',announceOn:'2027-06-04',subject:'Français',title:'Production d’écrits 3 — Écrire, relire et améliorer',scope:['Écrire 3 à 5 phrases.','Améliorer son texte.','Corriger les éléments signalés.'],preparation:'Aucune leçon à apprendre : penser à écrire, relire puis améliorer son texte.'}
+];
+function isFrenchEvaluation(ev){
+  const subject=String(ev&&ev.subject||'').toLowerCase();
+  const title=String(ev&&ev.title||'').toLowerCase();
+  return /^fran[cç]ais/.test(subject)||/(compréhension|lexique|vocabulaire|production d[’']écrits|mots appris|orthographe|grammaire|conjugaison)/.test(title);
+}
+function stripStaleFrenchEvaluations(item){
+  if(!item||typeof item!=='object')return item;
+  const clone={...item};
+  if(Array.isArray(clone.evaluations))clone.evaluations=clone.evaluations.filter(ev=>!isFrenchEvaluation(ev));
+  return clone;
+}
+function canonicalFrenchAnnouncementsForWeek(week){
+  if(!week)return [];
+  const start=String(week.start||''),end=String(week.end||'');
+  return PARENTS_FRENCH_EVALUATIONS.filter(ev=>ev.announceOn&&ev.announceOn>=start&&ev.announceOn<=end);
+}
+
 let upcomingTestPeriod=null;
 let remindersTestMode=false;
 
@@ -416,11 +457,16 @@ function schoolDayOffForDate(iso){
 function allEvaluations(){
   const out=[],seen=new Set();
   (D.weeks||[]).forEach(w=>(w.items||[]).forEach(it=>(it.evaluations||[]).forEach(ev=>{
-    if(!ev||!ev.date)return;
-    const key=`${ev.date}|${ev.subject||''}`;
+    if(!ev||!ev.date||isFrenchEvaluation(ev))return;
+    const key=`${ev.date}|${ev.subject||''}|${ev.title||''}`;
     if(seen.has(key))return;
     seen.add(key);out.push(ev);
   })));
+  PARENTS_FRENCH_EVALUATIONS.forEach(ev=>{
+    const key=`${ev.date}|${ev.subject||''}|${ev.title||''}`;
+    if(seen.has(key))return;
+    seen.add(key);out.push(ev);
+  });
   return out.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
 }
 function homeworkWeekCalendarHtml(week,sourceItems=[]){
@@ -635,7 +681,7 @@ function homeworkPhysicalRemindersHtml(week){
   </section>`;
 }
 function allEvaluationDates(){return [...new Set(allEvaluations().map(ev=>String(ev.date||'')).filter(Boolean))]}
-function renderHomework(){const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');if(!cur)return;if(!week){cur.innerHTML='<div class="homework-empty">Aucun devoir programmé.</div>';return}const sourceItems=Array.isArray(week.items)?week.items:[];let items=[...sourceItems];const periodTag=week.__period||'';const noSchool=noSchoolDateSet();items=items.filter(it=>!noSchool.has(String(it&&it.due||'')));const evalDates=allEvaluationDates();const weekEvalDates=evalDates.filter(d=>d>=week.start&&d<=week.end);const lightWeek=['p1','p2','p3','p4','p5'].includes(periodTag)&&weekEvalDates.length>0;if(lightWeek){items=items.filter(it=>{const hasOwnEvaluations=Array.isArray(it.evaluations)&&it.evaluations.length>0;return hasOwnEvaluations||!weekEvalDates.includes(String(it.due||''))})}const dayJItems=allEvaluations().filter(ev=>String(ev.date||'')>=week.start&&String(ev.date||'')<=week.end).map(ev=>({due:String(ev.date),evaluationToday:ev}));items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));const dates=`${esc(frDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(frDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;const head=`<div class="homework-week-head"><div><span>${esc(week.label||'Semaine en cours')}</span><h3>${dates}</h3>${week.theme?`<p class="homework-theme">${esc(week.theme)}</p>`:''}</div></div>`;const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);const calendar=schoolCalendarHtml(week);const practicalReminders=homeworkPhysicalRemindersHtml(week);const holidayRevisions=holidayRevisionHtml(week);if(!items.length){cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`;return}cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`}
+function renderHomework(){const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');if(!cur)return;if(!week){cur.innerHTML='<div class="homework-empty">Aucun devoir programmé.</div>';return}const sourceItems=(Array.isArray(week.items)?week.items:[]).map(stripStaleFrenchEvaluations);const frenchAnnouncements=canonicalFrenchAnnouncementsForWeek(week);let items=[...sourceItems];const periodTag=week.__period||'';const noSchool=noSchoolDateSet();items=items.filter(it=>!noSchool.has(String(it&&it.due||'')));const evalDates=allEvaluationDates();const weekEvalDates=evalDates.filter(d=>d>=week.start&&d<=week.end);const lightWeek=['p1','p2','p3','p4','p5'].includes(periodTag)&&weekEvalDates.length>0;if(lightWeek){items=items.filter(it=>{const hasOwnEvaluations=Array.isArray(it.evaluations)&&it.evaluations.length>0;return hasOwnEvaluations||!weekEvalDates.includes(String(it.due||''))})}const dayJItems=allEvaluations().filter(ev=>String(ev.date||'')>=week.start&&String(ev.date||'')<=week.end).map(ev=>({due:String(ev.date),evaluationToday:ev}));items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));const dates=`${esc(frDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(frDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;const head=`<div class="homework-week-head"><div><span>${esc(week.label||'Semaine en cours')}</span><h3>${dates}</h3>${week.theme?`<p class="homework-theme">${esc(week.theme)}</p>`:''}</div></div>`;const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);const calendar=schoolCalendarHtml(week);const practicalReminders=homeworkPhysicalRemindersHtml(week);const holidayRevisions=holidayRevisionHtml(week);const frenchAnnouncementsHtml=homeworkEvaluationsHtml(frenchAnnouncements,periodTag);if(!items.length){cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${frenchAnnouncementsHtml}<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`;return}cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${frenchAnnouncementsHtml}${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`}
 
 function setupHomeworkTest(){
   const btn=$('homeworkTestHotspot'),bar=$('homeworkTestBar'),label=$('homeworkTestLabel'),prev=$('homeworkTestPrev'),next=$('homeworkTestNext'),reset=$('homeworkTestReset');

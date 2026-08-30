@@ -1,4 +1,4 @@
-# Espace Parents CE2 — V34.82
+# Espace Parents CE2 — V35.26
 
 Site public séparé de l'espace professionnel Progressions CE2.
 
@@ -34,3 +34,5 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - V34.93 : étape 1 multilingue appliquée sur la vraie base V34.92. Ajout du bouton discret 🌐 entre l’icône familles et « Espace Parents », ordre 🇫🇷 Français · 🇦🇪 العربية · 🇪🇸 Español · 🇬🇧 English, mémorisation locale du choix, affichage RTL pour l’arabe et traduction des contenus rendus à l’écran. Le français reste la source et le repli de sécurité. Le filtre « À venir » exclut désormais les séances ordinaires comme « tournoi régulé » ou « présentation du chant ».
 
 - V34.94 : menu 🌐 compact sur ordinateur et téléphone. Sur mobile, largeur fixe 148 px et lignes resserrées ; le menu flotte au-dessus du contenu sans le déplacer. Fermeture après choix, clic/toucher extérieur, défilement, redimensionnement ou touche Échap.
+
+- V35.26 : audit global des devoirs après consolidation des évaluations de français V35.63. Les anciennes annonces de français embarquées dans les fichiers de devoirs sont filtrées et remplacées par un calendrier canonique : 5 compréhensions, 4 lexiques, 3 productions d’écrits et 4 bilans de mots. Les quatre bilans de mots affichent explicitement la liste des 10 mots annoncés. Les rappels du jour J restent sans devoir supplémentaire. Les données des autres matières restent inchangées.
