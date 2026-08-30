@@ -1,4 +1,4 @@
-# Espace Parents CE2 — V35.26
+# Espace Parents CE2 — V35.27
 
 Site public séparé de l'espace professionnel Progressions CE2.
 
@@ -36,3 +36,5 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - V34.94 : menu 🌐 compact sur ordinateur et téléphone. Sur mobile, largeur fixe 148 px et lignes resserrées ; le menu flotte au-dessus du contenu sans le déplacer. Fermeture après choix, clic/toucher extérieur, défilement, redimensionnement ou touche Échap.
 
 - V35.26 : audit global des devoirs après consolidation des évaluations de français V35.63. Les anciennes annonces de français embarquées dans les fichiers de devoirs sont filtrées et remplacées par un calendrier canonique : 5 compréhensions, 4 lexiques, 3 productions d’écrits et 4 bilans de mots. Les quatre bilans de mots affichent explicitement la liste des 10 mots annoncés. Les rappels du jour J restent sans devoir supplémentaire. Les données des autres matières restent inchangées.
+
+- V35.27 : synchronisation de la projection publique des dictées avec `dictees-ce2.js` V35.62 ; le chargement de `data/parents-dictees.js` passe de V34.96 à V35.62. Les séries Grande Muraille, Île de Pâques, Opéra de Sydney et Angkor Vat sont désormais cohérentes avec les bilans annoncés.
