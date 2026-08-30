@@ -1,4 +1,4 @@
-# Espace Parents CE2 — V35.30
+# Espace Parents CE2 — V35.31
 
 Site public séparé de l'espace professionnel Progressions CE2.
 
@@ -48,3 +48,6 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - Le rappel du jour reprend l’intitulé précis de l’évaluation.
 
 - V35.30 : calendrier des devoirs adapté à la semaine de classe sur 4 jours. Aucun devoir n’est affiché « Pour mercredi », samedi ou dimanche : une échéance du mercredi est rattachée au jeudi, et une échéance du week-end au lundi suivant. La règle est appliquée par le moteur à toutes les périodes P1 à P5, sans modifier les données pédagogiques sources.
+
+
+- V35.31 : harmonisation du bloc « La semaine en un coup d’œil » avec les couleurs de l’emploi du temps Progressions CE2. Français rose, mathématiques bleu, anglais violet, EPS vert, arts orange, sciences cyan, histoire jaune, EMC vert clair. Une évaluation conserve la couleur de sa matière et reçoit en plus un marqueur transversal rouge « 📝 Évaluation ». Une légende compacte est ajoutée sous la semaine.

@@ -1564,3 +1564,40 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
 .reminders-test-bar span{font-weight:800;color:#334f5d;min-width:190px;text-align:center}
 .reminders-test-bar button{border:1px solid #cedbe2;background:#fff;border-radius:9px;padding:6px 9px;font-weight:800;cursor:pointer}
 @media(max-width:620px){.reminders-test-bar span{min-width:0;flex:1 1 160px}.reminders-test-bar{gap:6px}}
+
+/* V35.31 — Semaine en un coup d’œil : couleurs identiques à l’emploi du temps Progressions CE2. */
+.homework-week-calendar__day--subject-francais{background:#fff1f2;border-color:#fecdd3;border-left:5px solid #e11d48}
+.homework-week-calendar__day--subject-maths{background:#eff6ff;border-color:#bfdbfe;border-left:5px solid #2563eb}
+.homework-week-calendar__day--subject-english{background:#f5f3ff;border-color:#ddd6fe;border-left:5px solid #7c3aed}
+.homework-week-calendar__day--subject-eps{background:#ecfdf5;border-color:#a7f3d0;border-left:5px solid #059669}
+.homework-week-calendar__day--subject-arts{background:#fff7ed;border-color:#fed7aa;border-left:5px solid #ea580c}
+.homework-week-calendar__day--subject-science{background:#ecfeff;border-color:#a5f3fc;border-left:5px solid #0891b2}
+.homework-week-calendar__day--subject-history{background:#fefce8;border-color:#fde68a;border-left:5px solid #ca8a04}
+.homework-week-calendar__day--subject-emc{background:#f7fee7;border-color:#d9f99d;border-left:5px solid #65a30d}
+.homework-week-calendar__day--subject-cham{background:#fdf4ff;border-color:#f5d0fe;border-left:5px solid #c026d3}
+.homework-week-calendar__day--subject-mixed{
+  background:linear-gradient(135deg,#fff1f2 0 33%,#eff6ff 33% 66%,#ecfdf5 66% 100%);
+  border-color:#cbd5e1;border-left:5px solid #64748b;
+}
+/* Une évaluation garde la couleur de sa matière ; le marqueur rouge est transversal. */
+.homework-week-calendar__day--evaluation{position:relative;box-shadow:inset 0 0 0 2px rgba(153,27,27,.18)}
+.homework-week-calendar__eval-badge{
+  align-self:flex-start;display:inline-flex;align-items:center;gap:3px;
+  padding:3px 6px;border-radius:999px;background:#991b1b;color:#fff;
+  font-size:9px;font-weight:900;line-height:1.1;box-shadow:0 1px 2px rgba(0,0,0,.08)
+}
+.homework-week-calendar__legend{
+  display:flex;flex-wrap:wrap;gap:5px 7px;margin-top:10px;padding-top:9px;border-top:1px dashed #e5dcf0
+}
+.homework-week-calendar__legend-item,.homework-week-calendar__legend-eval{
+  display:inline-flex;align-items:center;padding:3px 7px;border-radius:999px;font-size:9px;font-weight:850;border:1px solid transparent
+}
+.homework-week-calendar__legend-item--francais{background:#fff1f2;color:#9f1239;border-color:#fecdd3}
+.homework-week-calendar__legend-item--maths{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.homework-week-calendar__legend-item--english{background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe}
+.homework-week-calendar__legend-item--eps{background:#ecfdf5;color:#047857;border-color:#a7f3d0}
+.homework-week-calendar__legend-item--arts{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+.homework-week-calendar__legend-item--science{background:#ecfeff;color:#0e7490;border-color:#a5f3fc}
+.homework-week-calendar__legend-item--history{background:#fefce8;color:#a16207;border-color:#fde68a}
+.homework-week-calendar__legend-item--emc{background:#f7fee7;color:#4d7c0f;border-color:#d9f99d}
+.homework-week-calendar__legend-eval{background:#991b1b;color:#fff;border-color:#7f1d1d}
