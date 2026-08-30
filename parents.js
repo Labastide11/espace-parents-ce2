@@ -1193,6 +1193,63 @@ function scheduleRowsHtml(d){
     return `<div class="schedule-row${cls}"><time>${esc(r[0])}</time><div>${badges}<strong class="schedule-subject-title">${icon}<span>${esc(scheduleTr(r[1]))}</span></strong>${r[2]?`<small>${esc(r[2])}</small>`:''}</div></div>`;
   }).join('');
 }
+let scheduleWeekOffset=0;
+function scheduleBaseTarget(){
+  const t=scheduleTargetDate();
+  return t||new Date();
+}
+function scheduleDisplayedMonday(){
+  const base=EDT.mondayOf(scheduleBaseTarget());
+  return EDT.addDays(base,scheduleWeekOffset*7);
+}
+function scheduleWeekLabelFromMonday(monday){
+  const friday=EDT.addDays(monday,4);
+  const sameMonth=monday.getMonth()===friday.getMonth();
+  const left=frDate(monday,sameMonth?{day:'numeric'}:{day:'numeric',month:'short'});
+  const right=frDate(friday,{day:'numeric',month:'short'});
+  return `Semaine du ${left} au ${right}`;
+}
+function scheduleAvailableWeeks(){
+  const raw=window.PROGRESSIONS_EDT_DATA||{};
+  const weeks=[];
+  ['p1','p2','p3','p4','p5'].forEach(k=>{
+    const arr=raw[`${k}DetailedWeeks`];
+    if(!Array.isArray(arr))return;
+    arr.forEach(w=>{
+      const days=Array.isArray(w?.days)?w.days:[];
+      const dates=days.map(d=>frenchDateFromLabel(d?.[0])).filter(Boolean).sort((a,b)=>a-b);
+      if(!dates.length)return;
+      const monday=EDT.mondayOf(dates[0]);
+      const iso=isoLocal(monday);
+      if(!weeks.some(x=>x.iso===iso))weeks.push({iso,monday});
+    });
+  });
+  return weeks.sort((a,b)=>a.monday-b.monday);
+}
+function refreshScheduleWeekNav(){
+  const prev=$('schedulePrevWeek'),next=$('scheduleNextWeek'),sel=$('scheduleWeekSelect');
+  if(!prev||!next||!sel)return;
+  const weeks=scheduleAvailableWeeks();
+  const current=scheduleDisplayedMonday();
+  const currentIso=isoLocal(current);
+  sel.innerHTML=weeks.map(w=>`<option value="${esc(w.iso)}"${w.iso===currentIso?' selected':''}>${esc(scheduleWeekLabelFromMonday(w.monday))}</option>`).join('');
+  const idx=weeks.findIndex(w=>w.iso===currentIso);
+  prev.disabled=idx<=0;
+  next.disabled=idx<0||idx>=weeks.length-1;
+}
+function setupScheduleWeekNav(){
+  const prev=$('schedulePrevWeek'),next=$('scheduleNextWeek'),sel=$('scheduleWeekSelect');
+  if(!prev||!next||!sel||prev.dataset.bound==='1')return;
+  prev.dataset.bound=next.dataset.bound=sel.dataset.bound='1';
+  prev.addEventListener('click',()=>{scheduleWeekOffset-=1;renderSchedule();});
+  next.addEventListener('click',()=>{scheduleWeekOffset+=1;renderSchedule();});
+  sel.addEventListener('change',()=>{
+    const chosen=dateFromIso(sel.value);
+    const base=EDT.mondayOf(scheduleBaseTarget());
+    scheduleWeekOffset=Math.round((chosen-base)/(7*86400000));
+    renderSchedule();
+  });
+}
 function renderSchedule(){
   const today=new Date();today.setHours(12,0,0,0);
   const todayData=EDT.rowsForDate(today),todayInfo=todayData.noClass||null;
@@ -1219,9 +1276,12 @@ function renderSchedule(){
   }else{
     $('scheduleViewMessage').textContent=`${scheduleTr('Pas de classe aujourd’hui.')} ${scheduleTr('Prochain jour de classe')} : ${targetLabel}.`;
   }
-  $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(scheduleTr(frDate(target,{weekday:'long',day:'numeric',month:'long'})))}</h3>${scheduleRowsHtml(target)}</article>`;
-  const monday=EDT.mondayOf(target),days=[0,1,3,4].map(n=>EDT.addDays(monday,n));
-  $('parentsScheduleWeek').innerHTML=days.map(d=>`<article class="schedule-day${isoLocal(d)===isoLocal(target)?' schedule-day--selected':''}"><h3>${esc(scheduleTr(frDate(d,{weekday:'long',day:'numeric',month:'long'})))}</h3>${scheduleRowsHtml(d)}</article>`).join('');
+  const monday=scheduleDisplayedMonday(),days=[0,1,3,4].map(n=>EDT.addDays(monday,n));
+  const focus=scheduleWeekOffset===0?target:days[0];
+  $('parentsScheduleToday').innerHTML=`<article class="schedule-day schedule-day--today"><h3>${esc(scheduleTr(frDate(focus,{weekday:'long',day:'numeric',month:'long'})))}</h3>${scheduleRowsHtml(focus)}</article>`;
+  $('parentsScheduleWeek').innerHTML=days.map(d=>`<article class="schedule-day${isoLocal(d)===isoLocal(focus)?' schedule-day--selected':''}"><h3>${esc(scheduleTr(frDate(d,{weekday:'long',day:'numeric',month:'long'})))}</h3>${scheduleRowsHtml(d)}</article>`).join('');
+  setupScheduleWeekNav();
+  refreshScheduleWeekNav();
 }
 function showParentInfoPanel(target){
   const menu=$('parentsInfoMenu');

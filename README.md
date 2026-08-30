@@ -1,4 +1,4 @@
-# Espace Parents CE2 — V35.34
+# Espace Parents CE2 — V35.35
 
 Site public séparé de l'espace professionnel Progressions CE2.
 
@@ -56,4 +56,10 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 
 - V35.33 : l’emploi du temps détaillé reprend le double badge visuel des évaluations. Seules les lignes réellement identifiées comme évaluation/bilan sont marquées : `📝 Évaluation` + sous-domaine précis, avec la couleur de matière existante. Les séances ordinaires restent sobres et inchangées.
 
-- V35.34 : emploi du temps détaillé harmonisé à l’identique avec la palette de Progressions CE2 : Français rose, mathématiques bleu, anglais violet, EPS vert, arts orange, sciences cyan, histoire jaune, EMC vert clair et CHAM mauve. Chaque séance reconnue reçoit aussi l’icône de matière correspondante. Les évaluations conservent la couleur de leur matière et les doubles badges V35.32/V35.33.
+- V35.35 : emploi du temps détaillé harmonisé à l’identique avec la palette de Progressions CE2 : Français rose, mathématiques bleu, anglais violet, EPS vert, arts orange, sciences cyan, histoire jaune, EMC vert clair et CHAM mauve. Chaque séance reconnue reçoit aussi l’icône de matière correspondante. Les évaluations conservent la couleur de leur matière et les doubles badges V35.32/V35.33.
+
+
+## V35.35 — navigation entre les semaines dans l’emploi du temps Parents
+- Ajout de Semaine précédente / Choisir une semaine / Semaine suivante sous “Voir toute la semaine”.
+- Sélecteur construit à partir des semaines détaillées P1 à P5.
+- Navigation bornée aux semaines disponibles dans les données d’emploi du temps.

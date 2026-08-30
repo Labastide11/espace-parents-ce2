@@ -1659,3 +1659,15 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
 .schedule-row--evaluation .homework-evaluation-badges{margin:0 0 5px;gap:5px}
 .schedule-row--evaluation .homework-evaluation-badge{min-height:20px;padding:2px 7px;font-size:10.5px}
 @media(max-width:620px){.schedule-subject-icon{width:20px;height:20px;font-size:13px}.schedule-row--evaluation .homework-evaluation-badge{font-size:10px;padding:2px 6px}}
+
+
+/* V35.35 — navigation entre les semaines dans l'emploi du temps Parents */
+.schedule-week-nav{display:grid;grid-template-columns:auto minmax(230px,1fr) auto;gap:10px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid #ece6f3}
+.schedule-week-nav__btn,.schedule-week-nav__picker{min-height:42px;border:1px solid #d9cceb;border-radius:12px;background:#fff;color:#5e3a91;font-weight:900}
+.schedule-week-nav__btn{padding:9px 13px;cursor:pointer}
+.schedule-week-nav__btn:hover:not(:disabled){background:#f7f2fd}
+.schedule-week-nav__btn:disabled{opacity:.4;cursor:not-allowed}
+.schedule-week-nav__picker{display:flex;align-items:center;gap:8px;padding:6px 10px}
+.schedule-week-nav__picker span{white-space:nowrap}
+.schedule-week-nav__picker select{width:100%;min-width:0;border:0;background:transparent;color:#4b2d76;font:inherit;outline:none;cursor:pointer}
+@media(max-width:760px){.schedule-week-nav{grid-template-columns:1fr 1fr}.schedule-week-nav__picker{grid-column:1/-1;grid-row:1}.schedule-week-nav__btn{font-size:12px}}
