@@ -1601,3 +1601,22 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
 .homework-week-calendar__legend-item--history{background:#fefce8;color:#a16207;border-color:#fde68a}
 .homework-week-calendar__legend-item--emc{background:#f7fee7;color:#4d7c0f;border-color:#d9f99d}
 .homework-week-calendar__legend-eval{background:#991b1b;color:#fff;border-color:#7f1d1d}
+
+
+/* V35.32 — Double badge des évaluations : nature + sous-matière. */
+.homework-evaluation-badges{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:7px 0 6px}
+.homework-evaluation-badge{display:inline-flex;align-items:center;min-height:24px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:900;line-height:1.2;border:1px solid transparent;white-space:nowrap}
+.homework-evaluation-badge--evaluation{background:#a81f2b;color:#fff;border-color:#8d1721;box-shadow:0 1px 2px rgba(99,20,30,.12)}
+.homework-evaluation-badge--domain{background:#f5f3f7;color:#40354a;border-color:#ddd5e4}
+.homework-evaluation-badge--tone-francais{background:#fff0f4;color:#8d2948;border-color:#f1b9ca}
+.homework-evaluation-badge--tone-maths{background:#edf5ff;color:#235b9d;border-color:#b9d5f5}
+.homework-evaluation-badge--tone-anglais{background:#f4efff;color:#6140a2;border-color:#d6c7f4}
+.homework-evaluation-badge--tone-eps{background:#ecfbf1;color:#1f7950;border-color:#ace0c0}
+.homework-evaluation-badge--tone-arts{background:#fff3e9;color:#98572b;border-color:#f2c29e}
+.homework-evaluation-badge--tone-sciences{background:#eafcff;color:#267181;border-color:#aee2ea}
+.homework-evaluation-badge--tone-histoire{background:#fff9df;color:#806018;border-color:#ead68a}
+.homework-evaluation-badge--tone-geographie{background:#eef8f4;color:#2b6b59;border-color:#b8ddd0}
+.homework-evaluation-badge--tone-emc{background:#f3fae8;color:#58761e;border-color:#cfe6a6}
+.homework-evaluation-badge--tone-autre{background:#f4f4f6;color:#55515a;border-color:#d7d5da}
+.homework-card--today .homework-evaluation-badges{margin-top:2px;margin-bottom:9px}
+@media(max-width:620px){.homework-evaluation-badge{white-space:normal}}

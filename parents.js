@@ -1,3 +1,4 @@
+// V35.32 — Double badge des évaluations : 📝 Évaluation + sous-matière précise.
 // V35.29 — Le bandeau « Cette semaine » affiche uniquement les évaluations dont la date réelle appartient à la semaine affichée.
 // Les évaluations annoncées à l’avance mais prévues la semaine suivante sont séparées dans un bloc « À venir ».
 // V35.26 — Synchronisation canonique des évaluations de français avec Progressions CE2 V35.63.
@@ -673,6 +674,53 @@ function homeworkHibouHtml(value){
   }).join(' <span aria-hidden="true">·</span> ');
   return `<div class="homework-hibou">🦉 ${esc(intro)} ${links}</div>`;
 }
+
+// V35.32 — Double badge des évaluations : nature + domaine précis.
+// La couleur de matière reste portée par l'interface ; le second badge précise la sous-matière.
+function evaluationDomainMeta(ev){
+  const subject=String(ev&&ev.subject||'').toLowerCase();
+  const title=String(ev&&ev.title||'').toLowerCase();
+  const skills=[...(Array.isArray(ev&&ev.newSkills)?ev.newSkills:[]),...(Array.isArray(ev&&ev.reviewSkills)?ev.reviewSkills:[]),...(Array.isArray(ev&&ev.scope)?ev.scope:[])].join(' ').toLowerCase();
+  const text=`${subject} ${title} ${skills}`;
+  const meta=(key,label,tone)=>({key,label,tone});
+
+  // Français — le domaine précis prime sur le simple nom de matière.
+  if(/dict[ée]e|mots appris|autodict[ée]e|10 mots/.test(text))return meta('dictee','✏️ Dictée / mots appris','francais');
+  if(/compr[ée]hension|lecture|texte|inférence|information explicite|implicite/.test(text))return meta('lecture','📖 Lecture / compréhension','francais');
+  if(/lexique|vocabulaire|famille de mots|synonyme|contraire|ordre alphab[ée]tique/.test(text))return meta('lexique','🧠 Lexique / vocabulaire','francais');
+  if(/production d[’']?[ée]crits|production écrite|écrire .*phrase|raconter dans l'ordre|améliorer son texte/.test(text))return meta('ecriture','✍️ Production d’écrits','francais');
+  if(/orthographe/.test(text))return meta('orthographe','🔤 Orthographe','francais');
+  if(/grammaire|groupe nominal|sujet|verbe/.test(text)&&/fran[cç]ais/.test(subject))return meta('grammaire','📚 Grammaire','francais');
+  if(/conjugaison|présent|futur|imparfait|passé composé/.test(text)&&/fran[cç]ais/.test(subject))return meta('conjugaison','⏳ Conjugaison','francais');
+  if(/fluence|lecture orale|oral/.test(text)&&/fran[cç]ais/.test(subject))return meta('fluence','🗣️ Lecture orale / fluence','francais');
+
+  // Mathématiques — domaines CE2 lisibles par les familles.
+  if(/probl[èe]me/.test(text)&&/(calcul|addition|soustraction|multiplication|division|op[ée]ration)/.test(text))return meta('problemes-calcul','🧩 Problèmes / calcul','maths');
+  if(/fraction/.test(text))return meta('fractions','🍰 Fractions','maths');
+  if(/num[ée]ration|nombres?|d[ée]composer|comparer/.test(text)&&/(math|num)/.test(text))return meta('numeration','🔢 Numération','maths');
+  if(/g[ée]om[ée]tr|triangle|cercle|sym[ée]trie|solide/.test(text))return meta('geometrie','📐 Géométrie','maths');
+  if(/dur[ée]e|heure|temps|mesure|longueur|masse|monnaie|p[ée]rim[èe]tre/.test(text)&&/(math|temps|mesure)/.test(text))return meta('mesures','📏 Grandeurs / mesures','maths');
+  if(/donn[ée]es|tableau|graphique/.test(text))return meta('donnees','📊 Données','maths');
+  if(/calcul|op[ée]ration|addition|soustraction|multiplication|division|tables?/.test(text))return meta('calcul','➕ Calcul / opérations','maths');
+  if(/probl[èe]me/.test(text))return meta('problemes','🧩 Problèmes','maths');
+
+  // Autres matières.
+  if(/histoire|chronolog|frise|grandes p[ée]riodes/.test(text))return meta('histoire','🏺 Histoire / repères temporels','histoire');
+  if(/g[ée]ographie/.test(text))return meta('geographie','🌍 Géographie','geographie');
+  if(/sciences?|questionner le monde/.test(text))return meta('sciences','🔬 Sciences','sciences');
+  if(/anglais|english/.test(text))return meta('anglais','🇬🇧 Anglais','anglais');
+  if(/eps|sport|natation|piscine/.test(text))return meta('eps','🏃 EPS / Sport','eps');
+  if(/arts?|musique|arts visuels/.test(text))return meta('arts','🎨 Arts','arts');
+  if(/emc|enseignement moral|citoyen/.test(text))return meta('emc','🤝 EMC','emc');
+
+  const raw=String(ev&&ev.subject||'Autre domaine').trim();
+  return meta('autre',`📚 ${raw}`,'autre');
+}
+function evaluationBadgesHtml(ev){
+  const d=evaluationDomainMeta(ev);
+  return `<div class="homework-evaluation-badges" aria-label="Type et domaine de l'évaluation"><span class="homework-evaluation-badge homework-evaluation-badge--evaluation">📝 Évaluation</span><span class="homework-evaluation-badge homework-evaluation-badge--domain homework-evaluation-badge--tone-${esc(d.tone)}">${esc(d.label)}</span></div>`;
+}
+
 function homeworkEvaluationsHtml(list,periodTag='',titleOverride=''){
   const evaluations=Array.isArray(list)?list:[];
   if(!evaluations.length)return '';
@@ -691,7 +739,7 @@ function homeworkEvaluationsHtml(list,periodTag='',titleOverride=''){
     const scope=(!newSkills&&!reviewSkills&&Array.isArray(ev.scope)&&ev.scope.length)?`<ul>${ev.scope.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'';
     const prep=ev.preparation?`<p class="homework-evaluation-prep"><b>Pour se préparer :</b> ${esc(ev.preparation)}</p>`:'';
     const hibou=homeworkHibouHtml(ev.hibou);
-    return `<section class="homework-evaluation"><div class="homework-evaluation-head"><strong>${esc(ev.subject||'Évaluation')}</strong><span>${esc(dueLabel(ev.date))}</span></div>${ev.title?`<h4>${esc(ev.title)}</h4>`:''}${newSkills}${reviewSkills}${scope}${prep}${hibou}</section>`;
+    return `<section class="homework-evaluation"><div class="homework-evaluation-head"><strong>${esc(ev.subject||'Évaluation')}</strong><span>${esc(dueLabel(ev.date))}</span></div>${evaluationBadgesHtml(ev)}${ev.title?`<h4>${esc(ev.title)}</h4>`:''}${newSkills}${reviewSkills}${scope}${prep}${hibou}</section>`;
   }).join('')}</div>`;
 }
 function homeworkEvaluationTodayHtml(ev){
@@ -702,7 +750,7 @@ function homeworkEvaluationTodayHtml(ev){
   const label=title
     ? `Aujourd’hui : ${subject} — ${title}`
     : oral?`Aujourd’hui : bilan oral d’${subject}`:`Aujourd’hui : évaluation de ${subject}`;
-  return `<article class="homework-card homework-card--today"><div class="homework-date">${esc(dueLabel(ev.date))}</div><div class="homework-today"><b>⭐ ${esc(label)}</b><p>Aucun devoir supplémentaire aujourd’hui. Cette information rappelle simplement l’évaluation prévue.</p></div></article>`;
+  return `<article class="homework-card homework-card--today"><div class="homework-date">${esc(dueLabel(ev.date))}</div><div class="homework-today">${evaluationBadgesHtml(ev)}<b>⭐ ${esc(label)}</b><p>Aucun devoir supplémentaire aujourd’hui. Cette information rappelle simplement l’évaluation prévue.</p></div></article>`;
 }
 function homeworkSubjectMeta(task){
   const engine=window.DEVOIRS_ENGINE_CE2||{};
