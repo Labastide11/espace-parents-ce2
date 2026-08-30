@@ -1662,14 +1662,13 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
 
 
 /* V35.35 — navigation entre les semaines dans l'emploi du temps Parents */
-.schedule-week-nav{display:grid;grid-template-columns:minmax(165px,190px) minmax(320px,1fr) minmax(165px,190px);gap:14px;align-items:stretch;margin-top:14px;padding:14px 2px 2px;border-top:1px solid #ece6f3;max-width:880px;margin-left:auto;margin-right:auto}
-.schedule-week-nav__btn,.schedule-week-nav__picker{box-sizing:border-box;min-height:46px;border:1px solid #d9cceb;border-radius:14px;background:#fff;color:#5e3a91;font-weight:900;box-shadow:0 2px 7px rgba(79,45,118,.06)}
-.schedule-week-nav__btn{display:flex;align-items:center;justify-content:center;padding:10px 14px;cursor:pointer;font:inherit;white-space:nowrap;transition:background .15s ease,border-color .15s ease,transform .15s ease}
-.schedule-week-nav__btn:hover:not(:disabled){background:#f7f2fd;border-color:#bda9da;transform:translateY(-1px)}
-.schedule-week-nav__btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
-.schedule-week-nav__picker{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:10px;padding:6px 8px 6px 14px}
-.schedule-week-nav__picker>span{white-space:nowrap}
-.schedule-week-nav__picker select{width:100%;min-width:0;height:34px;border:1px solid #e0d5ef;border-radius:10px;background:#faf7fe;color:#4b2d76;font:inherit;font-weight:800;padding:4px 30px 4px 10px;outline:none;cursor:pointer}
-.schedule-week-nav__picker select:focus{border-color:#9c79ca;box-shadow:0 0 0 3px rgba(94,58,145,.10)}
-@media(max-width:900px){.schedule-week-nav{grid-template-columns:minmax(140px,170px) minmax(280px,1fr) minmax(140px,170px);gap:10px}.schedule-week-nav__btn{font-size:13px;padding-left:9px;padding-right:9px}}
-@media(max-width:760px){.schedule-week-nav{grid-template-columns:1fr 1fr;max-width:none}.schedule-week-nav__picker{grid-column:1/-1;grid-row:1}.schedule-week-nav__btn{font-size:12px;white-space:normal}.schedule-week-nav__picker{grid-template-columns:1fr}.schedule-week-nav__picker>span{margin-bottom:4px}}
+.schedule-week-nav{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px auto 2px;padding:10px 12px;border-top:1px solid #ece6f3;max-width:760px;background:#fbf9fe;border-radius:14px}
+.schedule-week-nav__btn{border:0;background:transparent;color:#6a4699;font:inherit;font-weight:800;padding:8px 10px;border-radius:10px;cursor:pointer;white-space:nowrap;transition:background .15s ease,color .15s ease}
+.schedule-week-nav__btn:hover:not(:disabled){background:#f0e8fa;color:#4f2f7d}
+.schedule-week-nav__btn:disabled{opacity:.35;cursor:not-allowed}
+.schedule-week-nav__picker{display:flex;align-items:center;gap:7px;min-width:0;border:1px solid #d9cceb;background:#fff;border-radius:11px;padding:5px 8px;box-shadow:0 1px 4px rgba(79,45,118,.05)}
+.schedule-week-nav__calendar{flex:0 0 auto;font-size:15px;line-height:1}
+.schedule-week-nav__picker select{max-width:330px;min-width:230px;height:32px;border:0;background:transparent;color:#4b2d76;font:inherit;font-weight:850;padding:2px 24px 2px 2px;outline:none;cursor:pointer}
+.schedule-week-nav__picker:focus-within{border-color:#9c79ca;box-shadow:0 0 0 3px rgba(94,58,145,.08)}
+@media(max-width:760px){.schedule-week-nav{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-width:none}.schedule-week-nav__picker{grid-column:1/-1;grid-row:1;justify-content:center}.schedule-week-nav__picker select{min-width:0;max-width:none;width:100%}.schedule-week-nav__btn{font-size:12px;padding:8px 6px}.schedule-week-nav__btn--prev{justify-self:stretch}.schedule-week-nav__btn--next{justify-self:stretch}}
+@media(max-width:430px){.schedule-week-nav__btn span{display:none}.schedule-week-nav__btn{font-size:18px}.schedule-week-nav__picker select{font-size:13px}}

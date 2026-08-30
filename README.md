@@ -1,4 +1,4 @@
-# Espace Parents CE2 — V35.35
+# Espace Parents CE2 — V35.37
 
 Site public séparé de l'espace professionnel Progressions CE2.
 
@@ -71,3 +71,6 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 - Le menu de sélection est intégré visuellement au bloc central au lieu d’apparaître comme un contrôle natif isolé.
 - Le responsive mobile reste conservé.
 - Les cache-busters de `parents.css` et `parents.js` passent en V35.36 afin de forcer le chargement des nouveaux styles.
+
+
+- V35.37 : navigation entre les semaines rendue compacte et intégrée : une seule barre légère, boutons précédent/suivant discrets et sélecteur central sans libellé redondant.
