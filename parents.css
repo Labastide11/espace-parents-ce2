@@ -1620,3 +1620,11 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
 .homework-evaluation-badge--tone-autre{background:#f4f4f6;color:#55515a;border-color:#d7d5da}
 .homework-card--today .homework-evaluation-badges{margin-top:2px;margin-bottom:9px}
 @media(max-width:620px){.homework-evaluation-badge{white-space:normal}}
+
+
+/* V35.33 — badges d'évaluation dans l'emploi du temps détaillé */
+.schedule-row--evaluation{background:linear-gradient(90deg,#fff9fa,#fff);border-left:4px solid #a81f2b;padding-left:7px}
+.schedule-row--evaluation .homework-evaluation-badges{margin:0 0 5px;gap:5px}
+.schedule-row--evaluation .homework-evaluation-badge{min-height:20px;padding:2px 7px;font-size:10.5px}
+.schedule-row--evaluation strong{color:#39214f}
+@media(max-width:620px){.schedule-row--evaluation .homework-evaluation-badge{font-size:10px;padding:2px 6px}}

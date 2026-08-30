@@ -1137,10 +1137,49 @@ function noClassHtml(d){
   const detail=info.type==='ferie'||info.type==='pont' ? `${info.label} — pas de classe` : (info.message||info.label);
   return `<div class="schedule-no-class schedule-no-class--${esc(info.type||'none')}"><span>${esc(info.icon||'📅')}</span><div><strong>${esc(scheduleTr(detail))}</strong>${info.type==='vacances'?`<small>${esc(scheduleTr('Les élèves ne sont pas attendus à l’école.'))}</small>`:''}</div></div>`;
 }
+// V35.33 — badges d'évaluation dans l'emploi du temps détaillé Parents.
+function scheduleRowEvaluation(d,row){
+  const iso=isoLocal(d);
+  const text=`${row?.[1]||''} ${row?.[2]||''}`.toLowerCase();
+  // Une ligne ordinaire ne reçoit jamais de badge, même si une autre évaluation a lieu le même jour.
+  if(!/évaluation|evaluation|bilan|contrôle|controle/.test(text))return null;
+  const candidates=allEvaluations().filter(ev=>String(ev?.date||'')===iso);
+  if(!candidates.length)return null;
+  if(candidates.length===1)return candidates[0];
+
+  // Quand plusieurs évaluations ont lieu le même jour (ex. 1er avril), on cherche le domaine qui correspond à la ligne.
+  const score=(ev)=>{
+    const d=evaluationDomainMeta(ev);
+    const hay=`${ev?.subject||''} ${ev?.title||''} ${ev?.scope||''} ${d?.label||''}`.toLowerCase();
+    let n=0;
+    const tests=[
+      [/dictée|dictee|mots appris|mots annoncés|mots annonces/,/dictée|dictee|mots appris|mots annoncés|mots annonces/],
+      [/lexique|vocabulaire|famille de mots|synonyme|contraire/,/lexique|vocabulaire|famille de mots|synonyme|contraire/],
+      [/compréhension|comprehension|lecture/,/compréhension|comprehension|lecture/],
+      [/production|écrit|ecrit|rédaction|redaction/,/production|écrit|ecrit|rédaction|redaction/],
+      [/géométr|geometr|triangle|cercle|symétr/,/géométr|geometr|triangle|cercle|symétr/],
+      [/temps|mesure|durée|duree|heure|longueur|masse/,/temps|mesure|durée|duree|heure|longueur|masse/],
+      [/problème|probleme/,/problème|probleme/],
+      [/calcul|opération|operation|addition|soustraction|multiplication|division|tables?/,/calcul|opération|operation|addition|soustraction|multiplication|division|tables?/],
+      [/histoire|chronolog|frise/,/histoire|chronolog|frise/],
+      [/science/,/science/]
+    ];
+    tests.forEach(([a,b])=>{if(a.test(text)&&b.test(hay))n+=3;});
+    const subj=weekGlanceSubjectKey(ev?.subject||'');
+    if(subj&&weekGlanceSubjectKey(text)===subj)n+=1;
+    return n;
+  };
+  return [...candidates].sort((a,b)=>score(b)-score(a))[0]||null;
+}
 function scheduleRowsHtml(d){
   const data=EDT.rowsForDate(d);
   if(!data.rows.length)return noClassHtml(d);
-  return data.rows.map(r=>`<div class="schedule-row"><time>${esc(r[0])}</time><div><strong>${esc(scheduleTr(r[1]))}</strong>${r[2]?`<small>${esc(r[2])}</small>`:''}</div></div>`).join('');
+  return data.rows.map(r=>{
+    const ev=scheduleRowEvaluation(d,r);
+    const badges=ev?evaluationBadgesHtml(ev):'';
+    const cls=ev?' schedule-row--evaluation':'';
+    return `<div class="schedule-row${cls}"><time>${esc(r[0])}</time><div>${badges}<strong>${esc(scheduleTr(r[1]))}</strong>${r[2]?`<small>${esc(r[2])}</small>`:''}</div></div>`;
+  }).join('');
 }
 function renderSchedule(){
   const today=new Date();today.setHours(12,0,0,0);
