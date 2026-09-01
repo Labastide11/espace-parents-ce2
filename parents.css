@@ -1710,7 +1710,7 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
 
 
 
-/* V35.42 — Infos de la classe : permanent + « En ce moment » */
+/* V35.43 — Infos de la classe : permanent + « En ce moment » */
 .parents-reminders-section{
   margin-top:14px;
   border:1px solid #e1e8e4;
@@ -1772,3 +1772,15 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
     align-items:flex-start;
   }
 }
+
+
+/* V35.43 — rappels « En ce moment » : rendez-vous détaillés */
+.parents-reminders-section--now .parents-info-list li{
+  margin-bottom:10px;
+  line-height:1.45;
+}
+.parents-reminders-section--now .parents-info-list li:last-child{
+  margin-bottom:0;
+}
+/* /V35.43 */
+

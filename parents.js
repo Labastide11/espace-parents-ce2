@@ -974,7 +974,7 @@ function renderFlashTicker(){
   ticker.setAttribute('aria-label',`Information de dernière minute : ${msg}. Ouvrir les infos de la classe.`);
 }
 
-// V35.42 — Rappels unifiés : permanent + « En ce moment ».
+// V35.43 — Rappels unifiés : permanent + « En ce moment ».
 function isoToday(){
   const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -1022,6 +1022,18 @@ function reminderCollections(){
 
   // Informations ponctuelles de rentrée.
   const datedDefaults=[
+    {
+      text:'🏫 Réunion d’information sur la coopérative scolaire — Lundi 7 septembre, de 17h05 à 17h15, sous le préau des CE2. Le Directeur présentera le fonctionnement de la coopérative scolaire : à quoi elle sert, comment elle est financée et de quelle manière elle permet de soutenir les projets, sorties et activités proposés aux élèves au cours de l’année.',
+      start:'2026-08-31',
+      end:'2026-09-07',
+      source:'rappel'
+    },
+    {
+      text:'👨‍🏫 Réunion de rentrée avec l’enseignant — Lundi 7 septembre, de 17h15 à 18h15, dans la classe de votre enfant. Cette réunion permettra de présenter le fonctionnement de la classe, l’organisation de l’année, les apprentissages, les devoirs et les outils utilisés. Je présenterai également l’application « Espace Parents » et son fonctionnement, afin que chacun puisse l’utiliser facilement. Un temps sera enfin consacré aux premières questions des familles.',
+      start:'2026-08-31',
+      end:'2026-09-07',
+      source:'rappel'
+    },
     {text:'🔵 Évaluations nationales CE2 — du 7 au 18 septembre 2026.',start:'2026-09-01',end:'2026-09-18',source:'rappel'},
     {text:'📝 Merci de remplir, dater et signer la fiche de renseignements.',start:'2026-09-01',end:'2026-09-18',source:'rappel'}
   ];
