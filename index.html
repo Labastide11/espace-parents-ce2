@@ -7,8 +7,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents — Progressions CE2 V35.41</title>
-  <link rel="stylesheet" href="parents.css?v=35.41">
+  <title>Espace Parents — Progressions CE2 V35.42</title>
+  <link rel="stylesheet" href="parents.css?v=35.42">
 </head>
 <body>
 <main class="parents-main">
@@ -133,10 +133,6 @@
         <img src="assets/parents/info_rappels.png?v=33.93" alt="" aria-hidden="true">
         <strong>Rappels du cahier de liaison</strong><small>Mots, rappels et documents</small>
       </button>
-      <button class="parents-info-card" type="button" data-parent-info-target="upcoming">
-        <img src="assets/parents/info_a_venir.png?v=33.93" alt="" aria-hidden="true">
-        <strong>À venir</strong><small>Dates et événements</small>
-      </button>
       <button class="parents-info-card" type="button" data-parent-info-target="material">
         <img src="assets/parents/info_materiel.png?v=33.93" alt="" aria-hidden="true">
         <strong>Matériel scolaire</strong><small>Fournitures et réserve</small>
@@ -159,30 +155,29 @@
   <section class="parents-info-detail" data-parent-info-panel="rappels" hidden>
     <div class="parents-info-detail__toolbar"><button class="parents-back" type="button" data-parent-info-menu>← Infos de la classe</button></div>
     <div class="parents-info-block parents-info-important" id="parentsInfoRappels">
-      <h3><button id="remindersTestHotspot" class="reminders-test-icon" type="button" aria-label="Icône Rappels — appui long enseignant" aria-expanded="false">📌</button> Rappels des mots du cahier de liaison</h3>
+      <h3><button id="remindersTestHotspot" class="reminders-test-icon" type="button" aria-label="Icône Rappels — appui long enseignant" aria-expanded="false">📌</button> Rappels du cahier de liaison</h3>
       <div id="remindersTestBar" class="reminders-test-bar" hidden>
         <strong>🧪 Test rappels</strong>
         <span id="remindersTestLabel">Affichage automatique</span>
         <button id="remindersTestReset" type="button">Retour auto</button>
       </div>
-      <p class="parents-info-help">Retrouvez ici les principaux mots et informations transmis dans le cahier de liaison.</p>
-      <div id="parentsImportantList"></div>
-    </div>
-  </section>
+      <p class="parents-info-help">Les repères permanents restent visibles toute l’année. Les informations ponctuelles apparaissent lorsqu’elles deviennent utiles.</p>
 
-  <section class="parents-info-detail" data-parent-info-panel="upcoming" hidden>
-    <div class="parents-info-detail__toolbar"><button class="parents-back" type="button" data-parent-info-menu>← Infos de la classe</button></div>
-    <div class="parents-info-block parents-info-upcoming" id="parentsInfoUpcoming">
-      <h3><button id="upcomingTestHotspot" class="upcoming-test-icon" type="button" aria-label="Icône À venir — appui long enseignant" aria-expanded="false">📅</button> À venir</h3>
-      <div id="upcomingTestBar" class="upcoming-test-bar" hidden>
-        <strong>🧪 Test À venir</strong>
-        <button id="upcomingTestPrev" type="button" aria-label="Période précédente">←</button>
-        <span id="upcomingTestLabel"></span>
-        <button id="upcomingTestNext" type="button" aria-label="Période suivante">→</button>
-        <button id="upcomingTestReset" type="button">Retour auto</button>
+      <div class="parents-reminders-section">
+        <div class="parents-reminders-section__head">
+          <span class="parents-reminders-section__icon" aria-hidden="true">📌</span>
+          <div><strong>À retenir toute l’année</strong><small>Les repères qui restent valables au quotidien</small></div>
+        </div>
+        <div id="parentsPermanentList"></div>
       </div>
-      <p class="parents-info-help">Sorties, rencontres et temps forts déjà programmés dans Progressions CE2, complétés si besoin par l’enseignant.</p>
-      <div id="parentsUpcomingList"></div>
+
+      <div class="parents-reminders-section parents-reminders-section--now">
+        <div class="parents-reminders-section__head">
+          <span class="parents-reminders-section__icon" aria-hidden="true">🕒</span>
+          <div><strong>En ce moment</strong><small>Les informations et dates utiles maintenant</small></div>
+        </div>
+        <div id="parentsCurrentList"></div>
+      </div>
     </div>
   </section>
 
@@ -256,7 +251,7 @@
   <p id="parentsTeacherStatsState" class="parents-teacher-stats__state"></p>
  </div>
 </section>
-<footer>Progressions CE2 · Espace Parents · V35.41</footer>
+<footer>Progressions CE2 · Espace Parents · V35.42</footer>
 <!-- Interface Parents séparée ; Progressions CE2 reste la source unique des données partagées. -->
 <script src="https://labastide11.github.io/progressions-ce2/data.js?v=34.38"></script>
 <script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p1.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p2.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p3.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p4.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p5.js?v=35.66"></script>
@@ -265,5 +260,5 @@
 <script src="https://labastide11.github.io/progressions-ce2/data/parents-dictees.js?v=35.62"></script>
 <script src="parents.js?v=35.38"></script>
 <script src="i18n.js?v=35.34"></script>
-<script src="parents-analytics.js?v=35.41"></script>
+<script src="parents-analytics.js?v=35.42"></script>
 </body></html>

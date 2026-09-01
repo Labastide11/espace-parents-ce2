@@ -61,7 +61,6 @@ function evaluationsForDisplayedWeek(week){
     .sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.subject||'').localeCompare(String(b.subject||''),'fr'));
 }
 
-let upcomingTestPeriod=null;
 let remindersTestMode=false;
 
 // V35.25 — Informations familles dynamiques via API Apps Script V2.9.
@@ -975,82 +974,110 @@ function renderFlashTicker(){
   ticker.setAttribute('aria-label',`Information de dernière minute : ${msg}. Ouvrir les infos de la classe.`);
 }
 
-// V35.24 — rappels datés + mode test enseignant par appui long sur 📌.
+// V35.42 — Rappels unifiés : permanent + « En ce moment ».
 function isoToday(){
   const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-function activeImportantItems(){
-  // V35.38 — rappels de rentrée utiles aux familles.
-  // Ils restent visibles pendant la période des évaluations nationales, puis disparaissent automatiquement.
-  const rentréeItems=[
-    {text:'🔵 Évaluations nationales CE2 — du 7 au 18 septembre 2026.',start:'2026-09-01',end:'2026-09-18'},
-    {text:'🎒 Merci de vérifier que la trousse reste complète.',start:'2026-09-01',end:'2026-09-18'},
-    {text:'📝 Merci de remplir, dater et signer la fiche de renseignements.',start:'2026-09-01',end:'2026-09-18'}
-  ];
-  const today=isoToday();
-  const rentréeActifs=rentréeItems.filter(item=>remindersTestMode||((!item.start||today>=item.start)&&(!item.end||today<=item.end)));
-
-  // En mode normal, le Google Sheet reste la source prioritaire dès que l’API a répondu.
-  // Les rappels de rentrée ci-dessus sont simplement ajoutés, sans supprimer les messages publiés via l’API.
-  const remote=parentApiItems('rappel');
-  let items;
-  if(remote!==null&&!remindersTestMode){
-    items=remote.map(item=>({
-      text:parentApiText(item),
-      start:String(item?.date_debut||''),
-      end:String(item?.date_fin||''),
-      priority:String(item?.priorite||'Normal')
-    })).filter(item=>item.text);
-  }else{
-    const raw=Array.isArray(I.importantItems)&&I.importantItems.length?I.importantItems:infoLines(W.items);
-    items=raw.map(item=>{
-      if(typeof item==='string')return {text:item,start:'',end:''};
-      return {text:String(item?.text||item?.label||'').trim(),start:String(item?.start||'').trim(),end:String(item?.end||'').trim()};
-    }).filter(item=>{
-      if(!item.text)return false;
-      if(remindersTestMode)return true;
-      if(item.start&&today<item.start)return false;
-      if(item.end&&today>item.end)return false;
-      return true;
-    });
-  }
-
-  // Déduplication souple pour éviter un doublon si le même rappel est aussi saisi dans le Google Sheet.
-  const seen=new Set();
-  return [...rentréeActifs,...items].filter(item=>{
-    const key=String(item.text||'').toLocaleLowerCase('fr').replace(/\s+/g,' ').trim();
-    if(!key||seen.has(key))return false;
-    seen.add(key);
-    return true;
-  });
+function isoShiftDays(iso,days){
+  const m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!m)return '';
+  const d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]),12,0,0);
+  d.setDate(d.getDate()+Number(days||0));
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-// V34.92 — « À venir » : plus d’extraction automatique des séances ordinaires de l’emploi du temps.
-function renderClassInfo(){
-  const important=activeImportantItems();
-  $('parentsImportantList').innerHTML=important.length
-    ? `<ul class="parents-info-list">${important.map(x=>`<li>${esc(x.text)}</li>`).join('')}</ul>`
-    : '<div class="parents-info-empty">Aucun rappel important publié pour le moment.</div>';
+function isOneWeekAdvanceEvent(item){
+  const text=String(item?.text||'').toLocaleLowerCase('fr');
+  return /\b(sortie|réunion|reunion|rencontre)\b/.test(text);
+}
+function normalizeReminderItem(item,source='rappel'){
+  if(typeof item==='string')return {text:item,start:'',end:'',source};
+  return {
+    text:String(item?.text||item?.label||parentApiText(item)||'').trim(),
+    start:String(item?.start||item?.date_debut||'').trim(),
+    end:String(item?.end||item?.date_fin||'').trim(),
+    priority:String(item?.priority||item?.priorite||'Normal'),
+    source
+  };
+}
+function itemVisibleNow(item,today){
+  if(remindersTestMode)return true;
+  const start=item.start||'';
+  const end=item.end||start||'';
 
-  let manual=[];
+  if(!start&&!end)return false;
+
+  // Sorties / réunions / rencontres : apparition 7 jours avant.
+  const visibleStart=(start&&isOneWeekAdvanceEvent(item))?isoShiftDays(start,-7):start;
+
+  if(visibleStart&&today<visibleStart)return false;
+  if(end&&today>end)return false;
+  return true;
+}
+function reminderCollections(){
+  // Repères permanents : pas de date de début/fin.
+  const permanentDefaults=[
+    {text:'🎒 Merci de vérifier régulièrement que la trousse reste complète.',start:'',end:'',source:'permanent'}
+  ];
+
+  // Informations ponctuelles de rentrée.
+  const datedDefaults=[
+    {text:'🔵 Évaluations nationales CE2 — du 7 au 18 septembre 2026.',start:'2026-09-01',end:'2026-09-18',source:'rappel'},
+    {text:'📝 Merci de remplir, dater et signer la fiche de renseignements.',start:'2026-09-01',end:'2026-09-18',source:'rappel'}
+  ];
+
+  const today=isoToday();
+  const remoteReminders=parentApiItems('rappel');
   const remoteUpcoming=parentApiItems('avenir');
-  if(remoteUpcoming!==null&&!upcomingTestPeriod){
-    manual=remoteUpcoming.map(parentApiText).filter(Boolean);
-  }else{
-    // Mode test historique : navigation P1→P5 conservée sur les données locales.
-    const activeUpcomingPeriod=upcomingTestPeriod||periodKey();
-    const periodItems=I.upcomingByPeriod&&Array.isArray(I.upcomingByPeriod[activeUpcomingPeriod])?I.upcomingByPeriod[activeUpcomingPeriod]:[];
-    manual=infoLines(periodItems.length?periodItems:(I.upcomingItems?.length?I.upcomingItems:L.items));
+
+  let localItems=[];
+  if(remoteReminders===null||remindersTestMode){
+    const raw=Array.isArray(I.importantItems)&&I.importantItems.length?I.importantItems:infoLines(W.items);
+    localItems=raw.map(item=>normalizeReminderItem(item,'rappel'));
   }
-  const manualHtml=manual.map(x=>`<article class="parents-upcoming-item parents-upcoming-item--manual"><span class="parents-upcoming-dot">•</span><div><span>${esc(x)}</span></div></article>`).join('');
-  $('parentsUpcomingList').innerHTML=manualHtml
-    ? manualHtml
-    : '<div class="parents-info-empty">Aucun temps fort particulier n’est encore annoncé pour cette période.</div>';
-  const testLabel=$('upcomingTestLabel');
-  if(testLabel){
-    const key=upcomingTestPeriod||periodKey();
-    testLabel.textContent=`${LEARNING_PERIOD_DATES[key]?.label||key.toUpperCase()}${upcomingTestPeriod?' · mode test':' · affichage automatique'}`;
-  }
+
+  const apiReminderItems=(remoteReminders!==null&&!remindersTestMode)
+    ? remoteReminders.map(item=>normalizeReminderItem(item,'rappel'))
+    : [];
+
+  // Les anciennes entrées « avenir » sont désormais absorbées dans « En ce moment ».
+  // Elles doivent être datées pour être affichées automatiquement.
+  const apiUpcomingItems=(remoteUpcoming!==null&&!remindersTestMode)
+    ? remoteUpcoming.map(item=>normalizeReminderItem(item,'avenir'))
+    : [];
+
+  const all=[...permanentDefaults,...datedDefaults,...apiReminderItems,...apiUpcomingItems,...localItems]
+    .filter(item=>item.text);
+
+  const permanent=[];
+  const current=[];
+  const seen=new Set();
+
+  all.forEach(item=>{
+    const key=String(item.text||'').toLocaleLowerCase('fr').replace(/\s+/g,' ').trim();
+    if(!key||seen.has(key))return;
+    seen.add(key);
+
+    if(!item.start&&!item.end){
+      permanent.push(item);
+      return;
+    }
+    if(itemVisibleNow(item,today))current.push(item);
+  });
+
+  return {permanent,current};
+}
+function renderReminderList(id,items,emptyText){
+  const root=$(id);
+  if(!root)return;
+  root.innerHTML=items.length
+    ? `<ul class="parents-info-list">${items.map(x=>`<li>${esc(x.text)}</li>`).join('')}</ul>`
+    : `<div class="parents-info-empty">${esc(emptyText)}</div>`;
+}
+function renderClassInfo(){
+  const groups=reminderCollections();
+  renderReminderList('parentsPermanentList',groups.permanent,'Aucun rappel permanent publié pour le moment.');
+  renderReminderList('parentsCurrentList',groups.current,'Aucune information ponctuelle à signaler pour le moment.');
 
   // V35.20 — ne plus afficher l'ancien lien « mots aux parents » devenu obsolète.
   const docs=(Array.isArray(I.documents)?I.documents:[]).filter(d=>{
@@ -1098,48 +1125,6 @@ function setupRemindersTest(){
   reset?.addEventListener('click',()=>{remindersTestMode=false;refresh();});
 }
 
-function setupUpcomingTest(){
-  const btn=$('upcomingTestHotspot'),bar=$('upcomingTestBar'),label=$('upcomingTestLabel'),prev=$('upcomingTestPrev'),next=$('upcomingTestNext'),reset=$('upcomingTestReset');
-  if(!btn||!bar)return;
-  const keys=['p1','p2','p3','p4','p5'];
-  let timer=null;
-  function currentIndex(){
-    const key=upcomingTestPeriod||periodKey();
-    const i=keys.indexOf(key);
-    return i>=0?i:0;
-  }
-  function refresh(){
-    const key=upcomingTestPeriod||periodKey();
-    if(label)label.textContent=`${LEARNING_PERIOD_DATES[key]?.label||key.toUpperCase()}${upcomingTestPeriod?' · mode test':' · affichage automatique'}`;
-    renderClassInfo();
-  }
-  function show(){
-    bar.hidden=false;
-    btn.setAttribute('aria-expanded','true');
-    if(!upcomingTestPeriod)upcomingTestPeriod=keys[currentIndex()];
-    refresh();
-  }
-  const start=()=>{clearTimeout(timer);timer=setTimeout(show,1200)};
-  const cancel=()=>clearTimeout(timer);
-  ['pointerdown','touchstart'].forEach(e=>btn.addEventListener(e,start,{passive:true}));
-  ['pointerup','pointercancel','pointerleave','touchend'].forEach(e=>btn.addEventListener(e,cancel,{passive:true}));
-  prev?.addEventListener('click',()=>{
-    const i=currentIndex();
-    upcomingTestPeriod=keys[(i-1+keys.length)%keys.length];
-    refresh();
-  });
-  next?.addEventListener('click',()=>{
-    const i=currentIndex();
-    upcomingTestPeriod=keys[(i+1)%keys.length];
-    refresh();
-  });
-  reset?.addEventListener('click',()=>{
-    upcomingTestPeriod=null;
-    bar.hidden=true;
-    btn.setAttribute('aria-expanded','false');
-    renderClassInfo();
-  });
-}
 function frDate(d,opts={weekday:'long',day:'numeric',month:'long',year:'numeric'}){return new Intl.DateTimeFormat('fr-FR',opts).format(d).replace(/^./,c=>c.toUpperCase())}
 // V35.21 — emploi du temps cible : structure + matieres, descriptions detaillees en francais.
 function scheduleTr(text){
@@ -1400,7 +1385,6 @@ function init(){
   bindHolidayRevisionPreviews();
   setupHomeworkTest();
   setupRemindersTest();
-  setupUpcomingTest();
   loadParentsInfoApi().then(ok=>{
     if(!ok)return;
     renderFlashTicker();
