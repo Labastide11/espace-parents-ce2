@@ -1,3 +1,4 @@
+// V35.38 — Rappels de rentrée affichés dans l’Espace Parents jusqu’au 18 septembre 2026.
 // V35.32 — Double badge des évaluations : 📝 Évaluation + sous-matière précise.
 // V35.29 — Le bandeau « Cette semaine » affiche uniquement les évaluations dont la date réelle appartient à la semaine affichée.
 // Les évaluations annoncées à l’avance mais prévues la semaine suivante sont séparées dans un bloc « À venir ».
@@ -980,27 +981,47 @@ function isoToday(){
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function activeImportantItems(){
-  // En mode normal, le Google Sheet devient la source prioritaire dès que l’API a répondu.
-  // Le mode test enseignant historique reste disponible sur les données de secours locales.
+  // V35.38 — rappels de rentrée utiles aux familles.
+  // Ils restent visibles pendant la période des évaluations nationales, puis disparaissent automatiquement.
+  const rentréeItems=[
+    {text:'🔵 Évaluations nationales CE2 — du 7 au 18 septembre 2026.',start:'2026-09-01',end:'2026-09-18'},
+    {text:'🎒 Merci de vérifier que la trousse reste complète.',start:'2026-09-01',end:'2026-09-18'},
+    {text:'📝 Merci de remplir, dater et signer la fiche de renseignements.',start:'2026-09-01',end:'2026-09-18'}
+  ];
+  const today=isoToday();
+  const rentréeActifs=rentréeItems.filter(item=>remindersTestMode||((!item.start||today>=item.start)&&(!item.end||today<=item.end)));
+
+  // En mode normal, le Google Sheet reste la source prioritaire dès que l’API a répondu.
+  // Les rappels de rentrée ci-dessus sont simplement ajoutés, sans supprimer les messages publiés via l’API.
   const remote=parentApiItems('rappel');
+  let items;
   if(remote!==null&&!remindersTestMode){
-    return remote.map(item=>({
+    items=remote.map(item=>({
       text:parentApiText(item),
       start:String(item?.date_debut||''),
       end:String(item?.date_fin||''),
       priority:String(item?.priorite||'Normal')
     })).filter(item=>item.text);
+  }else{
+    const raw=Array.isArray(I.importantItems)&&I.importantItems.length?I.importantItems:infoLines(W.items);
+    items=raw.map(item=>{
+      if(typeof item==='string')return {text:item,start:'',end:''};
+      return {text:String(item?.text||item?.label||'').trim(),start:String(item?.start||'').trim(),end:String(item?.end||'').trim()};
+    }).filter(item=>{
+      if(!item.text)return false;
+      if(remindersTestMode)return true;
+      if(item.start&&today<item.start)return false;
+      if(item.end&&today>item.end)return false;
+      return true;
+    });
   }
-  const raw=Array.isArray(I.importantItems)&&I.importantItems.length?I.importantItems:infoLines(W.items);
-  const today=isoToday();
-  return raw.map(item=>{
-    if(typeof item==='string')return {text:item,start:'',end:''};
-    return {text:String(item?.text||item?.label||'').trim(),start:String(item?.start||'').trim(),end:String(item?.end||'').trim()};
-  }).filter(item=>{
-    if(!item.text)return false;
-    if(remindersTestMode)return true;
-    if(item.start&&today<item.start)return false;
-    if(item.end&&today>item.end)return false;
+
+  // Déduplication souple pour éviter un doublon si le même rappel est aussi saisi dans le Google Sheet.
+  const seen=new Set();
+  return [...rentréeActifs,...items].filter(item=>{
+    const key=String(item.text||'').toLocaleLowerCase('fr').replace(/\s+/g,' ').trim();
+    if(!key||seen.has(key))return false;
+    seen.add(key);
     return true;
   });
 }

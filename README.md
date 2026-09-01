@@ -74,3 +74,10 @@ Adresse attendue : `https://labastide11.github.io/espace-parents-ce2/`
 
 
 - V35.37 : navigation entre les semaines rendue compacte et intégrée : une seule barre légère, boutons précédent/suivant discrets et sélecteur central sans libellé redondant.
+
+
+## V35.38 — Rappels de rentrée
+- Évaluations nationales CE2 : du 7 au 18 septembre 2026.
+- Vérification de la trousse.
+- Fiche de renseignements à remplir, dater et signer.
+- Affichage automatique du 1er au 18 septembre 2026 et fusion avec les rappels issus de l’API Infos Parents.
