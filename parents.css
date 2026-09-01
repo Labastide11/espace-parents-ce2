@@ -1672,3 +1672,16 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
 .schedule-week-nav__picker:focus-within{border-color:#9c79ca;box-shadow:0 0 0 3px rgba(94,58,145,.08)}
 @media(max-width:760px){.schedule-week-nav{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-width:none}.schedule-week-nav__picker{grid-column:1/-1;grid-row:1;justify-content:center}.schedule-week-nav__picker select{min-width:0;max-width:none;width:100%}.schedule-week-nav__btn{font-size:12px;padding:8px 6px}.schedule-week-nav__btn--prev{justify-self:stretch}.schedule-week-nav__btn--next{justify-self:stretch}}
 @media(max-width:430px){.schedule-week-nav__btn span{display:none}.schedule-week-nav__btn{font-size:18px}.schedule-week-nav__picker select{font-size:13px}}
+
+/* Fiche fournitures scolaires — CE2 de Monsieur Cotty */
+.parents-material-sheet{
+  display:block;
+  width:min(100%,980px);
+  height:auto;
+  margin:0 auto;
+  border-radius:16px;
+}
+@media (max-width:640px){
+  .parents-info-material{padding:8px;}
+  .parents-material-sheet{border-radius:10px;}
+}
