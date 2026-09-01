@@ -1697,3 +1697,14 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
 .parents-teacher-stats__toggle input{width:20px;height:20px;margin-top:2px;accent-color:#6e45a7}.parents-teacher-stats__toggle span{display:grid;gap:4px}.parents-teacher-stats__toggle small{color:#71647f;line-height:1.35}
 .parents-teacher-stats__state{margin:14px 0 0!important;padding:10px 12px;border-radius:12px;background:#f3edfb;font-weight:850}body.parents-teacher-stats-open{overflow:hidden}
 /* /V35.39 */
+
+
+/* V35.40 — grande illustration = zone d'appui long enseignant */
+#parentsTeacherStatsTrigger{
+  touch-action:manipulation;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+/* /V35.40 */
+
