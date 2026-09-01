@@ -1685,3 +1685,15 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
   .parents-info-material{padding:8px;}
   .parents-material-sheet{border-radius:10px;}
 }
+/* V35.39 — mode enseignant statistiques */
+.parents-dashboard__date{cursor:default;user-select:none;-webkit-user-select:none}
+.parents-teacher-stats{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;padding:18px;background:rgba(35,24,55,.48);backdrop-filter:blur(3px)}
+.parents-teacher-stats[hidden]{display:none!important}
+.parents-teacher-stats__dialog{position:relative;width:min(520px,calc(100vw - 28px));padding:24px 22px 22px;border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(44,31,76,.28);border:1px solid #e1d7f0;color:#3f3153}
+.parents-teacher-stats__kicker{margin:0 0 4px;color:#7652a5;font-size:12px;font-weight:950;letter-spacing:.12em}
+.parents-teacher-stats__dialog h2{margin:0 42px 8px 0;color:#41256f}.parents-teacher-stats__dialog>p{line-height:1.45}
+.parents-teacher-stats__close{position:absolute;right:14px;top:14px;width:38px;height:38px;border-radius:50%;border:1px solid #d9cbea;background:#fff;color:#5d3a86;font-size:24px;cursor:pointer}
+.parents-teacher-stats__toggle{display:flex;gap:12px;align-items:flex-start;margin-top:16px;padding:15px;border:1px solid #e2d7f1;border-radius:16px;background:#faf7ff}
+.parents-teacher-stats__toggle input{width:20px;height:20px;margin-top:2px;accent-color:#6e45a7}.parents-teacher-stats__toggle span{display:grid;gap:4px}.parents-teacher-stats__toggle small{color:#71647f;line-height:1.35}
+.parents-teacher-stats__state{margin:14px 0 0!important;padding:10px 12px;border-radius:12px;background:#f3edfb;font-weight:850}body.parents-teacher-stats-open{overflow:hidden}
+/* /V35.39 */
