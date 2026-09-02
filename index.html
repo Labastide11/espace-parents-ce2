@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents — Progressions CE2 V35.44</title>
+  <title>Espace Parents — Progressions CE2 V35.45</title>
   <link rel="stylesheet" href="parents.css?v=35.43">
   <style id="parents-meetings-v3544">
     .parents-meetings-focus{margin:14px 0 20px}
@@ -227,7 +227,7 @@
  </div>
 </section>
 
-<footer>Progressions CE2 · Espace Parents · V35.44</footer>
+<footer>Progressions CE2 · Espace Parents · V35.45</footer>
 
 <script src="https://labastide11.github.io/progressions-ce2/data.js?v=34.38"></script>
 <script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p1.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p2.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p3.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p4.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p5.js?v=35.66"></script>
@@ -246,4 +246,73 @@
   if(new Date()>=end) box.hidden=true;
 })();
 </script>
+
+<!-- V35.45 — Nettoyage des doublons réunions dans En ce moment -->
+<script id="parents-current-remove-meeting-duplicates-v3545">
+(function(){
+  'use strict';
+
+  function normalizeText(s){
+    return String(s || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+
+  function isMeetingDuplicate(text){
+    var t = normalizeText(text);
+    return (
+      t.indexOf('reunion d’information sur la cooperative scolaire') !== -1 ||
+      t.indexOf("reunion d'information sur la cooperative scolaire") !== -1 ||
+      t.indexOf('reunion de rentree avec l’enseignant') !== -1 ||
+      t.indexOf("reunion de rentree avec l'enseignant") !== -1
+    );
+  }
+
+  function cleanCurrentList(){
+    var host = document.getElementById('parentsCurrentList');
+    if(!host) return;
+
+    var candidates = host.querySelectorAll('li, article, .card, .parents-reminder, p, div');
+    Array.prototype.forEach.call(candidates, function(el){
+      if(el === host) return;
+      if(isMeetingDuplicate(el.textContent)){
+        var li = el.closest ? el.closest('li') : null;
+        var target = li || el;
+        if(target && target.parentNode && target !== host){
+          target.parentNode.removeChild(target);
+        }
+      }
+    });
+  }
+
+  function boot(){
+    cleanCurrentList();
+
+    var host = document.getElementById('parentsCurrentList');
+    if(!host) return;
+
+    if(window.MutationObserver){
+      var observer = new MutationObserver(function(){
+        cleanCurrentList();
+      });
+      observer.observe(host,{childList:true,subtree:true});
+    }
+
+    [300,800,1500,3000].forEach(function(delay){
+      setTimeout(cleanCurrentList,delay);
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded',boot);
+  }else{
+    boot();
+  }
+})();
+</script>
+<!-- /V35.45 — Nettoyage des doublons réunions dans En ce moment -->
+
 </body></html>
