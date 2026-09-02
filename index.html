@@ -7,8 +7,40 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents — Progressions CE2 V35.43</title>
+  <title>Espace Parents — Progressions CE2 V35.44</title>
   <link rel="stylesheet" href="parents.css?v=35.43">
+  <style id="parents-meetings-v3544">
+    .parents-meetings-focus{margin:14px 0 20px}
+    .parents-meetings-focus[hidden]{display:none!important}
+    .parents-meetings-intro{display:flex;align-items:flex-start;gap:11px;margin-bottom:12px}
+    .parents-meetings-intro__icon{font-size:30px;line-height:1}
+    .parents-meetings-intro h3{margin:0 0 3px;color:#17335f;font-size:clamp(20px,2.3vw,27px);line-height:1.15}
+    .parents-meetings-intro p{margin:0;color:#526174;font-size:15px}
+    .parents-meetings-date{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 14px;padding:12px 16px;border-radius:14px;background:linear-gradient(135deg,#0d3473,#0b2c63);color:#fff;font-weight:900;font-size:clamp(17px,2vw,22px);text-align:center}
+    .parents-meetings-grid{display:grid;gap:14px}
+    .parents-meeting-card{position:relative;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;padding:16px 18px;border:2px solid;border-radius:16px}
+    .parents-meeting-card--info{border-color:#4e8df5;background:linear-gradient(135deg,#f1f7ff,#fff);color:#17335f}
+    .parents-meeting-card--important{border-color:#f39a24;background:linear-gradient(135deg,#fff7e8,#fffdf8);color:#6d3308;box-shadow:0 8px 20px rgba(243,154,36,.12)}
+    .parents-meeting-card__icon{width:52px;height:52px;display:grid;place-items:center;border-radius:50%;font-size:27px;color:#fff}
+    .parents-meeting-card--info .parents-meeting-card__icon{background:#4e8df5}
+    .parents-meeting-card--important .parents-meeting-card__icon{background:#ee7203}
+    .parents-meeting-card__badge{display:inline-block;margin-bottom:6px;padding:4px 10px;border-radius:999px;color:#fff;font-size:12px;line-height:1;font-weight:900;letter-spacing:.03em}
+    .parents-meeting-card--info .parents-meeting-card__badge{background:#2370dc}
+    .parents-meeting-card--important .parents-meeting-card__badge{background:#ee7203}
+    .parents-meeting-card h4{margin:0 0 7px;font-size:clamp(17px,1.8vw,21px);line-height:1.25}
+    .parents-meeting-card--info h4{color:#173e82}
+    .parents-meeting-card--important h4{color:#d95e00}
+    .parents-meeting-card p{margin:4px 0;line-height:1.45}
+    .parents-meeting-card__place{font-weight:800;color:#172033}
+    .parents-meeting-card__stamp{position:absolute;right:15px;top:15px;transform:rotate(3deg);padding:6px 9px;border:2px solid #ee7203;border-radius:9px;color:#d95e00;background:#fffaf2;font-weight:900;font-size:13px}
+    .parents-meetings-note{display:flex;align-items:center;gap:10px;margin-top:14px;padding:11px 14px;border:1.5px solid #72c98d;border-radius:13px;background:#f0fbf3;color:#14682f}
+    @media(max-width:640px){
+      .parents-meeting-card{grid-template-columns:1fr;padding:14px}
+      .parents-meeting-card__icon{width:42px;height:42px;font-size:22px}
+      .parents-meeting-card__stamp{position:static;display:inline-block;transform:none;margin-top:7px}
+      .parents-meetings-date{font-size:17px}
+    }
+  </style>
 </head>
 <body>
 <main class="parents-main">
@@ -23,72 +55,33 @@
 </div>
     <img id="parentsTeacherStatsTrigger" class="parents-dashboard__banner" src="assets/parents/illustration_portail_parents_bandeau.png?v=33.69" alt="" aria-hidden="true">
   </div>
-
   <button id="parentsFlashTicker" class="parents-flash-ticker" type="button" data-parent-view="info" hidden aria-label="Ouvrir l'information de dernière minute">
     <span class="parents-flash-ticker__badge">⚡ Info</span>
-    <span class="parents-flash-ticker__viewport" aria-hidden="true">
-      <span class="parents-flash-ticker__track">
-        <span class="parents-flash-ticker__text" id="parentsFlashTickerText"></span>
-        <span class="parents-flash-ticker__separator">•</span>
-        <span class="parents-flash-ticker__text" id="parentsFlashTickerTextCopy"></span>
-        <span class="parents-flash-ticker__separator">•</span>
-      </span>
-    </span>
+    <span class="parents-flash-ticker__viewport" aria-hidden="true"><span class="parents-flash-ticker__track"><span class="parents-flash-ticker__text" id="parentsFlashTickerText"></span><span class="parents-flash-ticker__separator">•</span><span class="parents-flash-ticker__text" id="parentsFlashTickerTextCopy"></span><span class="parents-flash-ticker__separator">•</span></span></span>
   </button>
-
   <div class="parents-quick-grid" role="navigation" aria-label="Rubriques de l’espace Parents">
-    <button class="parents-quick-card parents-quick-card--homework" type="button" data-parent-view="homework">
-      <span class="parents-quick-card__icon" aria-hidden="true"><img src="assets/parents/icon_devoirs_v2.png?v=33.69" alt=""></span>
-      <span class="parents-quick-card__label">Devoirs</span>
-      <small>10 à 15 minutes</small>
-    </button>
-    <button class="parents-quick-card parents-quick-card--info" type="button" data-parent-view="info">
-      <span class="parents-quick-card__icon" aria-hidden="true"><img src="assets/parents/icon_info_parents.png?v=33.69" alt=""></span>
-      <span class="parents-quick-card__label">Infos de la classe</span>
-      <small>Rappels · dates · documents</small>
-    </button>
-    <button class="parents-quick-card" type="button" data-parent-view="schedule">
-      <span class="parents-quick-card__icon" aria-hidden="true"><img src="assets/parents/icon_emploi_du_temps_v2.png?v=33.69" alt=""></span>
-      <span class="parents-quick-card__label">Emploi du temps</span>
-      <small id="scheduleQuickHint">Aujourd’hui</small>
-    </button>
-    <button class="parents-quick-card" type="button" data-parent-view="learning">
-      <span class="parents-quick-card__icon" aria-hidden="true"><img src="assets/parents/icon_apprentissages_v2.png?v=33.69" alt=""></span>
-      <span class="parents-quick-card__label">Ce que nous apprenons</span>
-      <small>Objectifs de la période</small>
-    </button>
+    <button class="parents-quick-card parents-quick-card--homework" type="button" data-parent-view="homework"><span class="parents-quick-card__icon" aria-hidden="true"><img src="assets/parents/icon_devoirs_v2.png?v=33.69" alt=""></span><span class="parents-quick-card__label">Devoirs</span><small>10 à 15 minutes</small></button>
+    <button class="parents-quick-card parents-quick-card--info" type="button" data-parent-view="info"><span class="parents-quick-card__icon" aria-hidden="true"><img src="assets/parents/icon_info_parents.png?v=33.69" alt=""></span><span class="parents-quick-card__label">Infos de la classe</span><small>Rappels · dates · documents</small></button>
+    <button class="parents-quick-card" type="button" data-parent-view="schedule"><span class="parents-quick-card__icon" aria-hidden="true"><img src="assets/parents/icon_emploi_du_temps_v2.png?v=33.69" alt=""></span><span class="parents-quick-card__label">Emploi du temps</span><small id="scheduleQuickHint">Aujourd’hui</small></button>
+    <button class="parents-quick-card" type="button" data-parent-view="learning"><span class="parents-quick-card__icon" aria-hidden="true"><img src="assets/parents/icon_apprentissages_v2.png?v=33.69" alt=""></span><span class="parents-quick-card__label">Ce que nous apprenons</span><small>Objectifs de la période</small></button>
   </div>
 </section>
 
 <section class="parents-view" id="parentsViewSchedule" data-parent-panel="schedule" hidden>
-  <div class="parents-view__toolbar">
-    <button class="parents-back" type="button" data-parent-home>← Accueil Parents</button>
-    <span id="schedulePeriod" class="small-badge"></span>
-  </div>
-  <div class="section-title">
-    <div><span class="eyebrow" id="scheduleEyebrow">Aujourd’hui</span><h2>🗓️ Emploi du temps</h2></div>
-    <p id="scheduleViewMessage"></p>
-  </div>
+  <div class="parents-view__toolbar"><button class="parents-back" type="button" data-parent-home>← Accueil Parents</button><span id="schedulePeriod" class="small-badge"></span></div>
+  <div class="section-title"><div><span class="eyebrow" id="scheduleEyebrow">Aujourd’hui</span><h2>🗓️ Emploi du temps</h2></div><p id="scheduleViewMessage"></p></div>
   <div id="parentsScheduleToday" class="parents-schedule-today"></div>
-  <details class="schedule-week-details">
-    <summary>Voir toute la semaine</summary>
-    <div id="parentsScheduleWeek" class="parents-schedule"></div>
-  </details>
+  <details class="schedule-week-details"><summary>Voir toute la semaine</summary><div id="parentsScheduleWeek" class="parents-schedule"></div></details>
   <nav class="schedule-week-nav" aria-label="Navigation entre les semaines">
     <button type="button" id="schedulePrevWeek" class="schedule-week-nav__btn schedule-week-nav__btn--prev" aria-label="Semaine précédente">← <span>Semaine précédente</span></button>
-    <label class="schedule-week-nav__picker" aria-label="Choisir une semaine">
-      <span class="schedule-week-nav__calendar" aria-hidden="true">📅</span>
-      <select id="scheduleWeekSelect" aria-label="Choisir une semaine"></select>
-    </label>
+    <label class="schedule-week-nav__picker" aria-label="Choisir une semaine"><span class="schedule-week-nav__calendar" aria-hidden="true">📅</span><select id="scheduleWeekSelect" aria-label="Choisir une semaine"></select></label>
     <button type="button" id="scheduleNextWeek" class="schedule-week-nav__btn schedule-week-nav__btn--next" aria-label="Semaine suivante"><span>Semaine suivante</span> →</button>
   </nav>
 </section>
 
 <section class="parents-view" id="parentsViewHomework" data-parent-panel="homework" hidden>
   <div class="parents-view__toolbar homework-toolbar"><button class="parents-back" type="button" data-parent-home>← Accueil Parents</button></div>
-  <div class="section-title">
-    <div><span class="eyebrow">Temps de travail prévu : 10 à 15 minutes</span><h2><button id="homeworkTestHotspot" class="homework-test-icon" type="button" aria-label="Icône Devoirs" aria-expanded="false">📚</button> <span id="homeworkTitleLabel">Devoirs</span></h2></div>
-  </div>
+  <div class="section-title"><div><span class="eyebrow">Temps de travail prévu : 10 à 15 minutes</span><h2><button id="homeworkTestHotspot" class="homework-test-icon" type="button" aria-label="Icône Devoirs" aria-expanded="false">📚</button> <span id="homeworkTitleLabel">Devoirs</span></h2></div></div>
   <div class="homework-intro">
     <p id="homeworkIntroHello"><strong>Bonjour,</strong></p>
     <p id="homeworkIntroP1">À la maison, les devoirs restent <strong>courts et simples</strong> : quelques minutes de lecture, de mémorisation ou un petit entraînement oral pour revoir tranquillement ce qui a été travaillé en classe.</p>
@@ -98,57 +91,26 @@
     <p class="homework-signature"><strong>Cordialement,<br>M.Cotty</strong></p>
   </div>
   <div id="homeworkCurrent" class="homework-current"></div>
-  <div id="homeworkTestBar" class="homework-test-bar" hidden>
-    <strong>🧪 Test devoirs</strong>
-    <button id="homeworkTestPrev" type="button" aria-label="Semaine précédente">←</button>
-    <span id="homeworkTestLabel"></span>
-    <button id="homeworkTestNext" type="button" aria-label="Semaine suivante">→</button>
-    <button id="homeworkTestReset" type="button">Retour auto</button>
-  </div>
+  <div id="homeworkTestBar" class="homework-test-bar" hidden><strong>🧪 Test devoirs</strong><button id="homeworkTestPrev" type="button" aria-label="Semaine précédente">←</button><span id="homeworkTestLabel"></span><button id="homeworkTestNext" type="button" aria-label="Semaine suivante">→</button><button id="homeworkTestReset" type="button">Retour auto</button></div>
 </section>
 
 <section class="parents-view" id="parentsViewLearning" data-parent-panel="learning" hidden>
   <div class="parents-view__toolbar"><button class="parents-back" type="button" data-parent-home>← Accueil Parents</button></div>
-  <div class="section-title">
-    <div><span class="eyebrow">Les apprentissages de la période</span><h2>🎒 Ce que nous apprenons</h2><p id="learningPeriodDates" class="learning-period-dates"></p></div>
-    <p>Ces objectifs viennent directement des progressions de la classe et évoluent avec la période.</p>
-  </div>
+  <div class="section-title"><div><span class="eyebrow">Les apprentissages de la période</span><h2>🎒 Ce que nous apprenons</h2><p id="learningPeriodDates" class="learning-period-dates"></p></div><p>Ces objectifs viennent directement des progressions de la classe et évoluent avec la période.</p></div>
   <div id="learningGrid" class="learning-grid"></div>
-  <details class="parents-secondary-learning">
-    <summary>Voir aussi : grandir ensemble</summary>
-    <div id="togetherLearning" class="together-grid"></div>
-  </details>
+  <details class="parents-secondary-learning"><summary>Voir aussi : grandir ensemble</summary><div id="togetherLearning" class="together-grid"></div></details>
 </section>
 
 <section class="parents-view parents-info-view" id="parentsViewInfo" data-parent-panel="info" hidden>
   <div id="parentsInfoMenu" class="parents-info-menu">
     <div class="parents-view__toolbar"><button class="parents-back" type="button" data-parent-home>← Accueil Parents</button></div>
-    <div class="section-title parents-info-title">
-      <div><span class="eyebrow">Cahier de liaison &amp; informations</span><h2>📣 Infos de la classe</h2></div>
-    </div>
-
-
+    <div class="section-title parents-info-title"><div><span class="eyebrow">Cahier de liaison &amp; informations</span><h2>📣 Infos de la classe</h2></div></div>
     <div class="parents-info-card-grid" role="navigation" aria-label="Rubriques des informations de la classe">
-      <button class="parents-info-card" type="button" data-parent-info-target="rappels">
-        <img src="assets/parents/info_rappels.png?v=33.93" alt="" aria-hidden="true">
-        <strong>Rappels du cahier de liaison</strong><small>Mots, rappels et documents</small>
-      </button>
-      <button class="parents-info-card" type="button" data-parent-info-target="material">
-        <img src="assets/parents/info_materiel.png?v=33.93" alt="" aria-hidden="true">
-        <strong>Matériel scolaire</strong><small>Fournitures et réserve</small>
-      </button>
-      <button class="parents-info-card" type="button" data-parent-info-target="help">
-        <img src="assets/parents/info_aider.png?v=33.93" alt="" aria-hidden="true">
-        <strong>Aider mon enfant</strong><small>Conseils et accompagnement</small>
-      </button>
-      <button class="parents-info-card" type="button" data-parent-info-target="digital">
-        <img src="assets/parents/info_ecrans.png?v=33.93" alt="" aria-hidden="true">
-        <strong>Écrans &amp; numérique</strong><small>Repères pour le numérique</small>
-      </button>
-      <button class="parents-info-card" type="button" data-parent-info-target="resources">
-        <img src="assets/parents/info_ressources.png?v=33.93" alt="" aria-hidden="true">
-        <strong>Ressources utiles</strong><small>PDF, liens et documents</small>
-      </button>
+      <button class="parents-info-card" type="button" data-parent-info-target="rappels"><img src="assets/parents/info_rappels.png?v=33.93" alt="" aria-hidden="true"><strong>Rappels du cahier de liaison</strong><small>Mots, rappels et documents</small></button>
+      <button class="parents-info-card" type="button" data-parent-info-target="material"><img src="assets/parents/info_materiel.png?v=33.93" alt="" aria-hidden="true"><strong>Matériel scolaire</strong><small>Fournitures et réserve</small></button>
+      <button class="parents-info-card" type="button" data-parent-info-target="help"><img src="assets/parents/info_aider.png?v=33.93" alt="" aria-hidden="true"><strong>Aider mon enfant</strong><small>Conseils et accompagnement</small></button>
+      <button class="parents-info-card" type="button" data-parent-info-target="digital"><img src="assets/parents/info_ecrans.png?v=33.93" alt="" aria-hidden="true"><strong>Écrans &amp; numérique</strong><small>Repères pour le numérique</small></button>
+      <button class="parents-info-card" type="button" data-parent-info-target="resources"><img src="assets/parents/info_ressources.png?v=33.93" alt="" aria-hidden="true"><strong>Ressources utiles</strong><small>PDF, liens et documents</small></button>
     </div>
   </div>
 
@@ -156,26 +118,46 @@
     <div class="parents-info-detail__toolbar"><button class="parents-back" type="button" data-parent-info-menu>← Infos de la classe</button></div>
     <div class="parents-info-block parents-info-important" id="parentsInfoRappels">
       <h3><button id="remindersTestHotspot" class="reminders-test-icon" type="button" aria-label="Icône Rappels — appui long enseignant" aria-expanded="false">📌</button> Rappels du cahier de liaison</h3>
-      <div id="remindersTestBar" class="reminders-test-bar" hidden>
-        <strong>🧪 Test rappels</strong>
-        <span id="remindersTestLabel">Affichage automatique</span>
-        <button id="remindersTestReset" type="button">Retour auto</button>
-      </div>
+      <div id="remindersTestBar" class="reminders-test-bar" hidden><strong>🧪 Test rappels</strong><span id="remindersTestLabel">Affichage automatique</span><button id="remindersTestReset" type="button">Retour auto</button></div>
       <p class="parents-info-help">Les repères permanents restent visibles toute l’année. Les informations ponctuelles apparaissent lorsqu’elles deviennent utiles.</p>
 
-      <div class="parents-reminders-section">
-        <div class="parents-reminders-section__head">
-          <span class="parents-reminders-section__icon" aria-hidden="true">📌</span>
-          <div><strong>À retenir toute l’année</strong><small>Les repères qui restent valables au quotidien</small></div>
+      <!-- V35.44 — Mise en avant des rendez-vous du lundi 7 septembre -->
+      <section id="parentsMeetingsMonday7" class="parents-meetings-focus" aria-label="Rendez-vous importants du lundi 7 septembre">
+        <div class="parents-meetings-intro">
+          <div class="parents-meetings-intro__icon" aria-hidden="true">📣</div>
+          <div><h3>À ne pas manquer cette semaine</h3><p>Voici les deux rendez-vous du lundi 7 septembre à retenir.</p></div>
         </div>
+        <div class="parents-meetings-date">📅 Lundi 7 septembre — Deux rendez-vous à retenir</div>
+        <div class="parents-meetings-grid">
+          <article class="parents-meeting-card parents-meeting-card--info">
+            <div class="parents-meeting-card__icon" aria-hidden="true">ℹ️</div>
+            <div>
+              <span class="parents-meeting-card__badge">INFO</span>
+              <h4>17h05–17h15 — Point d’information sur la coopérative scolaire, avec le Directeur</h4>
+              <p class="parents-meeting-card__place">📍 Sous le préau des CE2.</p>
+              <p>Présentation rapide du fonctionnement de la coopérative scolaire, de son financement et de la manière dont elle soutient les projets, sorties et activités proposés aux élèves.</p>
+            </div>
+          </article>
+          <article class="parents-meeting-card parents-meeting-card--important">
+            <div class="parents-meeting-card__icon" aria-hidden="true">👨‍👩‍👧</div>
+            <div>
+              <span class="parents-meeting-card__badge">IMPORTANT</span>
+              <h4>17h15–18h15 — Réunion de rentrée avec l’enseignant</h4>
+              <p class="parents-meeting-card__place">📍 Dans la classe de votre enfant.</p>
+              <p>Présentation du fonctionnement de la classe, de l’organisation de l’année, des apprentissages, des devoirs, des outils utilisés et de l’application « Espace Parents », puis temps d’échange avec les familles pour répondre aux premières questions.</p>
+              <span class="parents-meeting-card__stamp">À ne pas manquer !</span>
+            </div>
+          </article>
+        </div>
+        <div class="parents-meetings-note"><span aria-hidden="true">✅</span><div><strong>Merci de noter ces horaires.</strong> Les deux rendez-vous s’enchaînent à partir de 17h05.</div></div>
+      </section>
+
+      <div class="parents-reminders-section">
+        <div class="parents-reminders-section__head"><span class="parents-reminders-section__icon" aria-hidden="true">📌</span><div><strong>À retenir toute l’année</strong><small>Les repères qui restent valables au quotidien</small></div></div>
         <div id="parentsPermanentList"></div>
       </div>
-
       <div class="parents-reminders-section parents-reminders-section--now">
-        <div class="parents-reminders-section__head">
-          <span class="parents-reminders-section__icon" aria-hidden="true">🕒</span>
-          <div><strong>En ce moment</strong><small>Les informations et dates utiles maintenant</small></div>
-        </div>
+        <div class="parents-reminders-section__head"><span class="parents-reminders-section__icon" aria-hidden="true">🕒</span><div><strong>En ce moment</strong><small>Les informations et dates utiles maintenant</small></div></div>
         <div id="parentsCurrentList"></div>
       </div>
     </div>
@@ -183,9 +165,7 @@
 
   <section class="parents-info-detail" data-parent-info-panel="material" hidden>
     <div class="parents-info-detail__toolbar"><button class="parents-back" type="button" data-parent-info-menu>← Infos de la classe</button></div>
-    <div class="parents-info-block parents-info-material" id="parentsInfoMaterial">
-      <img class="parents-material-sheet" src="assets/parents/fournitures_ce2_monsieur_cotty.png" alt="Fournitures scolaires du CE2 de Monsieur Cotty">
-    </div>
+    <div class="parents-info-block parents-info-material" id="parentsInfoMaterial"><img class="parents-material-sheet" src="assets/parents/fournitures_ce2_monsieur_cotty.png" alt="Fournitures scolaires du CE2 de Monsieur Cotty"></div>
   </section>
 
   <section class="parents-info-detail" data-parent-info-panel="help" hidden>
@@ -220,15 +200,10 @@
 
   <section class="parents-info-detail" data-parent-info-panel="resources" hidden>
     <div class="parents-info-detail__toolbar"><button class="parents-back" type="button" data-parent-info-menu>← Infos de la classe</button></div>
-    <div class="parents-info-block parents-info-documents" id="parentsInfoResources">
-      <h3>📎 Ressources utiles</h3>
-      <p class="parents-info-help">Documents, liens pratiques et ressources pour accompagner votre enfant.</p>
-      <div id="parentsDocumentsUseful"></div>
-    </div>
+    <div class="parents-info-block parents-info-documents" id="parentsInfoResources"><h3>📎 Ressources utiles</h3><p class="parents-info-help">Documents, liens pratiques et ressources pour accompagner votre enfant.</p><div id="parentsDocumentsUseful"></div></div>
   </section>
 </section>
 
-<!-- Données de publication conservées en réserve pour compatibilité. -->
 <section class="parents-data-reserve" hidden aria-hidden="true">
   <p id="weekMessage"></p><ul id="weekItems"></ul>
   <p id="lifeMessage"></p><ul id="lifeItems"></ul>
@@ -251,8 +226,9 @@
   <p id="parentsTeacherStatsState" class="parents-teacher-stats__state"></p>
  </div>
 </section>
-<footer>Progressions CE2 · Espace Parents · V35.43</footer>
-<!-- Interface Parents séparée ; Progressions CE2 reste la source unique des données partagées. -->
+
+<footer>Progressions CE2 · Espace Parents · V35.44</footer>
+
 <script src="https://labastide11.github.io/progressions-ce2/data.js?v=34.38"></script>
 <script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p1.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p2.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p3.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p4.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p5.js?v=35.66"></script>
 <script src="https://labastide11.github.io/progressions-ce2/public-emploi-du-temps.js?v=34.51"></script>
@@ -261,4 +237,13 @@
 <script src="parents.js?v=35.38"></script>
 <script src="i18n.js?v=35.34"></script>
 <script src="parents-analytics.js?v=35.43"></script>
+
+<script>
+(function(){
+  var box=document.getElementById('parentsMeetingsMonday7');
+  if(!box) return;
+  var end=new Date('2026-09-07T18:16:00+02:00');
+  if(new Date()>=end) box.hidden=true;
+})();
+</script>
 </body></html>
