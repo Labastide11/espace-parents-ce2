@@ -1,4 +1,4 @@
-// V35.47 — Devoirs visibles sur deux semaines + conservation du texte « Le kangourou » du 14 septembre.
+// V35.48 — Statut des évaluations nationales mis à jour + devoirs visibles sur deux semaines + texte « Le kangourou » du 14 septembre.
 // V35.38 — Rappels de rentrée affichés dans l’Espace Parents jusqu’au 18 septembre 2026.
 // V35.32 — Double badge des évaluations : 📝 Évaluation + sous-matière précise.
 // V35.29 — Le bandeau « Cette semaine » affiche uniquement les évaluations dont la date réelle appartient à la semaine affichée.
@@ -1127,7 +1127,15 @@ function reminderCollections(){
     ? remoteUpcoming.map(item=>normalizeReminderItem(item,'avenir'))
     : [];
 
+  const evaluationStatusText='🔵 Les évaluations nationales sont terminées. Je suis en train d’enregistrer les résultats numériquement. Vous serez informés lorsqu’ils seront disponibles.';
+
   const all=[...permanentDefaults,...datedDefaults,...apiReminderItems,...apiUpcomingItems,...localItems]
+    .map(item=>{
+      const text=String(item&&item.text||'');
+      return /évaluations nationales/i.test(text)
+        ? {...item,text:evaluationStatusText}
+        : item;
+    })
     .filter(item=>item.text);
 
   const permanent=[];
