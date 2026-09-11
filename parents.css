@@ -1795,3 +1795,14 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
 .homework-online-reading__content{padding:0 14px 14px;color:#3f4650;line-height:1.6}
 .homework-online-reading__content p{margin:9px 0}
 @media(max-width:620px){.homework-online-reading summary{padding:11px 12px}.homework-online-reading__content{padding:0 12px 12px}}
+
+
+/* V35.47 — Devoirs visibles sur deux semaines */
+.homework-two-week-section{display:grid;gap:14px}
+.homework-two-week-section+.homework-two-week-section{margin-top:10px}
+.homework-two-week-section--next{margin-top:12px;padding:18px;border:2px solid #e9e0f4;border-radius:20px;background:#fbf9fe}
+.homework-two-week-section--next .homework-week-head span{color:#6d538e}
+.homework-week-source-label{display:inline-block!important;margin-top:7px;background:#f0e8fb;color:#5e3a91!important;border-radius:999px;padding:5px 9px;font-size:11px!important;letter-spacing:0!important;text-transform:none!important}
+.homework-week-ahead-note{margin:0;padding:12px 14px;border-radius:14px;background:#f3eef9;color:#58466f;line-height:1.45}
+.homework-two-week-section--next .homework-card{background:#fff}
+@media(max-width:620px){.homework-two-week-section--next{padding:13px;border-radius:16px}}

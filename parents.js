@@ -1,4 +1,4 @@
-// V35.46 — Lundi 14 septembre : ajout du texte « Le kangourou » lisible directement en ligne dans les devoirs.
+// V35.47 — Devoirs visibles sur deux semaines + conservation du texte « Le kangourou » du 14 septembre.
 // V35.38 — Rappels de rentrée affichés dans l’Espace Parents jusqu’au 18 septembre 2026.
 // V35.32 — Double badge des évaluations : 📝 Évaluation + sous-matière précise.
 // V35.29 — Le bandeau « Cette semaine » affiche uniquement les évaluations dont la date réelle appartient à la semaine affichée.
@@ -849,7 +849,61 @@ function homeworkPhysicalRemindersHtml(week){
   </section>`;
 }
 function allEvaluationDates(){return [...new Set(allEvaluations().map(ev=>String(ev.date||'')).filter(Boolean))]}
-function renderHomework(){const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');if(!cur)return;if(!week){cur.innerHTML='<div class="homework-empty">Aucun devoir programmé.</div>';return}const sourceItems=homeworkItemsForDisplayedWeek(week);const weekEvaluations=evaluationsForDisplayedWeek(week);const advanceAnnouncements=canonicalFrenchAdvanceAnnouncementsForWeek(week);let items=[...sourceItems];const periodTag=week.__period||'';const noSchool=noSchoolDateSet();items=items.filter(it=>!noSchool.has(String(it&&it.due||'')));const evalDates=allEvaluationDates();const weekEvalDates=evalDates.filter(d=>d>=week.start&&d<=week.end);const lightWeek=['p1','p2','p3','p4','p5'].includes(periodTag)&&weekEvalDates.length>0;if(lightWeek){items=items.filter(it=>{const hasOwnEvaluations=Array.isArray(it.evaluations)&&it.evaluations.length>0;return hasOwnEvaluations||!weekEvalDates.includes(String(it.due||''))})}const dayJItems=allEvaluations().filter(ev=>String(ev.date||'')>=week.start&&String(ev.date||'')<=week.end).map(ev=>({due:String(ev.date),evaluationToday:ev}));items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));const dates=`${esc(frDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(frDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;const head=`<div class="homework-week-head"><div><span>${esc(week.label||'Semaine en cours')}</span><h3>${dates}</h3>${week.theme?`<p class="homework-theme">${esc(week.theme)}</p>`:''}</div></div>`;const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);const calendar=schoolCalendarHtml(week);const practicalReminders=homeworkPhysicalRemindersHtml(week);const holidayRevisions=holidayRevisionHtml(week);const weekEvaluationsHtml=homeworkEvaluationsHtml(weekEvaluations,periodTag);const advanceTitle=advanceAnnouncements.length?`📌 À venir : ${advanceAnnouncements.length} évaluation${advanceAnnouncements.length>1?'s':''} annoncée${advanceAnnouncements.length>1?'s':''} à l’avance`:'';const advanceAnnouncementsHtml=homeworkEvaluationsHtml(advanceAnnouncements,periodTag,advanceTitle);if(!items.length){cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${weekEvaluationsHtml}${advanceAnnouncementsHtml}<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`;return}cur.innerHTML=`${head}${weekCalendar}${calendar}${practicalReminders}${weekEvaluationsHtml}${advanceAnnouncementsHtml}${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}`}
+
+// V35.47 — La page Devoirs présente deux semaines : la semaine de référence et la suivante.
+function homeworkNextWeek(week){
+  if(!week)return null;
+  const weeks=Array.isArray(D.weeks)?D.weeks:[];
+  const idx=weeks.indexOf(week);
+  if(idx>=0&&weeks[idx+1])return weeks[idx+1];
+  return weeks.find(w=>String(w.start||'')>String(week.end||''))||null;
+}
+function homeworkWeekSectionHtml(week,{future=false}={}){
+  if(!week)return '';
+  const sourceItems=homeworkItemsForDisplayedWeek(week);
+  const weekEvaluations=evaluationsForDisplayedWeek(week);
+  const advanceAnnouncements=canonicalFrenchAdvanceAnnouncementsForWeek(week);
+  let items=[...sourceItems];
+  const periodTag=week.__period||'';
+  const noSchool=noSchoolDateSet();
+  items=items.filter(it=>!noSchool.has(String(it&&it.due||'')));
+  const evalDates=allEvaluationDates();
+  const weekEvalDates=evalDates.filter(d=>d>=week.start&&d<=week.end);
+  const lightWeek=['p1','p2','p3','p4','p5'].includes(periodTag)&&weekEvalDates.length>0;
+  if(lightWeek){
+    items=items.filter(it=>{
+      const hasOwnEvaluations=Array.isArray(it.evaluations)&&it.evaluations.length>0;
+      return hasOwnEvaluations||!weekEvalDates.includes(String(it.due||''));
+    });
+  }
+  const dayJItems=allEvaluations()
+    .filter(ev=>String(ev.date||'')>=week.start&&String(ev.date||'')<=week.end)
+    .map(ev=>({due:String(ev.date),evaluationToday:ev}));
+  items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));
+
+  const dates=`${esc(frDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(frDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;
+  const sectionLabel=future?'Semaine prochaine':'Cette semaine';
+  const anticipation=future?'<p class="homework-week-ahead-note">👀 <strong>Pour anticiper :</strong> ces devoirs sont affichés à l’avance pour faciliter l’organisation familiale.</p>':'';
+  const head=`<div class="homework-week-head"><div><span>${sectionLabel}</span><h3>${dates}</h3>${week.label?`<small class="homework-week-source-label">${esc(week.label)}</small>`:''}${week.theme?`<p class="homework-theme">${esc(week.theme)}</p>`:''}</div></div>`;
+  const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);
+  const calendar=schoolCalendarHtml(week);
+  const practicalReminders=homeworkPhysicalRemindersHtml(week);
+  const holidayRevisions=holidayRevisionHtml(week);
+  const weekEvaluationsHtml=homeworkEvaluationsHtml(weekEvaluations,periodTag);
+  const advanceTitle=advanceAnnouncements.length?`📌 À venir : ${advanceAnnouncements.length} évaluation${advanceAnnouncements.length>1?'s':''} annoncée${advanceAnnouncements.length>1?'s':''} à l’avance`:'';
+  const advanceAnnouncementsHtml=homeworkEvaluationsHtml(advanceAnnouncements,periodTag,advanceTitle);
+  const content=items.length
+    ? `${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}`
+    : `<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>`;
+  return `<section class="homework-two-week-section${future?' homework-two-week-section--next':''}" aria-label="${sectionLabel}">${head}${anticipation}${weekCalendar}${calendar}${practicalReminders}${weekEvaluationsHtml}${advanceAnnouncementsHtml}${content}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}</section>`;
+}
+function renderHomework(){
+  const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');
+  if(!cur)return;
+  if(!week){cur.innerHTML='<div class="homework-empty">Aucun devoir programmé.</div>';return;}
+  const nextWeek=homeworkNextWeek(week);
+  cur.innerHTML=`${homeworkWeekSectionHtml(week)}${nextWeek?homeworkWeekSectionHtml(nextWeek,{future:true}):''}`;
+}
 
 function setupHomeworkTest(){
   const btn=$('homeworkTestHotspot'),bar=$('homeworkTestBar'),label=$('homeworkTestLabel'),prev=$('homeworkTestPrev'),next=$('homeworkTestNext'),reset=$('homeworkTestReset');
