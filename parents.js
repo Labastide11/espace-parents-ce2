@@ -1,3 +1,4 @@
+// V35.46 — Lundi 14 septembre : ajout du texte « Le kangourou » lisible directement en ligne dans les devoirs.
 // V35.38 — Rappels de rentrée affichés dans l’Espace Parents jusqu’au 18 septembre 2026.
 // V35.32 — Double badge des évaluations : 📝 Évaluation + sous-matière précise.
 // V35.29 — Le bandeau « Cette semaine » affiche uniquement les évaluations dont la date réelle appartient à la semaine affichée.
@@ -775,7 +776,21 @@ function homeworkStructuredBlock(task,extraClass=''){
     </div>
   </div>`;
 }
-function homeworkItemCard(it,compact=false,periodTag='',lightWeek=false,week=null){if(it&&it.evaluationToday)return homeworkEvaluationTodayHtml(it.evaluationToday);const evaluations=homeworkEvaluationsHtml(it.evaluations,periodTag);const structured=Boolean(it&&(it.subject||it.instruction||it.action));const main=structured?homeworkStructuredBlock(it,'homework-task--main'):`<div class="homework-block homework-routine"><b>${esc(it.routineIcon||'📚')} ${esc(it.routineTitle||'Je revois')}</b><p>${esc(it.routine||'')}</p></div>`;const secondary=structured&&it.secondary?homeworkStructuredBlock(it.secondary,'homework-task--secondary'):'';const challenge=(!structured&&!lightWeek&&it.challenge)?`<div class="homework-block homework-challenge"><b>🎯 Petit défi</b><p>${esc(it.challenge)}</p></div>`:'';const family=(!lightWeek&&it.family)?`<div class="homework-block homework-family"><b>👨‍👩‍👧 Défi famille <span>facultatif</span></b><p>${esc(it.family)}</p></div>`:'';const hibou=homeworkHibouHtml(it.hibou);const dictation=dictationReviewHtml(it.__sourceWeek||week,it);const dateTitle=evaluationWeekLabel(it);return `<article class="homework-card${compact?' homework-card--compact':''}"><div class="homework-date">${esc(dateTitle)}</div>${evaluations}${main}${dictation}${secondary}${family}${hibou}</article>`}
+function homeworkOnlineReadingHtml(it){
+  if(String(it&&it.due||'')!=='2026-09-14')return '';
+  return `<details class="homework-online-reading">
+    <summary>📖 Texte à lire en ligne — <strong>Le kangourou</strong></summary>
+    <div class="homework-online-reading__content">
+      <p>Le kangourou est un mammifère qui vit en Australie. Il a une poche sur le ventre et fait la taille d’un homme. Il peut même le dépasser.</p>
+      <p>À la naissance, le petit n’est pas terminé. Il ne fait que 3 cm et n’a pas de fourrure. Il grimpe alors dans la poche de la maman, dans laquelle il y a des tétines. Il boit son lait et finit de grandir.</p>
+      <p>Le kangourou habite dans des prairies humides. Il vit en bande : sa bande s’appelle « un mob ».</p>
+      <p>C’est un animal nocturne. Il dort le jour dans des trous creusés dans la terre. Il profite des heures fraîches et de la nuit pour se nourrir.</p>
+      <p>Le kangourou est herbivore (il mange de l’herbe et des feuilles).</p>
+      <p>Le kangourou a de longues pattes arrière puissantes qui lui permettent de se déplacer en sautant. Il peut faire des bonds jusqu’à 10 mètres de long et 3,2 mètres de haut.</p>
+    </div>
+  </details>`;
+}
+function homeworkItemCard(it,compact=false,periodTag='',lightWeek=false,week=null){if(it&&it.evaluationToday)return homeworkEvaluationTodayHtml(it.evaluationToday);const evaluations=homeworkEvaluationsHtml(it.evaluations,periodTag);const structured=Boolean(it&&(it.subject||it.instruction||it.action));const main=structured?homeworkStructuredBlock(it,'homework-task--main'):`<div class="homework-block homework-routine"><b>${esc(it.routineIcon||'📚')} ${esc(it.routineTitle||'Je revois')}</b><p>${esc(it.routine||'')}</p></div>`;const secondary=structured&&it.secondary?homeworkStructuredBlock(it.secondary,'homework-task--secondary'):'';const challenge=(!structured&&!lightWeek&&it.challenge)?`<div class="homework-block homework-challenge"><b>🎯 Petit défi</b><p>${esc(it.challenge)}</p></div>`:'';const family=(!lightWeek&&it.family)?`<div class="homework-block homework-family"><b>👨‍👩‍👧 Défi famille <span>facultatif</span></b><p>${esc(it.family)}</p></div>`:'';const hibou=homeworkHibouHtml(it.hibou);const dictation=dictationReviewHtml(it.__sourceWeek||week,it);const onlineReading=homeworkOnlineReadingHtml(it);const dateTitle=evaluationWeekLabel(it);return `<article class="homework-card${compact?' homework-card--compact':''}"><div class="homework-date">${esc(dateTitle)}</div>${evaluations}${main}${dictation}${secondary}${onlineReading}${family}${hibou}</article>`}
 
 function physicalActivityReminderMeta(rows){
   const subjects=(Array.isArray(rows)?rows:[]).map(r=>String(r?.[1]||'')).filter(Boolean);
