@@ -586,7 +586,7 @@ function homeworkWeekCalendarHtml(week,sourceItems=[]){
     const isSpecialDay=Boolean(br||off||dow===0||dow===6||dow===3);
     const specialStatus=isSpecialDay?`<div class="homework-week-calendar__status"><span aria-hidden="true">${icon}</span><small>${esc(status)}</small></div>`:'';
     const badges=(taskBadges||sportBadge||evalMarker)?`<div class="homework-week-calendar__badges">${taskBadges}${sportBadge}${evalMarker}</div>`:'';
-    return `<div class="homework-week-calendar__day homework-week-calendar__day--${kind}" data-dow="${dow}"><div class="homework-week-calendar__date"><strong>${esc(frDate(d,{weekday:'long'}))}</strong><span>${esc(frDate(d,{day:'numeric',month:'short'}))}</span></div>${specialStatus}${badges}</div>`;
+    return `<div class="homework-week-calendar__day homework-week-calendar__day--${kind}" data-dow="${dow}"><div class="homework-week-calendar__date"><strong>${esc(`${frDate(d,{weekday:'long'})} ${frDate(d,{day:'numeric',month:'short'})}`)}</strong></div>${specialStatus}${badges}</div>`;
   }).join('');
   return `<section class="homework-week-calendar" aria-label="Calendrier de la semaine"><div class="homework-week-calendar__title">🗓️ La semaine en un coup d’œil</div><div class="homework-week-calendar__grid">${cells}</div></section>`;
 }
