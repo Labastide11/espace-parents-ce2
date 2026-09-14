@@ -486,7 +486,7 @@ const WEEK_GLANCE_SUBJECTS={
   francais:{label:'Français',icon:'📘',aliases:/fran[cç]ais|lecture|compr[ée]hension|lexique|vocabulaire|orthographe|dict[ée]e|production d[’']?[ée]crits?/i},
   maths:{label:'Mathématiques',icon:'🧮',aliases:/math[ée]mat|calcul|num[ée]ration|g[ée]om[ée]tr|mesure|probl[èe]me|fraction/i},
   english:{label:'Anglais',icon:'🇬🇧',aliases:/anglais|english/i},
-  eps:{label:'EPS / Sport',icon:'🏃',aliases:/eps|sport|piscine|natation|domec|vtt|sandball/i},
+  eps:{label:'Sport',icon:'🏃',aliases:/\beps\b|sport|piscine|natation|domec|vtt|sandball/i},
   arts:{label:'Arts',icon:'🎨',aliases:/arts?|artistique|musique|chant/i},
   science:{label:'Sciences',icon:'🔬',aliases:/sciences?|questionner le monde|qlm/i},
   history:{label:'Histoire',icon:'🏺',aliases:/histoire|g[ée]ographie|temps|espace/i},
@@ -553,15 +553,16 @@ function homeworkWeekCalendarHtml(week,sourceItems=[]){
       if(!subjectKeys.length&&physicalKey)subjectKeys=[physicalKey];
       const primary=subjectKeys[0]&&WEEK_GLANCE_SUBJECTS[subjectKeys[0]];
       icon=primary?.icon||'📚';
-      status=subjectKeys.length===1?`${primary.label} · petit travail`:subjectKeys.length>1?'Petit travail · plusieurs matières':'Petit travail prévu';
+      status=subjectKeys.length===1?`${primary.label}`:subjectKeys.length>1?'Plusieurs matières':'À préparer';
     }
     else if(physicalKey){
-      kind='activity';subjectKeys=['eps'];icon='🏃';status='EPS / Sport';
+      kind='activity';subjectKeys=['eps'];icon='🏃';status='Sport';
     }
     else {status='Classe · rien à préparer';}
     const subjectClass=subjectKeys.length===1?` homework-week-calendar__day--subject-${subjectKeys[0]}`:subjectKeys.length>1?' homework-week-calendar__day--subject-mixed':'';
     const evalMarker=kind==='evaluation'?'<span class="homework-week-calendar__eval-badge">📝 Évaluation</span>':'';
-    return `<div class="homework-week-calendar__day homework-week-calendar__day--${kind}${subjectClass}"><div class="homework-week-calendar__date"><strong>${esc(frDate(d,{weekday:'long'}))}</strong><span>${esc(frDate(d,{day:'numeric',month:'short'}))}</span></div>${evalMarker}<div class="homework-week-calendar__status"><span aria-hidden="true">${icon}</span><small>${esc(status)}</small></div></div>`;
+    const sportBadge=physicalKey&&![0,3,6].includes(dow)&&!br&&!off?'<span class="homework-week-calendar__sport-badge">🏃 Sport</span>':'';
+    return `<div class="homework-week-calendar__day homework-week-calendar__day--${kind}${subjectClass}"><div class="homework-week-calendar__date"><strong>${esc(frDate(d,{weekday:'long'}))}</strong><span>${esc(frDate(d,{day:'numeric',month:'short'}))}</span></div>${evalMarker}<div class="homework-week-calendar__status"><span aria-hidden="true">${icon}</span><small>${esc(status)}</small></div>${sportBadge}</div>`;
   }).join('');
   const legend=['francais','maths','english','eps','arts','science','history','emc'].map(k=>{const m=WEEK_GLANCE_SUBJECTS[k];return `<span class="homework-week-calendar__legend-item homework-week-calendar__legend-item--${k}">${m.icon} ${esc(m.label)}</span>`;}).join('');
   return `<section class="homework-week-calendar" aria-label="Calendrier de la semaine"><div class="homework-week-calendar__title">🗓️ La semaine en un coup d’œil</div><div class="homework-week-calendar__grid">${cells}</div><div class="homework-week-calendar__legend" aria-label="Code couleur des matières">${legend}<span class="homework-week-calendar__legend-eval">📝 Évaluation</span></div></section>`;
