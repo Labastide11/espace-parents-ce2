@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents CE2 — V35.59</title>
+  <title>Espace Parents CE2 — V35.60</title>
   <link rel="stylesheet" href="parents.css?v=35.49">
   <style id="parents-meetings-v3544">
     .parents-meetings-focus{margin:14px 0 20px}
@@ -62,6 +62,39 @@
     .homework-week-calendar__sport-badge{background:#dff7e8;border:1px solid #73d59a;color:#16723a}
     .homework-week-calendar__eval-badge{margin:0;background:#fff0f0;border:1px solid #ef9999;color:#a31d1d}
     .homework-week-calendar__legend{display:none!important}
+    /* V35.60 — Mobile : quatre jours de classe visibles sans défilement horizontal. */
+    @media (max-width:760px){
+      #parentsViewHomework{padding-left:12px!important;padding-right:12px!important}
+      #parentsViewHomework .homework-toolbar{margin-bottom:10px!important}
+      .homework-week-calendar{overflow:visible!important}
+      .homework-week-calendar__grid{
+        display:grid!important;
+        grid-template-columns:repeat(2,minmax(0,1fr))!important;
+        gap:8px!important;
+        overflow:visible!important;
+        padding:0!important;
+        scroll-snap-type:none!important;
+      }
+      .homework-week-calendar__day{
+        min-width:0!important;
+        width:auto!important;
+        min-height:118px!important;
+        box-sizing:border-box!important;
+      }
+      .homework-week-calendar__day[data-dow="3"],
+      .homework-week-calendar__day[data-dow="6"],
+      .homework-week-calendar__day[data-dow="0"]{display:none!important}
+      .homework-week-calendar__title{font-size:18px!important;line-height:1.15!important;margin-bottom:10px!important}
+      .homework-week-calendar__date strong{font-size:15px!important}
+      .homework-week-calendar__badges{gap:5px!important;margin-top:8px!important}
+      .homework-week-calendar__homework-badge,
+      .homework-week-calendar__sport-badge,
+      .homework-week-calendar__eval-badge{
+        font-size:12px!important;
+        padding:5px 8px!important;
+        justify-content:flex-start!important;
+      }
+    }
   </style>
 
   <style id="homework-header-banner-v3558">
@@ -129,13 +162,6 @@
 <!-- V35.49 — Devoirs visibles sur 2 semaines -->
 <section class="parents-view" id="parentsViewHomework" data-parent-panel="homework" hidden>
   <div class="parents-view__toolbar homework-toolbar"><button class="parents-back" type="button" data-parent-home>← Accueil Parents</button></div>
-  <div class="homework-page-banner" aria-labelledby="homeworkTitleLabel">
-    <div class="homework-page-banner__main">
-      <button id="homeworkTestHotspot" class="homework-page-banner__icon homework-test-icon" type="button" aria-label="Icône Devoirs" aria-expanded="false">📚</button>
-      <h2 id="homeworkTitleLabel" class="homework-page-banner__title">Devoirs</h2>
-    </div>
-    <div class="homework-page-banner__meta">10 à 15 minutes</div>
-  </div>
   <div id="homeworkCurrent" class="homework-current"></div>
   <div id="homeworkTestBar" class="homework-test-bar" hidden><strong>🧪 Test devoirs</strong><button id="homeworkTestPrev" type="button" aria-label="Semaine précédente">←</button><span id="homeworkTestLabel"></span><button id="homeworkTestNext" type="button" aria-label="Semaine suivante">→</button><button id="homeworkTestReset" type="button">Retour auto</button></div>
 </section>
@@ -273,7 +299,7 @@
  </div>
 </section>
 
-<footer>Progressions CE2 · Espace Parents · V35.59</footer>
+<footer>Progressions CE2 · Espace Parents · V35.60</footer>
 
 <script src="https://labastide11.github.io/progressions-ce2/data.js?v=34.38"></script>
 <script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p1.js?v=36.72"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p2.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p3.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p4.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p5.js?v=35.66"></script>
@@ -362,7 +388,7 @@
 <!-- /V35.45 — Nettoyage des doublons réunions dans En ce moment -->
 
 
-<!-- V35.59 — Page Devoirs compacte : suppression du bloc Cette semaine / dates / thème -->
+<!-- V35.60 — Page Devoirs mobile : suppression du bandeau Devoirs et grille 2 × 2 (Lun/Mar puis Jeu/Ven) -->
 <script id="parents-national-assessments-finished-v3549">
 (function(){
   'use strict';
