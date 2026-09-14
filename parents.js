@@ -1,4 +1,4 @@
-// V35.48 — Statut des évaluations nationales mis à jour + devoirs visibles sur deux semaines + texte « Le kangourou » du 14 septembre.
+// V35.50 — Synchronisation avec Progressions CE2 V36.69 : évaluations P1 lues depuis devoirs-p1.js, dictées et dates réalignées.
 // V35.38 — Rappels de rentrée affichés dans l’Espace Parents jusqu’au 18 septembre 2026.
 // V35.32 — Double badge des évaluations : 📝 Évaluation + sous-matière précise.
 // V35.29 — Le bandeau « Cette semaine » affiche uniquement les évaluations dont la date réelle appartient à la semaine affichée.
@@ -15,13 +15,9 @@ const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,
 const EDT=window.PUBLIC_EDT,PROG=window.PROGRESSIONS||{},W=window.PARENTS_SEMAINE||{},H=window.PARENTS_TRAVAIL||{},L=window.PARENTS_VIE_CLASSE||{},I=window.PARENTS_INFOS||{},D1=window.DEVOIRS_P1||{weeks:[]},D2=window.DEVOIRS_P2||{weeks:[]},D3=window.DEVOIRS_P3||{weeks:[]},D4=window.DEVOIRS_P4||{weeks:[]},D5=window.DEVOIRS_P5||{weeks:[]},D={weeks:[...(D1.weeks||[]).map(w=>({...w,__period:'p1'})),...(D2.weeks||[]).map(w=>({...w,__period:'p2'})),...(D3.weeks||[]).map(w=>({...w,__period:'p3'})),...(D4.weeks||[]).map(w=>({...w,__period:'p4'})),...(D5.weeks||[]).map(w=>({...w,__period:'p5'}))].sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')))};
 const CAL=window.CALENDRIER_SCOLAIRE_2026_2027||{daysOff:[],breaks:[]};
 
-// V35.26 — Source canonique familles pour les évaluations de français.
-// Ce tableau reflète le planning validé dans Progressions CE2 V35.63.
-// Il remplace uniquement les anciennes annonces de français embarquées dans les fichiers devoirs.
+// V35.50 — P1 : les évaluations de français viennent désormais de data/devoirs-p1.js.
+// P2 à P5 conservent ici leurs annonces canoniques jusqu’à leur migration vers la même source unique.
 const PARENTS_FRENCH_EVALUATIONS=[
-  {date:'2026-10-06',announceOn:'2026-10-02',subject:'Français',title:'Compréhension P1 — Le carnet retrouvé',scope:['Identifier les personnages.','Retrouver une information explicite.'],preparation:'Relire tranquillement un petit texte et s’entraîner à retrouver les informations écrites clairement.'},
-  {date:'2026-10-09',announceOn:'2026-10-06',subject:'Français',title:'Lexique P1 — Classer des mots et ordre alphabétique',scope:['Classer des mots qui vont ensemble.','Ranger des mots dans l’ordre alphabétique.'],preparation:'Revoir les petits exercices de classement et d’ordre alphabétique faits en classe.'},
-  {date:'2026-10-12',announceOn:'2026-10-09',subject:'Français',title:'Bilan des mots appris — La Grande Muraille',scope:['Écrire correctement les 10 mots annoncés et travaillés.'],preparation:'Revoir : une frontière, une invasion, le nord, une structure, l’homme, une longueur, une tour de guet, important, contre, jamais.'},
   {date:'2026-11-24',announceOn:'2026-11-20',subject:'Français',title:'Compréhension P2 — La balade au parc',scope:['Comprendre un mot grâce au contexte.','Identifier ce que remplace un pronom.'],preparation:'Lire un petit texte puis expliquer avec ses mots ce que l’on comprend.'},
   {date:'2026-12-08',announceOn:'2026-12-04',subject:'Français',title:'Lexique P2 — Familles de mots et synonymes/contraires',scope:['Reconnaître des mots de la même famille.','Trouver des synonymes et des contraires.'],preparation:'Revoir les familles de mots, les synonymes et les contraires travaillés en classe.'},
   {date:'2026-12-14',announceOn:'2026-12-07',subject:'Français',title:'Bilan des mots appris — L’Île de Pâques',scope:['Écrire correctement les 10 mots annoncés et travaillés.'],preparation:'Revoir : tailler, une paroi, un cratère, un volcan, l’intérieur, aligner, la côte, la mer, le long, un dos.'},
@@ -41,9 +37,11 @@ function isFrenchEvaluation(ev){
   const title=String(ev&&ev.title||'').toLowerCase();
   return /^fran[cç]ais/.test(subject)||/(compréhension|lexique|vocabulaire|production d[’']écrits|mots appris|orthographe|grammaire|conjugaison)/.test(title);
 }
-function stripStaleFrenchEvaluations(item){
+function stripStaleFrenchEvaluations(item,sourceWeek){
   if(!item||typeof item!=='object')return item;
   const clone={...item};
+  // V35.50 : P1 est désormais la source commune ; on conserve ses évaluations de français.
+  if(String(sourceWeek&&sourceWeek.__period||'')==='p1')return clone;
   if(Array.isArray(clone.evaluations))clone.evaluations=clone.evaluations.filter(ev=>!isFrenchEvaluation(ev));
   return clone;
 }
@@ -470,7 +468,8 @@ function schoolDayOffForDate(iso){
 function allEvaluations(){
   const out=[],seen=new Set();
   (D.weeks||[]).forEach(w=>(w.items||[]).forEach(it=>(it.evaluations||[]).forEach(ev=>{
-    if(!ev||!ev.date||isFrenchEvaluation(ev))return;
+    if(!ev||!ev.date)return;
+    if(isFrenchEvaluation(ev)&&String(w&&w.__period||'')!=='p1')return;
     const key=`${ev.date}|${ev.subject||''}|${ev.title||''}`;
     if(seen.has(key))return;
     seen.add(key);out.push(ev);
@@ -600,7 +599,7 @@ function homeworkItemsForDisplayedWeek(week){
   const out=[];
   weeks.forEach(sourceWeek=>{
     (Array.isArray(sourceWeek&&sourceWeek.items)?sourceWeek.items:[]).forEach(raw=>{
-      const it=stripStaleFrenchEvaluations(raw);
+      const it=stripStaleFrenchEvaluations(raw,sourceWeek);
       const originalDue=String(it&&it.due||'');
       const normalizedDue=homeworkNextClassDueIso(originalDue);
       if(!normalizedDue||normalizedDue<week.start||normalizedDue>week.end)return;
