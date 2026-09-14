@@ -521,27 +521,27 @@ function weekGlanceSubjectKey(value){
   for(const [key,meta] of Object.entries(WEEK_GLANCE_SUBJECTS))if(meta.aliases.test(raw))return key;
   return '';
 }
+function homeworkBadgeKindFromText(value){
+  const raw=String(value||'').trim();
+  if(!raw)return '';
+  const text=raw.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  if(/dictee|prepare ma dictee|mots appris|liste de mots|10 mots|mots annonces|epelle/.test(text))return 'dictee';
+  if(/lecture|comprehension|reformule|texte|personnages|histoire|lire/.test(text))return 'lecture';
+  if(/vocabulaire|lexique|ordre alphabetique|synonyme|contraire/.test(text))return 'vocabulaire';
+  if(/math|calcul|addition|soustraction|multiplication|division|numeration|probleme|geometrie|mesure|rituel maths|nombre/.test(text))return 'maths';
+  if(/ecriture|production d'ecrits|copie|redige|phrase/.test(text))return 'ecriture';
+  if(/anglais|english/.test(text))return 'anglais';
+  if(/lecon|poesie|chant|histoire|sciences|questionner le monde/.test(text))return 'lecon';
+  return '';
+}
 function weekGlanceItemHomeworkKinds(dayItems){
   const kinds=[];
   const addKind=kind=>{if(kind&&!kinds.includes(kind))kinds.push(kind);};
-  const detectKind=value=>{
-    const raw=String(value||'').trim();
-    if(!raw)return '';
-    const text=raw.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
-    if(/dictee|prepare ma dictee|mots appris|liste de mots|10 mots|mots annonces|epelle/.test(text))return 'dictee';
-    if(/lecture|comprehension|reformule|texte|personnages|histoire|lire/.test(text))return 'lecture';
-    if(/vocabulaire|lexique|ordre alphabetique|synonyme|contraire/.test(text))return 'vocabulaire';
-    if(/math|calcul|addition|soustraction|multiplication|division|numeration|probleme|geometrie|mesure|rituel maths|nombre/.test(text))return 'maths';
-    if(/ecriture|production d'ecrits|copie|redige|phrase/.test(text))return 'ecriture';
-    if(/anglais|english/.test(text))return 'anglais';
-    if(/lecon|poesie|chant|histoire|sciences|questionner le monde/.test(text))return 'lecon';
-    return '';
-  };
   (dayItems||[]).forEach(it=>{
     const values=[it?.subject,it?.subjectLabel,it?.title,it?.routineTitle,it?.classLink,it?.notion,it?.text,it?.help,it?.body,it?.content];
-    values.forEach(v=>addKind(detectKind(v)));
+    values.forEach(v=>addKind(homeworkBadgeKindFromText(v)));
     const secondaryList=Array.isArray(it?.secondary)?it.secondary:[it?.secondary].filter(Boolean);
-    secondaryList.forEach(sec=>[sec?.subject,sec?.subjectLabel,sec?.title,sec?.text,sec?.help,sec?.body].forEach(v=>addKind(detectKind(v))));
+    secondaryList.forEach(sec=>[sec?.subject,sec?.subjectLabel,sec?.title,sec?.text,sec?.help,sec?.body].forEach(v=>addKind(homeworkBadgeKindFromText(v))));
   });
   return kinds;
 }
@@ -579,7 +579,7 @@ function homeworkWeekCalendarHtml(week,sourceItems=[]){
     }
     else {status='Classe · rien à préparer';}
     const taskKinds=weekGlanceItemHomeworkKinds(dayItems);
-    const taskBadges=taskKinds.map(k=>WEEK_GLANCE_HOMEWORK_BADGES[k]).filter(Boolean).map(meta=>`<span class="homework-week-calendar__homework-badge">${esc(meta.label)}</span>`).join('');
+    const taskBadges=taskKinds.map(k=>({key:k,meta:WEEK_GLANCE_HOMEWORK_BADGES[k]})).filter(x=>x.meta).map(({key,meta})=>`<span class="homework-week-calendar__homework-badge homework-week-calendar__homework-badge--${esc(key)}">${esc(meta.label)}</span>`).join('');
     const sportBadge=physicalKey&&![0,3,6].includes(dow)&&!br&&!off?`<span class="homework-week-calendar__sport-badge">${esc(WEEK_GLANCE_HOMEWORK_BADGES.sport.label)}</span>`:'';
     const evalMarker=dayEvals.length?`<span class="homework-week-calendar__eval-badge">📝 ${dayEvals.length>1?`${dayEvals.length} évaluations`:'Évaluation'}</span>`:'';
     const isSpecialDay=Boolean(br||off||dow===0||dow===6||dow===3);
