@@ -907,15 +907,17 @@ function homeworkWeekSectionHtml(week,{future=false}={}){
   const anticipation=future?'<p class="homework-week-ahead-note">👀 <strong>Pour anticiper :</strong> ces devoirs sont affichés à l’avance pour faciliter l’organisation familiale.</p>':'';
   const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);
   const calendar=schoolCalendarHtml(week);
-  const practicalReminders=homeworkPhysicalRemindersHtml(week);
   const holidayRevisions=holidayRevisionHtml(week);
   const weekEvaluationsHtml=homeworkEvaluationsHtml(weekEvaluations,periodTag);
   const advanceTitle=advanceAnnouncements.length?`📌 À venir : ${advanceAnnouncements.length} évaluation${advanceAnnouncements.length>1?'s':''} annoncée${advanceAnnouncements.length>1?'s':''} à l’avance`:'';
   const advanceAnnouncementsHtml=homeworkEvaluationsHtml(advanceAnnouncements,periodTag,advanceTitle);
+  const weekNote=String(week.note||'').trim();
+  const isPostEvaluationNote=/évaluations nationales sont terminées|on reprend un rythme ordinaire/i.test(weekNote);
+  const visibleWeekNote=isPostEvaluationNote?'':weekNote;
   const content=items.length
-    ? `${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}`
-    : `<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>`;
-  return `<section class="homework-two-week-section${future?' homework-two-week-section--next':''}" aria-label="${sectionLabel}">${anticipation}${weekCalendar}${calendar}${practicalReminders}${weekEvaluationsHtml}${advanceAnnouncementsHtml}${content}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}</section>`;
+    ? `${visibleWeekNote?`<div class="homework-empty">${esc(visibleWeekNote)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}`
+    : `<div class="homework-empty">🌱 ${esc(visibleWeekNote||'Aucun devoir cette semaine.')}</div>`;
+  return `<section class="homework-two-week-section${future?' homework-two-week-section--next':''}" aria-label="${sectionLabel}">${anticipation}${weekCalendar}${calendar}${weekEvaluationsHtml}${advanceAnnouncementsHtml}${content}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}</section>`;
 }
 function renderHomework(){
   const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');
@@ -1124,6 +1126,7 @@ function reminderCollections(){
       source:'rappel'
     },
     {text:'🔵 Évaluations nationales CE2 — du 7 au 18 septembre 2026.',start:'2026-09-01',end:'2026-09-18',source:'rappel'},
+    {text:'📘 Les évaluations nationales sont terminées. On reprend un rythme ordinaire : lecture, français et mathématiques le matin, avec de courtes révisions à la maison.',start:'2026-09-14',end:'2026-09-18',source:'rappel'},
     {text:'📝 Merci de remplir, dater et signer la fiche de renseignements.',start:'2026-09-01',end:'2026-09-18',source:'rappel'}
   ];
 
