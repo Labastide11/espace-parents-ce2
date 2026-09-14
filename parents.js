@@ -1,3 +1,4 @@
+// V35.54 — « La semaine en un coup d’œil » : cartes neutres, pastille ✏️ devoir(s), pastille Sport unique, suppression des doublons et du code couleur par matière.
 // V35.51 — Synchronisation avec Progressions CE2 V36.70 : évaluations P1 lues depuis devoirs-p1.js, dictées et dates réalignées.
 // V35.38 — Rappels de rentrée affichés dans l’Espace Parents jusqu’au 18 septembre 2026.
 // V35.32 — Double badge des évaluations : 📝 Évaluation + sous-matière précise.
@@ -559,13 +560,16 @@ function homeworkWeekCalendarHtml(week,sourceItems=[]){
       kind='activity';subjectKeys=['eps'];icon='🏃';status='Sport';
     }
     else {status='Classe · rien à préparer';}
-    const subjectClass=subjectKeys.length===1?` homework-week-calendar__day--subject-${subjectKeys[0]}`:subjectKeys.length>1?' homework-week-calendar__day--subject-mixed':'';
-    const evalMarker=kind==='evaluation'?'<span class="homework-week-calendar__eval-badge">📝 Évaluation</span>':'';
+    const evalMarker=dayEvals.length?`<span class="homework-week-calendar__eval-badge">📝 ${dayEvals.length>1?`${dayEvals.length} évaluations`:'Évaluation'}</span>`:'';
+    const homeworkCount=dayItems.length;
+    const homeworkBadge=homeworkCount?`<span class="homework-week-calendar__homework-badge">✏️ ${homeworkCount} devoir${homeworkCount>1?'s':''}</span>`:'';
     const sportBadge=physicalKey&&![0,3,6].includes(dow)&&!br&&!off?'<span class="homework-week-calendar__sport-badge">🏃 Sport</span>':'';
-    return `<div class="homework-week-calendar__day homework-week-calendar__day--${kind}${subjectClass}"><div class="homework-week-calendar__date"><strong>${esc(frDate(d,{weekday:'long'}))}</strong><span>${esc(frDate(d,{day:'numeric',month:'short'}))}</span></div>${evalMarker}<div class="homework-week-calendar__status"><span aria-hidden="true">${icon}</span><small>${esc(status)}</small></div>${sportBadge}</div>`;
+    const isSpecialDay=Boolean(br||off||dow===0||dow===6||dow===3);
+    const specialStatus=isSpecialDay?`<div class="homework-week-calendar__status"><span aria-hidden="true">${icon}</span><small>${esc(status)}</small></div>`:'';
+    const badges=(homeworkBadge||sportBadge||evalMarker)?`<div class="homework-week-calendar__badges">${homeworkBadge}${sportBadge}${evalMarker}</div>`:'';
+    return `<div class="homework-week-calendar__day homework-week-calendar__day--${kind}"><div class="homework-week-calendar__date"><strong>${esc(frDate(d,{weekday:'long'}))}</strong><span>${esc(frDate(d,{day:'numeric',month:'short'}))}</span></div>${specialStatus}${badges}</div>`;
   }).join('');
-  const legend=['francais','maths','english','eps','arts','science','history','emc'].map(k=>{const m=WEEK_GLANCE_SUBJECTS[k];return `<span class="homework-week-calendar__legend-item homework-week-calendar__legend-item--${k}">${m.icon} ${esc(m.label)}</span>`;}).join('');
-  return `<section class="homework-week-calendar" aria-label="Calendrier de la semaine"><div class="homework-week-calendar__title">🗓️ La semaine en un coup d’œil</div><div class="homework-week-calendar__grid">${cells}</div><div class="homework-week-calendar__legend" aria-label="Code couleur des matières">${legend}<span class="homework-week-calendar__legend-eval">📝 Évaluation</span></div></section>`;
+  return `<section class="homework-week-calendar" aria-label="Calendrier de la semaine"><div class="homework-week-calendar__title">🗓️ La semaine en un coup d’œil</div><div class="homework-week-calendar__grid">${cells}</div></section>`;
 }
 function evaluationWeekLabel(it){
   const evaluations=Array.isArray(it&&it.evaluations)?it.evaluations:[];

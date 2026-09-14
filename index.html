@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents CE2 — V35.53</title>
+  <title>Espace Parents CE2 — V35.54</title>
   <link rel="stylesheet" href="parents.css?v=35.49">
   <style id="parents-meetings-v3544">
     .parents-meetings-focus{margin:14px 0 20px}
@@ -42,8 +42,26 @@
     }
   </style>
 
-  <style id="week-glance-sport-v3553">
-    .homework-week-calendar__sport-badge{display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:3px 8px;border-radius:999px;background:#dff7e8;border:1px solid #73d59a;color:#16723a;font-size:11px;font-weight:900;line-height:1.15;white-space:nowrap}
+  <style id="week-glance-badges-v3554">
+    /* V35.54 — Une information utile = une pastille. Les cartes restent neutres. */
+    .homework-week-calendar__day,
+    .homework-week-calendar__day[class*="homework-week-calendar__day--subject-"]{
+      background:#fff!important;
+      border-color:#d9dee8!important;
+      box-shadow:none!important;
+    }
+    .homework-week-calendar__day--weekend,
+    .homework-week-calendar__day--noclass,
+    .homework-week-calendar__day--dayoff,
+    .homework-week-calendar__day--holiday{background:#f7f8fa!important}
+    .homework-week-calendar__badges{display:flex;flex-direction:column;align-items:stretch;gap:5px;margin-top:7px}
+    .homework-week-calendar__homework-badge,
+    .homework-week-calendar__sport-badge,
+    .homework-week-calendar__eval-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:900;line-height:1.15;white-space:nowrap}
+    .homework-week-calendar__homework-badge{background:#eef1ff;border:1px solid #aeb9f3;color:#35459a}
+    .homework-week-calendar__sport-badge{background:#dff7e8;border:1px solid #73d59a;color:#16723a}
+    .homework-week-calendar__eval-badge{margin:0;background:#fff0f0;border:1px solid #ef9999;color:#a31d1d}
+    .homework-week-calendar__legend{display:none!important}
   </style>
 </head>
 <body>
