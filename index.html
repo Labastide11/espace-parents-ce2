@@ -63,6 +63,31 @@
     .homework-week-calendar__eval-badge{margin:0;background:#fff0f0;border:1px solid #ef9999;color:#a31d1d}
     .homework-week-calendar__legend{display:none!important}
   </style>
+
+  <style id="homework-header-banner-v3558">
+    /* V35.58 — Bandeau compact en tête de la page Devoirs. */
+    .homework-page-banner{
+      display:flex;align-items:center;justify-content:space-between;gap:18px;
+      margin:8px 0 18px;padding:14px 18px;border:1px solid #ddd0ff;border-radius:18px;
+      background:linear-gradient(135deg,#f5f0ff 0%,#fbf9ff 68%,#eef5ff 100%);
+      box-shadow:0 5px 16px rgba(92,61,153,.06);
+    }
+    .homework-page-banner__main{display:flex;align-items:center;gap:12px;min-width:0}
+    .homework-page-banner__icon{
+      display:grid;place-items:center;width:42px;height:42px;flex:0 0 42px;border-radius:14px;
+      background:#fff;border:1px solid #d9ccfb;font-size:23px;box-shadow:0 2px 8px rgba(92,61,153,.06)
+    }
+    .homework-page-banner__title{margin:0;color:#34206c;font-size:28px;line-height:1;font-weight:900}
+    .homework-page-banner__meta{
+      flex:0 0 auto;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid #ded4f5;
+      color:#6b51a2;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap
+    }
+    @media (max-width:680px){
+      .homework-page-banner{align-items:flex-start;flex-direction:column;gap:10px;padding:13px 14px}
+      .homework-page-banner__title{font-size:24px}
+      .homework-page-banner__meta{white-space:normal}
+    }
+  </style>
 </head>
 <body>
 <main class="parents-main">
@@ -104,7 +129,13 @@
 <!-- V35.49 — Devoirs visibles sur 2 semaines -->
 <section class="parents-view" id="parentsViewHomework" data-parent-panel="homework" hidden>
   <div class="parents-view__toolbar homework-toolbar"><button class="parents-back" type="button" data-parent-home>← Accueil Parents</button></div>
-  <div class="section-title"><div><span class="eyebrow">Temps de travail prévu : 10 à 15 minutes</span><h2><button id="homeworkTestHotspot" class="homework-test-icon" type="button" aria-label="Icône Devoirs" aria-expanded="false">📚</button> <span id="homeworkTitleLabel">Devoirs</span></h2></div></div>
+  <div class="homework-page-banner" aria-labelledby="homeworkTitleLabel">
+    <div class="homework-page-banner__main">
+      <button id="homeworkTestHotspot" class="homework-page-banner__icon homework-test-icon" type="button" aria-label="Icône Devoirs" aria-expanded="false">📚</button>
+      <h2 id="homeworkTitleLabel" class="homework-page-banner__title">Devoirs</h2>
+    </div>
+    <div class="homework-page-banner__meta">10 à 15 minutes</div>
+  </div>
   <div id="homeworkCurrent" class="homework-current"></div>
   <div id="homeworkTestBar" class="homework-test-bar" hidden><strong>🧪 Test devoirs</strong><button id="homeworkTestPrev" type="button" aria-label="Semaine précédente">←</button><span id="homeworkTestLabel"></span><button id="homeworkTestNext" type="button" aria-label="Semaine suivante">→</button><button id="homeworkTestReset" type="button">Retour auto</button></div>
 </section>
@@ -242,7 +273,7 @@
  </div>
 </section>
 
-<footer>Progressions CE2 · Espace Parents · V35.53</footer>
+<footer>Progressions CE2 · Espace Parents · V35.58</footer>
 
 <script src="https://labastide11.github.io/progressions-ce2/data.js?v=34.38"></script>
 <script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p1.js?v=36.72"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p2.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p3.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p4.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p5.js?v=35.66"></script>
