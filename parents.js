@@ -1,3 +1,4 @@
+// V35.56 — Page Devoirs : suppression du bloc introductif fixe pour afficher directement les devoirs.
 // V35.55 — « La semaine en un coup d’œil » : badges thématiques (Lecture, Dictée, Maths…), Sport unique, suppression du compteur générique de devoirs.
 // V35.51 — Synchronisation avec Progressions CE2 V36.70 : évaluations P1 lues depuis devoirs-p1.js, dictées et dates réalignées.
 // V35.38 — Rappels de rentrée affichés dans l’Espace Parents jusqu’au 18 septembre 2026.
