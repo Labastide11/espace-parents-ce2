@@ -1,3 +1,4 @@
+// V35.65 — Cache-busting mobile : badges thématiques et couleurs spécifiques chargés avec index V35.65.
 // V35.56 — Page Devoirs : suppression du bloc introductif fixe pour afficher directement les devoirs.
 // V35.60 — Mobile : coup d’œil en grille 2 × 2 (lundi/mardi puis jeudi/vendredi), sans scroll horizontal.
 // V35.51 — Synchronisation avec Progressions CE2 V36.70 : évaluations P1 lues depuis devoirs-p1.js, dictées et dates réalignées.
