@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents CE2 — V35.66</title>
+  <title>Espace Parents CE2 — V35.67</title>
   <link rel="stylesheet" href="parents.css?v=35.49">
   <style id="parents-meetings-v3544">
     .parents-meetings-focus{margin:14px 0 20px}
@@ -193,6 +193,60 @@
       #parentsViewHomework .homework-week-calendar__date span{font-size:13px!important}
     }
   </style>
+
+  <style id="week-glance-four-days-v3567">
+    /* V35.67 — Toujours 4 jours de classe : PC/tablette sur une ligne, mobile en 2 × 2. */
+    #parentsViewHomework .homework-week-calendar__day[data-dow="3"],
+    #parentsViewHomework .homework-week-calendar__day[data-dow="6"],
+    #parentsViewHomework .homework-week-calendar__day[data-dow="0"]{display:none!important}
+
+    #parentsViewHomework .homework-week-calendar__grid{
+      display:grid!important;
+      grid-template-columns:repeat(4,minmax(0,1fr))!important;
+      grid-auto-flow:row!important;
+      gap:10px!important;
+      width:100%!important;
+      max-width:100%!important;
+      min-width:0!important;
+      overflow:visible!important;
+      padding:0!important;
+      margin:0!important;
+      scroll-snap-type:none!important;
+    }
+    #parentsViewHomework .homework-week-calendar__day{
+      display:flex!important;
+      flex-direction:column!important;
+      width:100%!important;
+      min-width:0!important;
+      max-width:none!important;
+      box-sizing:border-box!important;
+    }
+    #parentsViewHomework .homework-week-calendar__date{
+      display:flex!important;
+      align-items:baseline!important;
+      gap:5px!important;
+      flex-wrap:nowrap!important;
+      white-space:nowrap!important;
+      width:auto!important;
+      max-width:100%!important;
+    }
+    #parentsViewHomework .homework-week-calendar__date strong,
+    #parentsViewHomework .homework-week-calendar__date span{
+      display:inline!important;
+      width:auto!important;
+      margin:0!important;
+      line-height:1.15!important;
+    }
+    @media (max-width:760px){
+      #parentsViewHomework .homework-week-calendar__grid{
+        grid-template-columns:repeat(2,minmax(0,1fr))!important;
+        gap:8px!important;
+      }
+      #parentsViewHomework .homework-week-calendar__day{min-height:116px!important}
+      #parentsViewHomework .homework-week-calendar__date strong{font-size:15px!important}
+      #parentsViewHomework .homework-week-calendar__date span{font-size:13px!important}
+    }
+  </style>
 </head>
 <body>
 <main class="parents-main">
@@ -371,7 +425,7 @@
  </div>
 </section>
 
-<footer>Progressions CE2 · Espace Parents · V35.66</footer>
+<footer>Progressions CE2 · Espace Parents · V35.67</footer>
 
 <script src="https://labastide11.github.io/progressions-ce2/data.js?v=34.38"></script>
 <script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p1.js?v=36.72"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p2.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p3.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p4.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p5.js?v=35.66"></script>
