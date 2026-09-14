@@ -1,5 +1,5 @@
 // V35.56 — Page Devoirs : suppression du bloc introductif fixe pour afficher directement les devoirs.
-// V35.55 — « La semaine en un coup d’œil » : badges thématiques (Lecture, Dictée, Maths…), Sport unique, suppression du compteur générique de devoirs.
+// V35.59 — Page Devoirs plus compacte : suppression du bloc d’en-tête de semaine au-dessus du coup d’œil.
 // V35.51 — Synchronisation avec Progressions CE2 V36.70 : évaluations P1 lues depuis devoirs-p1.js, dictées et dates réalignées.
 // V35.38 — Rappels de rentrée affichés dans l’Espace Parents jusqu’au 18 septembre 2026.
 // V35.32 — Double badge des évaluations : 📝 Évaluation + sous-matière précise.
@@ -903,10 +903,8 @@ function homeworkWeekSectionHtml(week,{future=false}={}){
     .map(ev=>({due:String(ev.date),evaluationToday:ev}));
   items=[...items,...dayJItems].sort((a,b)=>String(a.due||'').localeCompare(String(b.due||'')));
 
-  const dates=`${esc(frDate(dateFromIso(week.start),{day:'numeric',month:'long'}))} au ${esc(frDate(dateFromIso(week.end),{day:'numeric',month:'long'}))}`;
   const sectionLabel=future?'Semaine prochaine':'Cette semaine';
   const anticipation=future?'<p class="homework-week-ahead-note">👀 <strong>Pour anticiper :</strong> ces devoirs sont affichés à l’avance pour faciliter l’organisation familiale.</p>':'';
-  const head=`<div class="homework-week-head"><div><span>${sectionLabel}</span><h3>${dates}</h3>${week.label?`<small class="homework-week-source-label">${esc(week.label)}</small>`:''}${week.theme?`<p class="homework-theme">${esc(week.theme)}</p>`:''}</div></div>`;
   const weekCalendar=homeworkWeekCalendarHtml(week,sourceItems);
   const calendar=schoolCalendarHtml(week);
   const practicalReminders=homeworkPhysicalRemindersHtml(week);
@@ -917,7 +915,7 @@ function homeworkWeekSectionHtml(week,{future=false}={}){
   const content=items.length
     ? `${week.note?`<div class="homework-empty">${esc(week.note)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}`
     : `<div class="homework-empty">🌱 ${esc(week.note||'Aucun devoir cette semaine.')}</div>`;
-  return `<section class="homework-two-week-section${future?' homework-two-week-section--next':''}" aria-label="${sectionLabel}">${head}${anticipation}${weekCalendar}${calendar}${practicalReminders}${weekEvaluationsHtml}${advanceAnnouncementsHtml}${content}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}</section>`;
+  return `<section class="homework-two-week-section${future?' homework-two-week-section--next':''}" aria-label="${sectionLabel}">${anticipation}${weekCalendar}${calendar}${practicalReminders}${weekEvaluationsHtml}${advanceAnnouncementsHtml}${content}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}</section>`;
 }
 function renderHomework(){
   const now=new Date(),week=homeworkWeekFor(now),cur=$('homeworkCurrent');
