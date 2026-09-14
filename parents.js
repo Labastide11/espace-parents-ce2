@@ -1,4 +1,4 @@
-// V35.50 — Synchronisation avec Progressions CE2 V36.69 : évaluations P1 lues depuis devoirs-p1.js, dictées et dates réalignées.
+// V35.51 — Synchronisation avec Progressions CE2 V36.70 : évaluations P1 lues depuis devoirs-p1.js, dictées et dates réalignées.
 // V35.38 — Rappels de rentrée affichés dans l’Espace Parents jusqu’au 18 septembre 2026.
 // V35.32 — Double badge des évaluations : 📝 Évaluation + sous-matière précise.
 // V35.29 — Le bandeau « Cette semaine » affiche uniquement les évaluations dont la date réelle appartient à la semaine affichée.
@@ -15,7 +15,7 @@ const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,
 const EDT=window.PUBLIC_EDT,PROG=window.PROGRESSIONS||{},W=window.PARENTS_SEMAINE||{},H=window.PARENTS_TRAVAIL||{},L=window.PARENTS_VIE_CLASSE||{},I=window.PARENTS_INFOS||{},D1=window.DEVOIRS_P1||{weeks:[]},D2=window.DEVOIRS_P2||{weeks:[]},D3=window.DEVOIRS_P3||{weeks:[]},D4=window.DEVOIRS_P4||{weeks:[]},D5=window.DEVOIRS_P5||{weeks:[]},D={weeks:[...(D1.weeks||[]).map(w=>({...w,__period:'p1'})),...(D2.weeks||[]).map(w=>({...w,__period:'p2'})),...(D3.weeks||[]).map(w=>({...w,__period:'p3'})),...(D4.weeks||[]).map(w=>({...w,__period:'p4'})),...(D5.weeks||[]).map(w=>({...w,__period:'p5'}))].sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')))};
 const CAL=window.CALENDRIER_SCOLAIRE_2026_2027||{daysOff:[],breaks:[]};
 
-// V35.50 — P1 : les évaluations de français viennent désormais de data/devoirs-p1.js.
+// V35.51 — P1 : les évaluations de français viennent désormais de data/devoirs-p1.js.
 // P2 à P5 conservent ici leurs annonces canoniques jusqu’à leur migration vers la même source unique.
 const PARENTS_FRENCH_EVALUATIONS=[
   {date:'2026-11-24',announceOn:'2026-11-20',subject:'Français',title:'Compréhension P2 — La balade au parc',scope:['Comprendre un mot grâce au contexte.','Identifier ce que remplace un pronom.'],preparation:'Lire un petit texte puis expliquer avec ses mots ce que l’on comprend.'},
@@ -40,7 +40,7 @@ function isFrenchEvaluation(ev){
 function stripStaleFrenchEvaluations(item,sourceWeek){
   if(!item||typeof item!=='object')return item;
   const clone={...item};
-  // V35.50 : P1 est désormais la source commune ; on conserve ses évaluations de français.
+  // V35.51 : P1 est désormais la source commune ; on conserve ses évaluations de français.
   if(String(sourceWeek&&sourceWeek.__period||'')==='p1')return clone;
   if(Array.isArray(clone.evaluations))clone.evaluations=clone.evaluations.filter(ev=>!isFrenchEvaluation(ev));
   return clone;
