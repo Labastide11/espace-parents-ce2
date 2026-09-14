@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents CE2 — V35.60</title>
+  <title>Espace Parents CE2 — V35.61</title>
   <link rel="stylesheet" href="parents.css?v=35.49">
   <style id="parents-meetings-v3544">
     .parents-meetings-focus{margin:14px 0 20px}
@@ -62,7 +62,7 @@
     .homework-week-calendar__sport-badge{background:#dff7e8;border:1px solid #73d59a;color:#16723a}
     .homework-week-calendar__eval-badge{margin:0;background:#fff0f0;border:1px solid #ef9999;color:#a31d1d}
     .homework-week-calendar__legend{display:none!important}
-    /* V35.60 — Mobile : quatre jours de classe visibles sans défilement horizontal. */
+    /* V35.61 — Mobile : quatre jours de classe visibles sans défilement horizontal. */
     @media (max-width:760px){
       #parentsViewHomework{padding-left:12px!important;padding-right:12px!important}
       #parentsViewHomework .homework-toolbar{margin-bottom:10px!important}
@@ -119,6 +119,47 @@
       .homework-page-banner{align-items:flex-start;flex-direction:column;gap:10px;padding:13px 14px}
       .homework-page-banner__title{font-size:24px}
       .homework-page-banner__meta{white-space:normal}
+    }
+  </style>
+
+  <style id="homework-mobile-grid-v3561">
+    /* V35.61 — Mobile : vraie grille 2 × 2, sans largeur héritée du calendrier desktop. */
+    @media (max-width:760px){
+      html,body{max-width:100%!important;overflow-x:hidden!important}
+      #parentsViewHomework,
+      #parentsViewHomework .homework-current,
+      #parentsViewHomework .homework-week-calendar{
+        width:100%!important;max-width:100%!important;min-width:0!important;
+        box-sizing:border-box!important;overflow:hidden!important;
+      }
+      #parentsViewHomework .homework-week-calendar{padding:14px 10px!important;margin-left:0!important;margin-right:0!important}
+      #parentsViewHomework .homework-week-calendar__title{
+        display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;
+        white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;
+        font-size:19px!important;line-height:1.15!important;margin:0 0 10px!important;
+      }
+      #parentsViewHomework .homework-week-calendar__grid{
+        display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+        grid-auto-flow:row!important;width:100%!important;max-width:100%!important;min-width:0!important;
+        gap:8px!important;padding:0!important;margin:0!important;overflow:visible!important;
+      }
+      #parentsViewHomework .homework-week-calendar__day{
+        display:flex!important;flex-direction:column!important;min-width:0!important;max-width:none!important;width:100%!important;
+        min-height:116px!important;padding:10px!important;margin:0!important;box-sizing:border-box!important;
+        overflow:hidden!important;
+      }
+      #parentsViewHomework .homework-week-calendar__day[data-dow="3"],
+      #parentsViewHomework .homework-week-calendar__day[data-dow="6"],
+      #parentsViewHomework .homework-week-calendar__day[data-dow="0"]{display:none!important}
+      #parentsViewHomework .homework-week-calendar__date,
+      #parentsViewHomework .homework-week-calendar__badges{width:100%!important;max-width:100%!important;min-width:0!important}
+      #parentsViewHomework .homework-week-calendar__homework-badge,
+      #parentsViewHomework .homework-week-calendar__sport-badge,
+      #parentsViewHomework .homework-week-calendar__eval-badge{
+        width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;
+        white-space:normal!important;overflow:hidden!important;text-overflow:ellipsis!important;
+        font-size:11px!important;padding:5px 7px!important;
+      }
     }
   </style>
 </head>
@@ -299,7 +340,7 @@
  </div>
 </section>
 
-<footer>Progressions CE2 · Espace Parents · V35.60</footer>
+<footer>Progressions CE2 · Espace Parents · V35.61</footer>
 
 <script src="https://labastide11.github.io/progressions-ce2/data.js?v=34.38"></script>
 <script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p1.js?v=36.72"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p2.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p3.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p4.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p5.js?v=35.66"></script>
@@ -388,7 +429,7 @@
 <!-- /V35.45 — Nettoyage des doublons réunions dans En ce moment -->
 
 
-<!-- V35.60 — Page Devoirs mobile : suppression du bandeau Devoirs et grille 2 × 2 (Lun/Mar puis Jeu/Ven) -->
+<!-- V35.61 — Page Devoirs mobile : suppression du bandeau Devoirs et grille 2 × 2 (Lun/Mar puis Jeu/Ven) -->
 <script id="parents-national-assessments-finished-v3549">
 (function(){
   'use strict';
