@@ -1,4 +1,4 @@
-// V35.54 — « La semaine en un coup d’œil » : cartes neutres, pastille ✏️ devoir(s), pastille Sport unique, suppression des doublons et du code couleur par matière.
+// V35.55 — « La semaine en un coup d’œil » : badges thématiques (Lecture, Dictée, Maths…), Sport unique, suppression du compteur générique de devoirs.
 // V35.51 — Synchronisation avec Progressions CE2 V36.70 : évaluations P1 lues depuis devoirs-p1.js, dictées et dates réalignées.
 // V35.38 — Rappels de rentrée affichés dans l’Espace Parents jusqu’au 18 septembre 2026.
 // V35.32 — Double badge des évaluations : 📝 Évaluation + sous-matière précise.
@@ -482,22 +482,32 @@ function allEvaluations(){
   });
   return out.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
 }
-// V35.31 — Même langage couleur que l'emploi du temps de Progressions CE2.
+// V35.55 — Dans « La semaine en un coup d’œil », on affiche des badges thématiques simples et parlants.
 const WEEK_GLANCE_SUBJECTS={
   francais:{label:'Français',icon:'📘',aliases:/fran[cç]ais|lecture|compr[ée]hension|lexique|vocabulaire|orthographe|dict[ée]e|production d[’']?[ée]crits?/i},
   maths:{label:'Mathématiques',icon:'🧮',aliases:/math[ée]mat|calcul|num[ée]ration|g[ée]om[ée]tr|mesure|probl[èe]me|fraction/i},
   english:{label:'Anglais',icon:'🇬🇧',aliases:/anglais|english/i},
-  eps:{label:'Sport',icon:'🏃',aliases:/\beps\b|sport|piscine|natation|domec|vtt|sandball/i},
+  eps:{label:'Sport',icon:'🏃',aliases:/eps|sport|piscine|natation|domec|vtt|sandball/i},
   arts:{label:'Arts',icon:'🎨',aliases:/arts?|artistique|musique|chant/i},
   science:{label:'Sciences',icon:'🔬',aliases:/sciences?|questionner le monde|qlm/i},
   history:{label:'Histoire',icon:'🏺',aliases:/histoire|g[ée]ographie|temps|espace/i},
   emc:{label:'EMC',icon:'🤝',aliases:/emc|enseignement moral|citoyen/i},
   cham:{label:'CHAM',icon:'🎵',aliases:/cham/i}
 };
+const WEEK_GLANCE_HOMEWORK_BADGES={
+  lecture:{label:'📖 Lecture',tone:'homework'},
+  dictee:{label:'📝 Dictée',tone:'homework'},
+  maths:{label:'➕ Maths',tone:'homework'},
+  vocabulaire:{label:'🧠 Vocabulaire',tone:'homework'},
+  ecriture:{label:'✍️ Écriture',tone:'homework'},
+  anglais:{label:'🇬🇧 Anglais',tone:'homework'},
+  lecon:{label:'📚 Leçon',tone:'homework'},
+  sport:{label:'🏃 Sport',tone:'sport'}
+};
 function weekGlanceSubjectKey(value){
   const raw=String(value||'').trim();
   if(!raw)return '';
-  const normalized=raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const normalized=raw.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
   if(['francais','french'].includes(normalized))return 'francais';
   if(['maths','mathematiques','mathematique'].includes(normalized))return 'maths';
   if(['anglais','english'].includes(normalized))return 'english';
@@ -510,13 +520,29 @@ function weekGlanceSubjectKey(value){
   for(const [key,meta] of Object.entries(WEEK_GLANCE_SUBJECTS))if(meta.aliases.test(raw))return key;
   return '';
 }
-function weekGlanceItemSubjectKeys(dayItems){
-  const keys=[];
+function weekGlanceItemHomeworkKinds(dayItems){
+  const kinds=[];
+  const addKind=kind=>{if(kind&&!kinds.includes(kind))kinds.push(kind);};
+  const detectKind=value=>{
+    const raw=String(value||'').trim();
+    if(!raw)return '';
+    const text=raw.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+    if(/dictee|prepare ma dictee|mots appris|liste de mots|10 mots|mots annonces|epelle/.test(text))return 'dictee';
+    if(/lecture|comprehension|reformule|texte|personnages|histoire|lire/.test(text))return 'lecture';
+    if(/vocabulaire|lexique|ordre alphabetique|synonyme|contraire/.test(text))return 'vocabulaire';
+    if(/math|calcul|addition|soustraction|multiplication|division|numeration|probleme|geometrie|mesure|rituel maths|nombre/.test(text))return 'maths';
+    if(/ecriture|production d'ecrits|copie|redige|phrase/.test(text))return 'ecriture';
+    if(/anglais|english/.test(text))return 'anglais';
+    if(/lecon|poesie|chant|histoire|sciences|questionner le monde/.test(text))return 'lecon';
+    return '';
+  };
   (dayItems||[]).forEach(it=>{
-    [it?.subject,it?.subjectLabel,it?.title,it?.routineTitle,it?.classLink,it?.notion].forEach(v=>{const k=weekGlanceSubjectKey(v);if(k&&!keys.includes(k))keys.push(k);});
-    if(it?.secondary){[it.secondary.subject,it.secondary.subjectLabel,it.secondary.title].forEach(v=>{const k=weekGlanceSubjectKey(v);if(k&&!keys.includes(k))keys.push(k);});}
+    const values=[it?.subject,it?.subjectLabel,it?.title,it?.routineTitle,it?.classLink,it?.notion,it?.text,it?.help,it?.body,it?.content];
+    values.forEach(v=>addKind(detectKind(v)));
+    const secondaryList=Array.isArray(it?.secondary)?it.secondary:[it?.secondary].filter(Boolean);
+    secondaryList.forEach(sec=>[sec?.subject,sec?.subjectLabel,sec?.title,sec?.text,sec?.help,sec?.body].forEach(v=>addKind(detectKind(v))));
   });
-  return keys;
+  return kinds;
 }
 function weekGlancePhysicalKey(d){
   try{
@@ -535,38 +561,29 @@ function homeworkWeekCalendarHtml(week,sourceItems=[]){
     const br=schoolBreakForDate(iso),off=schoolDayOffForDate(iso);
     const dayItems=items.filter(it=>String(it&&it.due||'')===iso);
     const dayEvals=evals.filter(ev=>String(ev&&ev.date||'')===iso);
-    const evalKeys=[...new Set(dayEvals.map(ev=>weekGlanceSubjectKey(`${ev?.subject||''} ${ev?.title||''}`)).filter(Boolean))];
-    const itemKeys=weekGlanceItemSubjectKeys(dayItems);
     const physicalKey=weekGlancePhysicalKey(d);
-    let kind='class',icon='🏫',status='Classe',subjectKeys=[];
+    let kind='class',icon='🏫',status='Classe';
     if(br){kind='holiday';icon='🏖️';status=br.label||'Vacances scolaires';}
     else if(off){kind='dayoff';icon=off.icon||'📅';status=off.label||'Pas de classe';}
     else if(dow===0||dow===6){kind='weekend';icon='☕';status='Week-end';}
     else if(dow===3){kind='noclass';icon='🌿';status='Pas de classe';}
     else if(dayEvals.length){
-      kind='evaluation';subjectKeys=evalKeys;
-      icon='📝';
-      const labels=subjectKeys.map(k=>WEEK_GLANCE_SUBJECTS[k]?.label).filter(Boolean);
-      status=`${dayEvals.length} évaluation${dayEvals.length>1?'s':''}${labels.length?` · ${labels.join(' / ')}`:''}`;
+      kind='evaluation';icon='📝';status=`${dayEvals.length} évaluation${dayEvals.length>1?'s':''}`;
     }
     else if(dayItems.length){
-      kind='homework';subjectKeys=itemKeys;
-      if(!subjectKeys.length&&physicalKey)subjectKeys=[physicalKey];
-      const primary=subjectKeys[0]&&WEEK_GLANCE_SUBJECTS[subjectKeys[0]];
-      icon=primary?.icon||'📚';
-      status=subjectKeys.length===1?`${primary.label}`:subjectKeys.length>1?'Plusieurs matières':'À préparer';
+      kind='homework';icon='📚';status='À préparer';
     }
     else if(physicalKey){
-      kind='activity';subjectKeys=['eps'];icon='🏃';status='Sport';
+      kind='activity';icon='🏃';status='Sport';
     }
     else {status='Classe · rien à préparer';}
+    const taskKinds=weekGlanceItemHomeworkKinds(dayItems);
+    const taskBadges=taskKinds.map(k=>WEEK_GLANCE_HOMEWORK_BADGES[k]).filter(Boolean).map(meta=>`<span class="homework-week-calendar__homework-badge">${esc(meta.label)}</span>`).join('');
+    const sportBadge=physicalKey&&![0,3,6].includes(dow)&&!br&&!off?`<span class="homework-week-calendar__sport-badge">${esc(WEEK_GLANCE_HOMEWORK_BADGES.sport.label)}</span>`:'';
     const evalMarker=dayEvals.length?`<span class="homework-week-calendar__eval-badge">📝 ${dayEvals.length>1?`${dayEvals.length} évaluations`:'Évaluation'}</span>`:'';
-    const homeworkCount=dayItems.length;
-    const homeworkBadge=homeworkCount?`<span class="homework-week-calendar__homework-badge">✏️ ${homeworkCount} devoir${homeworkCount>1?'s':''}</span>`:'';
-    const sportBadge=physicalKey&&![0,3,6].includes(dow)&&!br&&!off?'<span class="homework-week-calendar__sport-badge">🏃 Sport</span>':'';
     const isSpecialDay=Boolean(br||off||dow===0||dow===6||dow===3);
     const specialStatus=isSpecialDay?`<div class="homework-week-calendar__status"><span aria-hidden="true">${icon}</span><small>${esc(status)}</small></div>`:'';
-    const badges=(homeworkBadge||sportBadge||evalMarker)?`<div class="homework-week-calendar__badges">${homeworkBadge}${sportBadge}${evalMarker}</div>`:'';
+    const badges=(taskBadges||sportBadge||evalMarker)?`<div class="homework-week-calendar__badges">${taskBadges}${sportBadge}${evalMarker}</div>`:'';
     return `<div class="homework-week-calendar__day homework-week-calendar__day--${kind}"><div class="homework-week-calendar__date"><strong>${esc(frDate(d,{weekday:'long'}))}</strong><span>${esc(frDate(d,{day:'numeric',month:'short'}))}</span></div>${specialStatus}${badges}</div>`;
   }).join('');
   return `<section class="homework-week-calendar" aria-label="Calendrier de la semaine"><div class="homework-week-calendar__title">🗓️ La semaine en un coup d’œil</div><div class="homework-week-calendar__grid">${cells}</div></section>`;
