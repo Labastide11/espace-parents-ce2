@@ -107,11 +107,11 @@ const PARENT_LEARNING_SUMMARIES={
       'Découvrir quelques repères culturels liés à l’Angleterre et à Halloween.'
     ],
     sciences:[
-      'Se poser une question que l’on peut étudier.',
-      'Réaliser une expérience simple en respectant les consignes.',
-      'Observer et garder une trace des résultats.',
-      'Comparer ce que l’on observe.',
-      'Tirer une conclusion simple à partir des résultats.'
+      'Découvrir la démarche scientifique avec une expérience courte sur l’eau et l’huile.',
+      'Mettre en évidence que l’air existe même s’il est invisible.',
+      'Comprendre que l’air occupe de la place et peut être comprimé.',
+      'Classer des matériaux selon qu’ils sont transparents, translucides ou opaques.',
+      'Comprendre comment se forme une ombre et réinvestir les observations dans un petit bilan.'
     ],
     histoire:[
       'Ordonner des événements dans le temps.',
