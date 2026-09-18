@@ -696,11 +696,12 @@ function homeworkHibouHtml(value){
   const valid=list.filter(x=>x&&(typeof x==='string'||x.url));
   if(!valid.length)return'';
   const intro=(!Array.isArray(value)&&typeof value==='object'&&value.intro)?value.intro:'Leçons utiles dans Maître Hibou :';
+  const resourceIcon=(!Array.isArray(value)&&typeof value==='object'&&value.icon)?String(value.icon):'🦉';
   const links=valid.map(x=>{
     if(typeof x==='string')return `<span><b>${esc(x)}</b></span>`;
     return `<a class="homework-hibou-link" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer"><b>${esc(x.label||'Ouvrir la leçon')}</b> ↗</a>`;
   }).join(' <span aria-hidden="true">·</span> ');
-  return `<div class="homework-hibou">🦉 ${esc(intro)} ${links}</div>`;
+  return `<div class="homework-hibou">${esc(resourceIcon)} ${esc(intro)} ${links}</div>`;
 }
 
 // V35.32 — Double badge des évaluations : nature + domaine précis.
@@ -793,13 +794,14 @@ function homeworkStructuredBlock(task,extraClass=''){
   const instruction=String(task.instruction||task.routine||'');
   const help=String(task.help||'');
   const duration=Number(task.duration||0);
+  const durationLabel=String(task.durationLabel||'').trim();
   const classLink=String(task.classLink||task.notion||'');
   return `<div class="homework-block homework-task homework-task--${esc(meta.tone||'neutral')} ${extraClass}">
     <b>${esc(meta.icon||'📚')} ${esc(title)}</b>
     <p>${esc(instruction)}</p>
     ${help?`<div class="homework-help"><strong>💡 Pour t’aider :</strong> ${esc(help)}</div>`:''}
     <div class="homework-task-meta">
-      ${duration?`<span>⏱️ ${duration} min environ</span>`:''}
+      ${durationLabel?`<span>⏱️ ${esc(durationLabel)}</span>`:(duration?`<span>⏱️ ${duration} min environ</span>`:'')}
       ${classLink?`<span>↪ En classe : ${esc(classLink)}</span>`:''}
     </div>
   </div>`;
