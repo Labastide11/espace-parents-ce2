@@ -1,6 +1,6 @@
-// V36.72 — P1 : rituel maths (nombre en lettres + addition) à partir du 17/09, synchronisé avec l’emploi du temps.
+// V36.73 — P1 : précision du devoir de lecture du lundi 21/09 (cahier de Découverte du monde, partie Géographie, 5 à 10 min).
 window.DEVOIRS_P1 = {
-  "version": "36.72",
+  "version": "36.73",
   "period": "p1",
   "schoolYear": "2026-2027",
   "principles": {
@@ -219,13 +219,13 @@ window.DEVOIRS_P1 = {
           "icon": "📖",
           "action": "Je prépare ma lecture",
           "title": "Lecture — Je prépare ma lecture",
-          "instruction": "Si tu as le passage indiqué, relis-le à voix haute pendant 5 minutes. Sans le texte, raconte l’essentiel de la lecture précédente.",
+          "instruction": "Dans ton cahier de Découverte du monde, partie Géographie, relis à voix haute pendant 5 à 10 minutes le texte « Un pays immense à découvrir » de la fiche « Australie – Mon carnet d’explorateur ».",
           "help": "Cherche à lire sans hésiter, par groupes de mots, en respectant la ponctuation.",
           "duration": 5,
           "classLink": "Fluence · compréhension",
           "routineIcon": "📖",
           "routineTitle": "Lecture — Je prépare ma lecture",
-          "routine": "Si tu as le passage indiqué, relis-le à voix haute pendant 5 minutes. Sans le texte, raconte l’essentiel de la lecture précédente.",
+          "routine": "Dans ton cahier de Découverte du monde, partie Géographie, relis à voix haute pendant 5 à 10 minutes le texte « Un pays immense à découvrir » de la fiche « Australie – Mon carnet d’explorateur ».",
           "notion": "Fluence · compréhension",
           "challenge": "",
           "family": ""
