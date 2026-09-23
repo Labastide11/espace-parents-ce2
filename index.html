@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents CE2 — V35.73</title>
+  <title>Espace Parents CE2 — V35.74</title>
   <link rel="stylesheet" href="parents.css?v=35.49">
   <style id="parents-meetings-v3544">
     .parents-meetings-focus{margin:14px 0 20px}
@@ -439,7 +439,7 @@
  </div>
 </section>
 
-<footer>Progressions CE2 · Espace Parents · V35.73</footer>
+<footer>Progressions CE2 · Espace Parents · V35.74</footer>
 
 <script src="https://labastide11.github.io/progressions-ce2/data.js?v=34.38"></script>
 <script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p1.js?v=37.07"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p2.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p3.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p4.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p5.js?v=35.66"></script>
@@ -577,17 +577,8 @@
 </script>
 <!-- /V35.51 -->
 
-
-<style id="parents-schedule-html-v3573-style">
-/* V35.73 — lisibilité des descriptions importées depuis Progressions */
-#parentsScheduleToday .parents-schedule-row__activity,
-#parentsScheduleWeek .parents-schedule-row__activity,
-#parentsScheduleToday .schedule-activity,
-#parentsScheduleWeek .schedule-activity,
-#parentsScheduleToday .activity,
-#parentsScheduleWeek .activity {
-  line-height:1.45;
-}
+<style id="parents-schedule-safe-html-v3574-style">
+/* V35.74 — uniquement la lisibilité du texte, sans toucher à la grille */
 #parentsScheduleToday br,
 #parentsScheduleWeek br{
   display:block;
@@ -596,76 +587,78 @@
 }
 </style>
 
-<script id="parents-schedule-html-v3573">
+<script id="parents-schedule-safe-html-v3574">
 (function(){
   'use strict';
 
-  var ALLOWED = {
-    BR:1, STRONG:1, B:1, EM:1, I:1
-  };
-
-  function decodeSafeMarkup(el){
-    if(!el || el.dataset.parentsHtmlFixed==='1') return;
-
-    var raw=el.innerHTML || '';
-    if(!/&lt;(?:br|strong|\/strong|b|\/b|em|\/em|i|\/i)\b/i.test(raw)) return;
-
+  function buildSafeFragment(raw){
     var holder=document.createElement('div');
-    holder.innerHTML=raw
-      .replace(/&lt;br\s*\/?&gt;/gi,'<br>')
-      .replace(/&lt;strong&gt;/gi,'<strong>')
-      .replace(/&lt;\/strong&gt;/gi,'</strong>')
-      .replace(/&lt;b&gt;/gi,'<b>')
-      .replace(/&lt;\/b&gt;/gi,'</b>')
-      .replace(/&lt;em&gt;/gi,'<em>')
-      .replace(/&lt;\/em&gt;/gi,'</em>')
-      .replace(/&lt;i&gt;/gi,'<i>')
-      .replace(/&lt;\/i&gt;/gi,'</i>');
+    holder.innerHTML=String(raw||'')
+      .replace(/<br\s*\/?>/gi,'<br>')
+      .replace(/<strong>/gi,'<strong>')
+      .replace(/<\/strong>/gi,'</strong>')
+      .replace(/<b>/gi,'<b>')
+      .replace(/<\/b>/gi,'</b>')
+      .replace(/<em>/gi,'<em>')
+      .replace(/<\/em>/gi,'</em>');
 
-    Array.from(holder.querySelectorAll('*')).forEach(function(node){
-      if(!ALLOWED[node.tagName]){
-        node.replaceWith(document.createTextNode(node.textContent || ''));
+    // Supprime toute balise autre que celles nécessaires à la mise en forme.
+    Array.from(holder.querySelectorAll('*')).forEach(function(el){
+      if(!/^(BR|STRONG|B|EM)$/i.test(el.tagName)){
+        el.replaceWith(document.createTextNode(el.textContent||''));
       }else{
-        Array.from(node.attributes || []).forEach(function(attr){
-          node.removeAttribute(attr.name);
+        Array.from(el.attributes || []).forEach(function(attr){
+          el.removeAttribute(attr.name);
         });
       }
     });
 
-    el.innerHTML=holder.innerHTML;
-    el.dataset.parentsHtmlFixed='1';
+    var frag=document.createDocumentFragment();
+    while(holder.firstChild) frag.appendChild(holder.firstChild);
+    return frag;
   }
 
-  function fixSchedules(){
-    ['parentsScheduleToday','parentsScheduleWeek'].forEach(function(id){
-      var root=document.getElementById(id);
-      if(!root) return;
+  function fixTextNodes(root){
+    if(!root) return;
 
-      // Target leaf elements carrying descriptions; also catch compact legacy nodes.
-      root.querySelectorAll('small,p,.parents-schedule-row__activity,.schedule-activity,.activity,li,div').forEach(function(el){
-        if(el.children.length>8) return;
-        decodeSafeMarkup(el);
-      });
+    var walker=document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode:function(node){
+          var s=String(node.nodeValue||'');
+          return /<(?:br|strong|\/strong|b|\/b|em|\/em)\b/i.test(s)
+            ? NodeFilter.FILTER_ACCEPT
+            : NodeFilter.FILTER_REJECT;
+        }
+      }
+    );
+
+    var nodes=[];
+    while(walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(function(node){
+      var raw=node.nodeValue||'';
+      node.parentNode.replaceChild(buildSafeFragment(raw),node);
     });
   }
 
-  function boot(){
-    fixSchedules();
-
-    ['parentsScheduleToday','parentsScheduleWeek'].forEach(function(id){
-      var root=document.getElementById(id);
-      if(!root || !window.MutationObserver) return;
-      new MutationObserver(function(){
-        fixSchedules();
-      }).observe(root,{childList:true,subtree:true,characterData:true});
-    });
+  function run(){
+    fixTextNodes(document.getElementById('parentsScheduleToday'));
+    fixTextNodes(document.getElementById('parentsScheduleWeek'));
   }
 
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',boot);
+    document.addEventListener('DOMContentLoaded',run);
   }else{
-    boot();
+    run();
   }
+
+  ['parentsScheduleToday','parentsScheduleWeek'].forEach(function(id){
+    var root=document.getElementById(id);
+    if(!root || !window.MutationObserver) return;
+    new MutationObserver(run).observe(root,{childList:true,subtree:true,characterData:true});
+  });
 })();
 </script>
 
