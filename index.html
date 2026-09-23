@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents CE2 — V35.74</title>
+  <title>Espace Parents CE2 — V35.75</title>
   <link rel="stylesheet" href="parents.css?v=35.49">
   <style id="parents-meetings-v3544">
     .parents-meetings-focus{margin:14px 0 20px}
@@ -261,6 +261,39 @@
     .homework-week-calendar__day--link:focus-visible{outline:3px solid #8f73d6;outline-offset:2px}
     .homework-card[id^="devoirs-"]{scroll-margin-top:18px}
   </style>
+
+<style id="parents-schedule-black-text-v3575">
+/* V35.75 — meilleure lisibilité : texte noir dans l'emploi du temps */
+#parentsScheduleToday,
+#parentsScheduleWeek,
+#parentsScheduleToday .schedule-card,
+#parentsScheduleWeek .schedule-card,
+#parentsScheduleToday .schedule-row,
+#parentsScheduleWeek .schedule-row,
+#parentsScheduleToday .schedule-activity,
+#parentsScheduleWeek .schedule-activity,
+#parentsScheduleToday .activity,
+#parentsScheduleWeek .activity,
+#parentsScheduleToday .subject,
+#parentsScheduleWeek .subject,
+#parentsScheduleToday .time,
+#parentsScheduleWeek .time,
+#parentsScheduleToday strong,
+#parentsScheduleWeek strong,
+#parentsScheduleToday b,
+#parentsScheduleWeek b,
+#parentsScheduleToday small,
+#parentsScheduleWeek small,
+#parentsScheduleToday p,
+#parentsScheduleWeek p,
+#parentsScheduleToday li,
+#parentsScheduleWeek li,
+#parentsScheduleToday span,
+#parentsScheduleWeek span {
+  color:#111 !important;
+}
+</style>
+
 </head>
 <body>
 <main class="parents-main">
@@ -439,7 +472,7 @@
  </div>
 </section>
 
-<footer>Progressions CE2 · Espace Parents · V35.74</footer>
+<footer>Progressions CE2 · Espace Parents · V35.75</footer>
 
 <script src="https://labastide11.github.io/progressions-ce2/data.js?v=34.38"></script>
 <script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p1.js?v=37.07"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p2.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p3.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p4.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/emploi-du-temps-data-p5.js?v=35.66"></script>
@@ -578,7 +611,7 @@
 <!-- /V35.51 -->
 
 <style id="parents-schedule-safe-html-v3574-style">
-/* V35.74 — uniquement la lisibilité du texte, sans toucher à la grille */
+/* V35.75 — uniquement la lisibilité du texte, sans toucher à la grille */
 #parentsScheduleToday br,
 #parentsScheduleWeek br{
   display:block;
