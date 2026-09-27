@@ -1806,3 +1806,43 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
 .homework-week-ahead-note{margin:0;padding:12px 14px;border-radius:14px;background:#f3eef9;color:#58466f;line-height:1.45}
 .homework-two-week-section--next .homework-card{background:#fff}
 @media(max-width:620px){.homework-two-week-section--next{padding:13px;border-radius:16px}}
+
+
+/* V35.79 — badge « Important » dans le bandeau d'accueil */
+.parents-flash-ticker__text{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+}
+.parents-flash-ticker__item{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+}
+.parents-flash-ticker__important{
+  display:inline-flex;
+  align-items:center;
+  min-height:22px;
+  padding:2px 8px;
+  border:1px solid #d9a91e;
+  border-radius:999px;
+  background:#f7d86b;
+  color:#684d00;
+  font-size:11px;
+  line-height:1;
+  font-weight:950;
+  white-space:nowrap;
+  box-shadow:0 1px 3px rgba(104,77,0,.12);
+}
+.parents-flash-ticker__item-separator{
+  color:#a27a19;
+  font-weight:900;
+}
+@media(max-width:620px){
+  .parents-flash-ticker__important{
+    min-height:20px;
+    padding:2px 6px;
+    font-size:10px;
+  }
+  .parents-flash-ticker__item{gap:5px}
+}

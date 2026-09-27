@@ -1016,6 +1016,20 @@ function parentApiText(item){
   if(title&&message)return `${title} — ${message}`;
   return message||title;
 }
+function parentApiIsImportant(item){
+  const priority=String(item?.priorite||item?.priority||'').trim().toLocaleLowerCase('fr');
+  return priority==='important';
+}
+function parentApiTickerHtml(items){
+  return items.map(item=>{
+    const text=parentApiText(item);
+    if(!text)return '';
+    const badge=parentApiIsImportant(item)
+      ? '<span class="parents-flash-ticker__important">Important</span>'
+      : '';
+    return `<span class="parents-flash-ticker__item">${badge}<span>${esc(text)}</span></span>`;
+  }).filter(Boolean).join('<span class="parents-flash-ticker__item-separator">•</span>');
+}
 function parentApiItems(type){
   if(!parentsApiLoaded)return null;
   return parentsApiMessages.filter(item=>String(item?.type||'').toLowerCase()===type);
@@ -1058,9 +1072,9 @@ function loadParentsInfoApi(){
   });
 }
 
-// V35.77 — Bandeau Parents : attendre l'API publique et afficher les messages
-// actifs visibles aujourd'hui de type « flash » OU « avenir ».
-// Aucun ancien message local (urgentMessage) ne doit apparaître pendant le chargement.
+// V35.79 — Bandeau Parents : attendre l'API publique, afficher les messages
+// actifs visibles aujourd'hui de type « flash » OU « avenir », et signaler
+// visuellement chaque message dont la priorité est « Important ».
 function renderFlashTicker(){
   const ticker=$('parentsFlashTicker');
   if(!ticker)return;
@@ -1070,14 +1084,13 @@ function renderFlashTicker(){
   // Tant que l'API n'a pas répondu, le bandeau reste totalement masqué.
   if(!parentsApiLoaded){
     ticker.hidden=true;
-    if(a)a.textContent='';
-    if(b)b.textContent='';
+    if(a)a.innerHTML='';
+    if(b)b.innerHTML='';
     ticker.removeAttribute('aria-label');
     return;
   }
 
   // L'API publique ne renvoie que les messages actifs/visibles.
-  // Le bandeau d'accueil peut donc afficher aussi bien les Info Flash que les À venir.
   const remote=parentsApiMessages.filter(item=>{
     const type=String(item?.type||'').toLowerCase();
     return type==='flash'||type==='avenir';
@@ -1086,14 +1099,15 @@ function renderFlashTicker(){
   const msg=remote.map(parentApiText).filter(Boolean).join(' • ');
   ticker.hidden=!msg;
   if(!msg){
-    if(a)a.textContent='';
-    if(b)b.textContent='';
+    if(a)a.innerHTML='';
+    if(b)b.innerHTML='';
     ticker.removeAttribute('aria-label');
     return;
   }
 
-  if(a)a.textContent=msg;
-  if(b)b.textContent=msg;
+  const html=parentApiTickerHtml(remote);
+  if(a)a.innerHTML=html;
+  if(b)b.innerHTML=html;
   ticker.setAttribute('aria-label',`Information importante : ${msg}. Ouvrir les infos de la classe.`);
 }
 
