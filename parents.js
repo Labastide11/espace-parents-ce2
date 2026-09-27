@@ -1051,6 +1051,19 @@ function renderTickerBlock(tickerId,textId,copyId,items,ariaLabel,{showPriorityB
   if(b)b.innerHTML=html;
   ticker.setAttribute('aria-label',`${ariaLabel} : ${msg}. Ouvrir les infos de la classe.`);
 }
+function renderSecondaryDropdown(items){
+  const box=$('parentsSecondaryDropdown');
+  const panel=$('parentsSecondaryDropdownPanel');
+  if(!box||!panel)return;
+  const list=items.map(parentApiText).filter(Boolean);
+  box.hidden=!list.length;
+  if(!list.length){
+    panel.innerHTML='';
+    box.open=false;
+    return;
+  }
+  panel.innerHTML=list.map(text=>`<div class="parents-secondary-dropdown__item">${esc(text)}</div>`).join('');
+}
 function parentApiItems(type){
   if(!parentsApiLoaded)return null;
   return parentsApiMessages.filter(item=>String(item?.type||'').toLowerCase()===type);
@@ -1093,17 +1106,16 @@ function loadParentsInfoApi(){
   });
 }
 
-// V35.81 — Double bandeau Parents :
-// 1) messages prioritaires (Urgent / Important) dans le bandeau principal ;
-// 2) messages secondaires (priorité Normal) dans un second bandeau vert.
+// V35.82 — Bandeau principal pour les messages prioritaires,
+// puis menu déroulant vert juste en dessous pour les messages secondaires.
 function renderFlashTicker(){
   const primaryTicker=$('parentsFlashTicker');
-  const secondaryTicker=$('parentsSecondaryTicker');
-  if(!primaryTicker&&!secondaryTicker)return;
+  const secondaryDropdown=$('parentsSecondaryDropdown');
+  if(!primaryTicker&&!secondaryDropdown)return;
 
   if(!parentsApiLoaded){
     renderTickerBlock('parentsFlashTicker','parentsFlashTickerText','parentsFlashTickerTextCopy',[],`Information prioritaire`,{showPriorityBadge:true});
-    renderTickerBlock('parentsSecondaryTicker','parentsSecondaryTickerText','parentsSecondaryTickerTextCopy',[],`Information complémentaire`);
+    renderSecondaryDropdown([]);
     return;
   }
 
@@ -1116,7 +1128,7 @@ function renderFlashTicker(){
   const secondaryItems=remote.filter(item=>parentApiPriority(item)==='normal');
 
   renderTickerBlock('parentsFlashTicker','parentsFlashTickerText','parentsFlashTickerTextCopy',primaryItems,`Information prioritaire`,{showPriorityBadge:true});
-  renderTickerBlock('parentsSecondaryTicker','parentsSecondaryTickerText','parentsSecondaryTickerTextCopy',secondaryItems,`Information complémentaire`);
+  renderSecondaryDropdown(secondaryItems);
 }
 
 // V35.43 — Rappels unifiés : permanent + « En ce moment ».

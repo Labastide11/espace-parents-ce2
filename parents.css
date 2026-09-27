@@ -1865,3 +1865,65 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
   }
   .parents-flash-ticker__item{gap:5px}
 }
+
+.parents-secondary-dropdown{
+  margin:0 0 8px;
+  border:1px solid #9cd2a8;
+  border-radius:12px;
+  background:#eef9f1;
+  box-shadow:0 4px 10px rgba(31,111,62,.08);
+  color:#234a31;
+  overflow:hidden;
+}
+.parents-secondary-dropdown[hidden]{display:none!important}
+.parents-secondary-dropdown__summary{
+  list-style:none;
+  cursor:pointer;
+  padding:10px 14px;
+  font-size:13px;
+  font-weight:850;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  user-select:none;
+}
+.parents-secondary-dropdown__summary::-webkit-details-marker{display:none}
+.parents-secondary-dropdown__summary::before{
+  content:'▸';
+  font-size:13px;
+  color:#38734a;
+  transition:transform .18s ease;
+}
+.parents-secondary-dropdown[open] .parents-secondary-dropdown__summary::before{
+  transform:rotate(90deg);
+}
+.parents-secondary-dropdown__summary::after{
+  content:'Voir';
+  margin-left:auto;
+  font-size:12px;
+  font-weight:800;
+  color:#4d815d;
+}
+.parents-secondary-dropdown[open] .parents-secondary-dropdown__summary::after{
+  content:'Masquer';
+}
+.parents-secondary-dropdown__panel{
+  padding:0 14px 12px;
+  display:grid;
+  gap:8px;
+}
+.parents-secondary-dropdown__item{
+  padding:10px 12px;
+  border-radius:10px;
+  background:#ffffff;
+  border:1px solid #cfe8d6;
+  font-size:13px;
+  font-weight:750;
+  line-height:1.35;
+}
+@media(max-width:620px){
+  .parents-secondary-dropdown{border-radius:10px;margin-bottom:7px}
+  .parents-secondary-dropdown__summary{padding:9px 12px;font-size:12px}
+  .parents-secondary-dropdown__panel{padding:0 12px 10px}
+  .parents-secondary-dropdown__item{font-size:12px;padding:9px 10px}
+}
