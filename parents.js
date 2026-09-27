@@ -1058,17 +1058,17 @@ function loadParentsInfoApi(){
   });
 }
 
-// V35.76 — Info Flash : attendre la réponse de l'API publique.
+// V35.77 — Bandeau Parents : attendre l'API publique et afficher les messages
+// actifs visibles aujourd'hui de type « flash » OU « avenir ».
 // Aucun ancien message local (urgentMessage) ne doit apparaître pendant le chargement.
 function renderFlashTicker(){
   const ticker=$('parentsFlashTicker');
   if(!ticker)return;
 
   const a=$('parentsFlashTickerText'),b=$('parentsFlashTickerTextCopy');
-  const remote=parentApiItems('flash');
 
   // Tant que l'API n'a pas répondu, le bandeau reste totalement masqué.
-  if(remote===null){
+  if(!parentsApiLoaded){
     ticker.hidden=true;
     if(a)a.textContent='';
     if(b)b.textContent='';
@@ -1076,7 +1076,13 @@ function renderFlashTicker(){
     return;
   }
 
-  // Une fois l'API chargée, seuls les flash réellement publiés sont affichés.
+  // L'API publique ne renvoie que les messages actifs/visibles.
+  // Le bandeau d'accueil peut donc afficher aussi bien les Info Flash que les À venir.
+  const remote=parentsApiMessages.filter(item=>{
+    const type=String(item?.type||'').toLowerCase();
+    return type==='flash'||type==='avenir';
+  });
+
   const msg=remote.map(parentApiText).filter(Boolean).join(' • ');
   ticker.hidden=!msg;
   if(!msg){
@@ -1088,7 +1094,7 @@ function renderFlashTicker(){
 
   if(a)a.textContent=msg;
   if(b)b.textContent=msg;
-  ticker.setAttribute('aria-label',`Information de dernière minute : ${msg}. Ouvrir les infos de la classe.`);
+  ticker.setAttribute('aria-label',`Information importante : ${msg}. Ouvrir les infos de la classe.`);
 }
 
 // V35.43 — Rappels unifiés : permanent + « En ce moment ».
