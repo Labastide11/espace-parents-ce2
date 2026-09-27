@@ -1058,16 +1058,34 @@ function loadParentsInfoApi(){
   });
 }
 
+// V35.76 — Info Flash : attendre la réponse de l'API publique.
+// Aucun ancien message local (urgentMessage) ne doit apparaître pendant le chargement.
 function renderFlashTicker(){
   const ticker=$('parentsFlashTicker');
   if(!ticker)return;
-  const remote=parentApiItems('flash');
-  const msg=remote===null
-    ? String(I.urgentMessage||'').trim()
-    : remote.map(parentApiText).filter(Boolean).join(' • ');
-  ticker.hidden=!msg;
-  if(!msg)return;
+
   const a=$('parentsFlashTickerText'),b=$('parentsFlashTickerTextCopy');
+  const remote=parentApiItems('flash');
+
+  // Tant que l'API n'a pas répondu, le bandeau reste totalement masqué.
+  if(remote===null){
+    ticker.hidden=true;
+    if(a)a.textContent='';
+    if(b)b.textContent='';
+    ticker.removeAttribute('aria-label');
+    return;
+  }
+
+  // Une fois l'API chargée, seuls les flash réellement publiés sont affichés.
+  const msg=remote.map(parentApiText).filter(Boolean).join(' • ');
+  ticker.hidden=!msg;
+  if(!msg){
+    if(a)a.textContent='';
+    if(b)b.textContent='';
+    ticker.removeAttribute('aria-label');
+    return;
+  }
+
   if(a)a.textContent=msg;
   if(b)b.textContent=msg;
   ticker.setAttribute('aria-label',`Information de dernière minute : ${msg}. Ouvrir les infos de la classe.`);
