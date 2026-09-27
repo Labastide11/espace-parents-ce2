@@ -612,6 +612,25 @@ button[data-parent-view="learning"] .parents-quick-card__icon img{
   .parents-flash-ticker__separator{display:none}
 }
 
+.parents-flash-ticker--secondary{
+  border-color:#9cd2a8;
+  background:#eef9f1;
+  color:#234a31;
+  box-shadow:0 4px 10px rgba(31,111,62,.08);
+}
+.parents-flash-ticker--secondary .parents-flash-ticker__separator,
+.parents-flash-ticker--secondary .parents-flash-ticker__item-separator{
+  color:#5b9a6c;
+}
+.parents-flash-ticker--secondary .parents-flash-ticker__text{
+  font-weight:800;
+}
+.parents-flash-ticker__important--urgent{
+  background:#ef8d84;
+  color:#fff;
+  border-color:#d7675d;
+}
+
 
 /* V33.62 — correction du bandeau défilant qui dépassait */
 .parents-flash-ticker{
