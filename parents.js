@@ -1051,18 +1051,17 @@ function renderTickerBlock(tickerId,textId,copyId,items,ariaLabel,{showPriorityB
   if(b)b.innerHTML=html;
   ticker.setAttribute('aria-label',`${ariaLabel} : ${msg}. Ouvrir les infos de la classe.`);
 }
-function renderSecondaryDropdown(items){
-  const box=$('parentsSecondaryDropdown');
-  const panel=$('parentsSecondaryDropdownPanel');
-  if(!box||!panel)return;
+function renderSecondaryStrip(items){
+  const box=$('parentsSecondaryStrip');
+  const content=$('parentsSecondaryStripContent');
+  if(!box||!content)return;
   const list=items.map(parentApiText).filter(Boolean);
   box.hidden=!list.length;
   if(!list.length){
-    panel.innerHTML='';
-    box.open=false;
+    content.innerHTML='';
     return;
   }
-  panel.innerHTML=list.map(text=>`<div class="parents-secondary-dropdown__item">${esc(text)}</div>`).join('');
+  content.innerHTML=list.map(text=>`<span class="parents-secondary-strip__item">${esc(text)}</span>`).join('');
 }
 function parentApiItems(type){
   if(!parentsApiLoaded)return null;
@@ -1106,16 +1105,16 @@ function loadParentsInfoApi(){
   });
 }
 
-// V35.82 — Bandeau principal pour les messages prioritaires,
-// puis menu déroulant vert juste en dessous pour les messages secondaires.
+// V35.83 — Bandeau principal pour les messages prioritaires,
+// puis ligne verte directement visible pour les messages secondaires.
 function renderFlashTicker(){
   const primaryTicker=$('parentsFlashTicker');
-  const secondaryDropdown=$('parentsSecondaryDropdown');
-  if(!primaryTicker&&!secondaryDropdown)return;
+  const secondaryStrip=$('parentsSecondaryStrip');
+  if(!primaryTicker&&!secondaryStrip)return;
 
   if(!parentsApiLoaded){
     renderTickerBlock('parentsFlashTicker','parentsFlashTickerText','parentsFlashTickerTextCopy',[],`Information prioritaire`,{showPriorityBadge:true});
-    renderSecondaryDropdown([]);
+    renderSecondaryStrip([]);
     return;
   }
 
@@ -1128,7 +1127,7 @@ function renderFlashTicker(){
   const secondaryItems=remote.filter(item=>parentApiPriority(item)==='normal');
 
   renderTickerBlock('parentsFlashTicker','parentsFlashTickerText','parentsFlashTickerTextCopy',primaryItems,`Information prioritaire`,{showPriorityBadge:true});
-  renderSecondaryDropdown(secondaryItems);
+  renderSecondaryStrip(secondaryItems);
 }
 
 // V35.43 — Rappels unifiés : permanent + « En ce moment ».

@@ -1927,3 +1927,40 @@ html[dir="rtl"] .homework-practical-reminder{flex-direction:row-reverse}
   .parents-secondary-dropdown__panel{padding:0 12px 10px}
   .parents-secondary-dropdown__item{font-size:12px;padding:9px 10px}
 }
+
+/* V35.83 — Informations secondaires visibles immédiatement */
+.parents-secondary-strip{
+  margin:0 0 8px;
+  border:1px solid #9cd2a8;
+  border-radius:12px;
+  background:#eef9f1;
+  box-shadow:0 4px 10px rgba(31,111,62,.08);
+  color:#234a31;
+  overflow:hidden;
+}
+.parents-secondary-strip[hidden]{display:none!important}
+.parents-secondary-strip__content{
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+  font-size:13px;
+  font-weight:800;
+  line-height:1.35;
+}
+.parents-secondary-strip__item{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.parents-secondary-strip__item + .parents-secondary-strip__item::before{
+  content:'•';
+  color:#5b9a6c;
+  font-weight:900;
+  margin-right:6px;
+}
+@media(max-width:620px){
+  .parents-secondary-strip{border-radius:10px;margin-bottom:7px}
+  .parents-secondary-strip__content{padding:9px 12px;font-size:12px;gap:10px}
+}
