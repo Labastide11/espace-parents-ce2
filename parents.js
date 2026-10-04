@@ -1192,7 +1192,14 @@ function reminderCollections(){
     },
     {text:'🔵 Évaluations nationales CE2 — du 7 au 18 septembre 2026.',start:'2026-09-01',end:'2026-09-18',source:'rappel'},
     {text:'📘 Les évaluations nationales sont terminées. On reprend un rythme ordinaire : lecture, français et mathématiques le matin, avec de courtes révisions à la maison.',start:'2026-09-14',end:'2026-09-18',source:'rappel'},
-    {text:'📝 Merci de remplir, dater et signer la fiche de renseignements.',start:'2026-09-01',end:'2026-09-18',source:'rappel'}
+    {text:'📝 Merci de remplir, dater et signer la fiche de renseignements.',start:'2026-09-01',end:'2026-09-18',source:'rappel'},
+
+    // V35.84 — Informations à rappeler aux familles début octobre.
+    {text:'1. 📒 Cahier de liaison — Merci de le consulter régulièrement. Pour chaque mot collé, merci de signer ou d’écrire « Vu ». C’est le seul moyen pour l’enseignant de s’assurer que les informations ont bien été lues par les familles.',start:'2026-10-04',end:'2026-10-16',source:'rappel'},
+    {text:'2. 📊 Résultats des évaluations — Les résultats des évaluations repères ont été collés dans le cahier de liaison. Merci d’en prendre connaissance.',start:'2026-10-04',end:'2026-10-16',source:'rappel'},
+    {text:'3. 🛡️ Assurance scolaire — Certaines familles n’ont pas encore fourni l’attestation d’assurance scolaire. Merci de la transmettre dès que possible.',start:'2026-10-04',end:'2026-10-16',source:'rappel'},
+    {text:'4. 🤝 Coopérative scolaire — La participation des familles n’est pas obligatoire, mais elle est fortement conseillée. Elle permet de financer du matériel, des activités et les projets de la classe, notamment la classe de mer prévue en fin d’année scolaire.',start:'2026-10-04',end:'2026-10-16',source:'rappel'},
+    {text:'5. 🌱 Aide aux élèves — Afin d’aider au mieux certains enfants rencontrant des difficultés, quelques élèves ont été signalés au RASED. L’objectif est de pouvoir leur proposer une aide adaptée à leurs besoins.',start:'2026-10-04',end:'2026-10-16',source:'rappel'}
   ];
 
   const today=isoToday();
