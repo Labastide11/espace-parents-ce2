@@ -1,3 +1,4 @@
+// V35.86 — Espace Parents : KODOMO placé en rappel n°6.
 // V35.65 — Cache-busting mobile : badges thématiques et couleurs spécifiques chargés avec index V35.65.
 // V35.56 — Page Devoirs : suppression du bloc introductif fixe pour afficher directement les devoirs.
 // V35.60 — Mobile : coup d’œil en grille 2 × 2 (lundi/mardi puis jeudi/vendredi), sans scroll horizontal.
@@ -1199,7 +1200,8 @@ function reminderCollections(){
     {text:'2. 📊 Résultats des évaluations — Les résultats des évaluations repères ont été collés dans le cahier de liaison. Merci d’en prendre connaissance.',start:'2026-10-04',end:'2026-10-16',source:'rappel'},
     {text:'3. 🛡️ Assurance scolaire — Certaines familles n’ont pas encore fourni l’attestation d’assurance scolaire. Merci de la transmettre dès que possible.',start:'2026-10-04',end:'2026-10-16',source:'rappel'},
     {text:'4. 🤝 Coopérative scolaire — La participation des familles n’est pas obligatoire, mais elle est fortement conseillée. Elle permet de financer du matériel, des activités et les projets de la classe, notamment la classe de mer prévue en fin d’année scolaire.',start:'2026-10-04',end:'2026-10-16',source:'rappel'},
-    {text:'5. 🌱 Aide aux élèves — Afin d’aider au mieux certains enfants rencontrant des difficultés, quelques élèves ont été signalés au RASED. L’objectif est de pouvoir leur proposer une aide adaptée à leurs besoins.',start:'2026-10-04',end:'2026-10-16',source:'rappel'}
+    {text:'5. 🌱 Aide aux élèves — Afin d’aider au mieux certains enfants rencontrant des difficultés, quelques élèves ont été signalés au RASED. L’objectif est de pouvoir leur proposer une aide adaptée à leurs besoins.',start:'2026-10-04',end:'2026-10-16',source:'rappel'},
+    {text:'6. 🥋 Vendredi 9 octobre — Rencontre avec KODOMO à la Cité des sports. Les élèves de CP à CE2 participeront de 14h à 15h à des animations ludiques autour des valeurs du judo, en présence de KODOMO, le panda roux mascotte de la Fédération. Un petit goûter est prévu à l’issue de l’activité. Cette action est entièrement prise en charge par le Comité de l’Aude de Judo et ne coûte rien à l’école.',start:'2026-10-04',end:'2026-10-09',source:'rappel'}
   ];
 
   const today=isoToday();
