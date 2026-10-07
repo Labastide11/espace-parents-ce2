@@ -1,4 +1,4 @@
-// V35.88 — P1 : le calendrier « La semaine en un coup d’œil » n’affiche plus les évaluations ; il reste centré sur ce qui est à préparer à la maison et les activités pratiques.
+// V35.89 — P1 : évaluations rétablies dans « La semaine en un coup d’œil » uniquement à leur date réelle ; jargon enseignant traduit pour les familles.
 // V35.87 — Aide aux familles : ajout des blocs facultatifs « Ce qu’il faut savoir », exemple concret et support.
 // V35.86 — Espace Parents : KODOMO placé en rappel n°6.
 // V35.65 — Cache-busting mobile : badges thématiques et couleurs spécifiques chargés avec index V35.65.
@@ -566,10 +566,8 @@ function homeworkWeekCalendarHtml(week,sourceItems=[]){
     const br=schoolBreakForDate(iso),off=schoolDayOffForDate(iso);
     const dayItems=items.filter(it=>String(it&&it.due||'')===iso);
     const dayEvals=evals.filter(ev=>String(ev&&ev.date||'')===iso);
-    // V35.88 — En P1, le coup d’œil sert uniquement à voir ce qui est à préparer
-    // à la maison et les activités pratiques. Les évaluations restent détaillées
-    // dans les cartes de la semaine, mais ne sont plus affichées comme badges ici.
-    const glanceEvals=String(week&&week.__period||'')==='p1'?[]:dayEvals;
+    // V35.89 — Une évaluation apparaît dans la case du jour uniquement si sa date réelle correspond à ce jour.
+    const glanceEvals=dayEvals;
     const physicalKey=weekGlancePhysicalKey(d);
     let kind='class',icon='🏫',status='Classe';
     if(br){kind='holiday';icon='🏖️';status=br.label||'Vacances scolaires';}
@@ -770,15 +768,22 @@ function homeworkEvaluationsHtml(list,periodTag='',titleOverride=''){
       : `📅 Évaluation${count>1?'s':''} prévue${count>1?'s':''} cette semaine`);
   const titleClass=`homework-evaluations-title${showCountBanner?' homework-evaluations-title--count':''}`;
   return `<div class="homework-evaluations"><div class="${titleClass}">${title}</div>${evaluations.map(ev=>{
-    const newSkills=Array.isArray(ev.newSkills)&&ev.newSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--new"><b>🎯 Nouvelles compétences évaluées</b><ul>${ev.newSkills.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
-    const reviewSkills=Array.isArray(ev.reviewSkills)&&ev.reviewSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--review"><b>🔁 Déjà vu — rebrassage</b><p>Cette partie a déjà été travaillée : elle sert seulement à vérifier que l’acquis est bien consolidé.</p><ul>${ev.reviewSkills.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
-    const scope=(!newSkills&&!reviewSkills&&Array.isArray(ev.scope)&&ev.scope.length)?`<ul>${ev.scope.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'';
-    const parentGoal=ev.parentGoal?`<div class="homework-parent-goal"><b>🎯 Ce qu’il faut savoir :</b> ${esc(ev.parentGoal)}</div>`:'';
-    const example=ev.example?`<div class="homework-parent-example"><b>💡 Exemple :</b> ${esc(ev.example)}</div>`:'';
+    const isP1=periodTag==='p1';
+    const parentTitle=String(ev.parentTitle||ev.title||'').trim();
+    const parentKnow=Array.isArray(ev.parentKnow)?ev.parentKnow.filter(Boolean):[];
+    const parentCanDo=Array.isArray(ev.parentCanDo)?ev.parentCanDo.filter(Boolean):[];
+    const parentExample=String(ev.parentExample||ev.example||'').trim();
+    const parentKnowHtml=parentKnow.length?`<div class="homework-evaluation-skills homework-evaluation-skills--new"><b>🧠 Ce que votre enfant doit connaître</b><ul>${parentKnow.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
+    const parentCanDoHtml=parentCanDo.length?`<div class="homework-evaluation-skills homework-evaluation-skills--review"><b>✏️ Ce que votre enfant doit savoir faire</b><ul>${parentCanDo.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
+    const newSkills=!isP1&&Array.isArray(ev.newSkills)&&ev.newSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--new"><b>🎯 Nouvelles compétences évaluées</b><ul>${ev.newSkills.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
+    const reviewSkills=!isP1&&Array.isArray(ev.reviewSkills)&&ev.reviewSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--review"><b>🔁 Déjà vu — rebrassage</b><p>Cette partie a déjà été travaillée : elle sert seulement à vérifier que l’acquis est bien consolidé.</p><ul>${ev.reviewSkills.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
+    const scope=(!isP1&&!newSkills&&!reviewSkills&&Array.isArray(ev.scope)&&ev.scope.length)?`<ul>${ev.scope.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'';
+    const legacyGoal=!isP1&&ev.parentGoal?`<div class="homework-parent-goal"><b>🎯 Ce qu’il faut savoir :</b> ${esc(ev.parentGoal)}</div>`:'';
+    const example=parentExample?`<div class="homework-parent-example"><b>💡 Exemple pour s’entraîner :</b> ${esc(parentExample)}</div>`:'';
     const support=(ev.support&&ev.support.url)?`<div class="homework-parent-support"><a href="${esc(ev.support.url)}" target="_blank" rel="noopener">${esc(ev.support.label||'📖 Voir le support')}</a></div>`:'';
-    const prep=ev.preparation?`<p class="homework-evaluation-prep"><b>Pour se préparer :</b> ${esc(ev.preparation)}</p>`:'';
+    const prep=ev.preparation?`<p class="homework-evaluation-prep"><b>À la maison :</b> ${esc(ev.preparation)}</p>`:'';
     const hibou=homeworkHibouHtml(ev.hibou);
-    return `<section class="homework-evaluation"><div class="homework-evaluation-head"><strong>${esc(ev.subject||'Évaluation')}</strong><span>${esc(dueLabel(ev.date))}</span></div>${evaluationBadgesHtml(ev)}${ev.title?`<h4>${esc(ev.title)}</h4>`:''}${newSkills}${reviewSkills}${scope}${parentGoal}${example}${support}${prep}${hibou}</section>`;
+    return `<section class="homework-evaluation"><div class="homework-evaluation-head"><strong>${esc(ev.subject||'Évaluation')}</strong><span>${esc(dueLabel(ev.date))}</span></div>${evaluationBadgesHtml(ev)}${parentTitle?`<h4>${esc(parentTitle)}</h4>`:''}${isP1?parentKnowHtml+parentCanDoHtml:newSkills+reviewSkills+scope+legacyGoal}${example}${support}${prep}${hibou}</section>`;
   }).join('')}</div>`;
 }
 function homeworkEvaluationTodayHtml(ev){
