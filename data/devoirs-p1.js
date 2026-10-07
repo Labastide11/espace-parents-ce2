@@ -1,6 +1,6 @@
-// V36.74 — P1 : aides concrètes pour les familles du 7 au 16/10 ; retrait des sciences des devoirs/évaluations de fin de P1.
+// V36.89 — P1 : aides concrètes pour les familles du 7 au 16/10 ; retrait des sciences des devoirs/évaluations de fin de P1.
 window.DEVOIRS_P1 = {
-  "version": "36.74",
+  "version": "36.89",
   "period": "p1",
   "schoolYear": "2026-2027",
   "principles": {
