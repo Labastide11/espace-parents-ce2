@@ -1,3 +1,5 @@
+// V35.88 — P1 : le calendrier « La semaine en un coup d’œil » n’affiche plus les évaluations ; il reste centré sur ce qui est à préparer à la maison et les activités pratiques.
+// V35.87 — Aide aux familles : ajout des blocs facultatifs « Ce qu’il faut savoir », exemple concret et support.
 // V35.86 — Espace Parents : KODOMO placé en rappel n°6.
 // V35.65 — Cache-busting mobile : badges thématiques et couleurs spécifiques chargés avec index V35.65.
 // V35.56 — Page Devoirs : suppression du bloc introductif fixe pour afficher directement les devoirs.
@@ -564,14 +566,18 @@ function homeworkWeekCalendarHtml(week,sourceItems=[]){
     const br=schoolBreakForDate(iso),off=schoolDayOffForDate(iso);
     const dayItems=items.filter(it=>String(it&&it.due||'')===iso);
     const dayEvals=evals.filter(ev=>String(ev&&ev.date||'')===iso);
+    // V35.88 — En P1, le coup d’œil sert uniquement à voir ce qui est à préparer
+    // à la maison et les activités pratiques. Les évaluations restent détaillées
+    // dans les cartes de la semaine, mais ne sont plus affichées comme badges ici.
+    const glanceEvals=String(week&&week.__period||'')==='p1'?[]:dayEvals;
     const physicalKey=weekGlancePhysicalKey(d);
     let kind='class',icon='🏫',status='Classe';
     if(br){kind='holiday';icon='🏖️';status=br.label||'Vacances scolaires';}
     else if(off){kind='dayoff';icon=off.icon||'📅';status=off.label||'Pas de classe';}
     else if(dow===0||dow===6){kind='weekend';icon='☕';status='Week-end';}
     else if(dow===3){kind='noclass';icon='🌿';status='Pas de classe';}
-    else if(dayEvals.length){
-      kind='evaluation';icon='📝';status=`${dayEvals.length} évaluation${dayEvals.length>1?'s':''}`;
+    else if(glanceEvals.length){
+      kind='evaluation';icon='📝';status=`${glanceEvals.length} évaluation${glanceEvals.length>1?'s':''}`;
     }
     else if(dayItems.length){
       kind='homework';icon='📚';status='À préparer';
@@ -583,12 +589,12 @@ function homeworkWeekCalendarHtml(week,sourceItems=[]){
     const taskKinds=weekGlanceItemHomeworkKinds(dayItems);
     const taskBadges=taskKinds.map(k=>({key:k,meta:WEEK_GLANCE_HOMEWORK_BADGES[k]})).filter(x=>x.meta).map(({key,meta})=>`<span class="homework-week-calendar__homework-badge homework-week-calendar__homework-badge--${esc(key)}">${esc(meta.label)}</span>`).join('');
     const sportBadge=physicalKey&&![0,3,6].includes(dow)&&!br&&!off?`<span class="homework-week-calendar__sport-badge">${esc(WEEK_GLANCE_HOMEWORK_BADGES.sport.label)}</span>`:'';
-    const evalMarker=dayEvals.length?`<span class="homework-week-calendar__eval-badge">📝 ${dayEvals.length>1?`${dayEvals.length} évaluations`:'Évaluation'}</span>`:'';
+    const evalMarker=glanceEvals.length?`<span class="homework-week-calendar__eval-badge">📝 ${glanceEvals.length>1?`${glanceEvals.length} évaluations`:'Évaluation'}</span>`:'';
     const isSpecialDay=Boolean(br||off||dow===0||dow===6||dow===3);
     const specialStatus=isSpecialDay?`<div class="homework-week-calendar__status"><span aria-hidden="true">${icon}</span><small>${esc(status)}</small></div>`:'';
     const badges=(taskBadges||sportBadge||evalMarker)?`<div class="homework-week-calendar__badges">${taskBadges}${sportBadge}${evalMarker}</div>`:'';
     const dayContent=`<div class="homework-week-calendar__date"><strong>${esc(`${frDate(d,{weekday:'long'})} ${frDate(d,{day:'numeric',month:'short'})}`)}</strong></div>${specialStatus}${badges}`;
-    const canJump=Boolean(dayItems.length||dayEvals.length);
+    const canJump=Boolean(dayItems.length||glanceEvals.length);
     return canJump
       ? `<a class="homework-week-calendar__day homework-week-calendar__day--${kind} homework-week-calendar__day--link" data-dow="${dow}" href="#devoirs-${esc(iso)}" aria-label="Voir les devoirs de ${esc(frDate(d,{weekday:'long',day:'numeric',month:'long'}))}">${dayContent}</a>`
       : `<div class="homework-week-calendar__day homework-week-calendar__day--${kind}" data-dow="${dow}">${dayContent}</div>`;
@@ -767,9 +773,12 @@ function homeworkEvaluationsHtml(list,periodTag='',titleOverride=''){
     const newSkills=Array.isArray(ev.newSkills)&&ev.newSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--new"><b>🎯 Nouvelles compétences évaluées</b><ul>${ev.newSkills.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
     const reviewSkills=Array.isArray(ev.reviewSkills)&&ev.reviewSkills.length?`<div class="homework-evaluation-skills homework-evaluation-skills--review"><b>🔁 Déjà vu — rebrassage</b><p>Cette partie a déjà été travaillée : elle sert seulement à vérifier que l’acquis est bien consolidé.</p><ul>${ev.reviewSkills.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
     const scope=(!newSkills&&!reviewSkills&&Array.isArray(ev.scope)&&ev.scope.length)?`<ul>${ev.scope.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'';
+    const parentGoal=ev.parentGoal?`<div class="homework-parent-goal"><b>🎯 Ce qu’il faut savoir :</b> ${esc(ev.parentGoal)}</div>`:'';
+    const example=ev.example?`<div class="homework-parent-example"><b>💡 Exemple :</b> ${esc(ev.example)}</div>`:'';
+    const support=(ev.support&&ev.support.url)?`<div class="homework-parent-support"><a href="${esc(ev.support.url)}" target="_blank" rel="noopener">${esc(ev.support.label||'📖 Voir le support')}</a></div>`:'';
     const prep=ev.preparation?`<p class="homework-evaluation-prep"><b>Pour se préparer :</b> ${esc(ev.preparation)}</p>`:'';
     const hibou=homeworkHibouHtml(ev.hibou);
-    return `<section class="homework-evaluation"><div class="homework-evaluation-head"><strong>${esc(ev.subject||'Évaluation')}</strong><span>${esc(dueLabel(ev.date))}</span></div>${evaluationBadgesHtml(ev)}${ev.title?`<h4>${esc(ev.title)}</h4>`:''}${newSkills}${reviewSkills}${scope}${prep}${hibou}</section>`;
+    return `<section class="homework-evaluation"><div class="homework-evaluation-head"><strong>${esc(ev.subject||'Évaluation')}</strong><span>${esc(dueLabel(ev.date))}</span></div>${evaluationBadgesHtml(ev)}${ev.title?`<h4>${esc(ev.title)}</h4>`:''}${newSkills}${reviewSkills}${scope}${parentGoal}${example}${support}${prep}${hibou}</section>`;
   }).join('')}</div>`;
 }
 function homeworkEvaluationTodayHtml(ev){
@@ -794,12 +803,18 @@ function homeworkStructuredBlock(task,extraClass=''){
   const title=String(task.title||`${meta.label} — ${task.action||'Je revois'}`);
   const instruction=String(task.instruction||task.routine||'');
   const help=String(task.help||'');
+  const parentGoal=String(task.parentGoal||'').trim();
+  const example=String(task.example||'').trim();
+  const support=(task.support&&task.support.url)?task.support:null;
   const duration=Number(task.duration||0);
   const durationLabel=String(task.durationLabel||'').trim();
   const classLink=String(task.classLink||task.notion||'');
   return `<div class="homework-block homework-task homework-task--${esc(meta.tone||'neutral')} ${extraClass}">
     <b>${esc(meta.icon||'📚')} ${esc(title)}</b>
     <p>${esc(instruction)}</p>
+    ${parentGoal?`<div class="homework-parent-goal"><b>🎯 Ce qu’il faut savoir :</b> ${esc(parentGoal)}</div>`:''}
+    ${example?`<div class="homework-parent-example"><b>💡 Exemple :</b> ${esc(example)}</div>`:''}
+    ${support?`<div class="homework-parent-support"><a href="${esc(support.url)}" target="_blank" rel="noopener">${esc(support.label||'📖 Voir le support')}</a></div>`:''}
     ${help?`<div class="homework-help"><strong>💡 Pour t’aider :</strong> ${esc(help)}</div>`:''}
     <div class="homework-task-meta">
       ${durationLabel?`<span>⏱️ ${esc(durationLabel)}</span>`:(duration?`<span>⏱️ ${duration} min environ</span>`:'')}
