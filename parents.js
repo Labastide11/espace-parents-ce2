@@ -1029,7 +1029,7 @@ function homeworkWeekSectionHtml(week,{future=false}={}){
   const calendar=schoolCalendarHtml(week);
   const nowIso=isoToday();
   const showToussaintDuringBreak=periodTag==='p2'&&week.start==='2026-11-02'&&nowIso>='2026-10-17'&&nowIso<'2026-11-02';
-  const holidayRevisions=showToussaintDuringBreak?holidayRevisionHtml({start:'2026-10-12',end:'2026-10-16'}):holidayRevisionHtml(week);
+  const holidayRevisions=(periodTag==='p2'&&week.start==='2026-11-02')?holidayRevisionHtml({start:'2026-10-12',end:'2026-10-16'}):holidayRevisionHtml(week);
   // P1 : plus de gros bloc « Cette semaine : X évaluations ».
   // Les évaluations sont directement intégrées au jour concerné.
   const weekEvaluationsHtml=['p1','p2'].includes(periodTag)?'':homeworkEvaluationsHtml(weekEvaluations,periodTag);
@@ -1720,3 +1720,42 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',ini
   });
 })();
 
+
+// P2 — ajustement de la hauteur réelle des exercices, y compris sur téléphone.
+// Tous les documents sont hébergés sur le même domaine GitHub Pages.
+(function(){
+  'use strict';
+  function measure(doc){
+    if(!doc)return 0;
+    const body=doc.body, root=doc.documentElement;
+    if(!body||!root)return 0;
+    return Math.max(body.scrollHeight,root.scrollHeight,body.offsetHeight,root.offsetHeight);
+  }
+  function update(){
+    document.querySelectorAll('iframe.homework-p2-embedded').forEach(function(frame){
+      try{
+        const d=frame.contentDocument;
+        if(!d||!d.body)return;
+        const nested=d.getElementById('week1Frame');
+        if(nested && nested.srcdoc){
+          const inner=nested.contentDocument;
+          const ih=measure(inner);
+          if(ih>100 && ih<25000 && Math.abs(nested.getBoundingClientRect().height-ih)>12){
+            nested.style.setProperty('height',Math.ceil(ih+24)+'px','important');
+          }
+        }
+        const h=measure(d);
+        if(h>150 && h<30000 && Math.abs(frame.getBoundingClientRect().height-h)>14){
+          frame.style.setProperty('height',Math.ceil(h+24)+'px','important');
+        }
+      }catch(e){ /* le message CE2_P2_FRAME_HEIGHT reste le repli */ }
+    });
+  }
+  window.addEventListener('load',update);
+  document.addEventListener('DOMContentLoaded',update);
+  document.addEventListener('click',function(){setTimeout(update,80);setTimeout(update,450);});
+  window.addEventListener('message',function(e){if(e.origin===location.origin)setTimeout(update,60)});
+  setInterval(function(){
+    if(document.getElementById('parentsViewHomework')?.hidden===false)update();
+  },1100);
+})();

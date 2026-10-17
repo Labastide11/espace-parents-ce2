@@ -334,6 +334,16 @@
 #parentsViewHomework iframe.homework-p2-embedded{width:100%;max-width:100%;border:0;display:block}
 @media(max-width:640px){#parentsViewHomework .homework-agenda-entry--interactive .homework-block{padding:5px!important}}
 </style>
+<style id="p2-mobile-scroll-fix">
+/* P2 : autoriser le défilement vertical naturel de la page et des fiches. */
+#parentsViewHomework,#homeworkCurrent,#homeworkCurrent .p2-native-section,
+#homeworkCurrent .p2-single-day{overflow:visible!important;max-height:none!important;height:auto!important}
+#homeworkCurrent iframe.homework-p2-embedded{display:block;width:100%!important;max-width:100%;min-height:850px;border:0;overflow:hidden}
+@media(max-width:760px){
+  #parentsViewHomework,#homeworkCurrent{touch-action:pan-y!important;overflow-y:visible!important}
+  #homeworkCurrent iframe.homework-p2-embedded{touch-action:pan-y!important}
+}
+</style>
 </head>
 <body>
 <main class="parents-main">
