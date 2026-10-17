@@ -950,7 +950,7 @@ function p2SingleDayHtml(week,sourceItems){
   const base=String(task.interactiveUrl).split('?')[0];
   const preferred=(sourceItems||[]).find(it=>it&&it.interactiveUrl&&/^2026-\d{2}-\d{2}$/.test(it.due||''));
   const day=preferred?preferred.due:week.start;
-  const url=base+'?date='+encodeURIComponent(day)+'&embed=1';
+  const url=base+'?date='+encodeURIComponent(day)+'&embed=1&v=20261017-2100';
   return `<div class="p2-single-day" data-p2-week="${esc(week.start)}"><iframe class="homework-p2-embedded" title="Devoir interactif P2" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" src="${esc(url)}" style="display:block;width:100%;height:1450px;border:0;background:transparent;border-radius:12px"></iframe></div>`;
 }
 function homeworkAgendaDayHtml(iso,items,evaluations,week){
