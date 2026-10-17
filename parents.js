@@ -1,3 +1,4 @@
+// V38.00 — P2 : agenda interactif raccordé ; P1 inchangée.
 // V35.90 — P1 : page Devoirs en mode agenda, une seule section par jour ; suppression du gros bloc hebdomadaire d’évaluations.
 // V35.87 — Aide aux familles : ajout des blocs facultatifs « Ce qu’il faut savoir », exemple concret et support.
 // V35.86 — Espace Parents : KODOMO placé en rappel n°6.
@@ -935,6 +936,16 @@ function homeworkAgendaEvaluationHtml(ev){
 
 function homeworkAgendaTaskHtml(it,week){
   if(!it)return '';
+  if(it.interactiveUrl){
+    const label=it.title||'Devoirs du jour';
+    return `<div class="homework-agenda-entry homework-agenda-entry--task homework-agenda-entry--interactive">
+      <div class="homework-block homework-task homework-task--main">
+      <b>📚 ${esc(label)}</b>
+      <p>Fais tes exercices directement en ligne, avec une aide et une correction après chaque question.</p>
+      <a class="homework-p2-open" href="${esc(it.interactiveUrl)}" target="_blank" rel="noopener noreferrer">✏️ Faire les devoirs du jour ↗</a>
+      </div></div>`;
+  }
+
   const main=homeworkStructuredBlock(it,'homework-task--main');
   const secondary=it.secondary?homeworkStructuredBlock(it.secondary,'homework-task--secondary'):'';
   const dictation=dictationReviewHtml(it.__sourceWeek||week,it);
@@ -1020,14 +1031,14 @@ function homeworkWeekSectionHtml(week,{future=false}={}){
   const holidayRevisions=holidayRevisionHtml(week);
   // P1 : plus de gros bloc « Cette semaine : X évaluations ».
   // Les évaluations sont directement intégrées au jour concerné.
-  const weekEvaluationsHtml=periodTag==='p1'?'':homeworkEvaluationsHtml(weekEvaluations,periodTag);
+  const weekEvaluationsHtml=['p1','p2'].includes(periodTag)?'':homeworkEvaluationsHtml(weekEvaluations,periodTag);
   const advanceTitle=advanceAnnouncements.length?`📌 À venir : ${advanceAnnouncements.length} évaluation${advanceAnnouncements.length>1?'s':''} annoncée${advanceAnnouncements.length>1?'s':''} à l’avance`:'';
-  const advanceAnnouncementsHtml=periodTag==='p1'?'':homeworkEvaluationsHtml(advanceAnnouncements,periodTag,advanceTitle);
+  const advanceAnnouncementsHtml=['p1','p2'].includes(periodTag)?'':homeworkEvaluationsHtml(advanceAnnouncements,periodTag,advanceTitle);
   const weekNote=String(week.note||'').trim();
   const isPostEvaluationNote=/évaluations nationales sont terminées|on reprend un rythme ordinaire/i.test(weekNote);
   const visibleWeekNote=isPostEvaluationNote?'':weekNote;
-  const agendaContent=periodTag==='p1'?homeworkAgendaWeekHtml(week,sourceItems):'';
-  const content=periodTag==='p1'
+  const agendaContent=['p1','p2'].includes(periodTag)?homeworkAgendaWeekHtml(week,sourceItems):'';
+  const content=['p1','p2'].includes(periodTag)
     ? `${visibleWeekNote?`<div class="homework-empty">${esc(visibleWeekNote)}</div>`:''}${agendaContent||`<div class="homework-empty">🌱 ${esc(visibleWeekNote||'Aucun devoir cette semaine.')}</div>`}`
     : (items.length
       ? `${visibleWeekNote?`<div class="homework-empty">${esc(visibleWeekNote)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}`
