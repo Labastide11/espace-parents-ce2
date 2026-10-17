@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Espace Parents CE2 — V38.00</title>
+  <title>Espace Parents CE2 — V38.02</title>
   <link rel="stylesheet" href="parents.css?v=35.92">
   <style id="parents-meetings-v3544">
     .parents-meetings-focus{margin:14px 0 20px}
@@ -344,7 +344,15 @@
   #homeworkCurrent iframe.homework-p2-embedded{touch-action:pan-y!important}
 }
 </style>
-</head>
+<style id="parents-p2-mobile-fullwidth-v3802">
+@media (max-width:760px) {
+ body:has(#parentsViewHomework:not([hidden])) .parents-main {width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;}
+ #parentsViewHomework:not([hidden]) {width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:2px 3px!important;border:0!important;box-shadow:none!important;overflow:visible!important;}
+ #parentsViewHomework .homework-toolbar {padding:8px 5px!important;}
+ #homeworkCurrent,#homeworkCurrent .p2-native-section,#homeworkCurrent .p2-single-day {width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;overflow:visible!important;}
+ #homeworkCurrent iframe.homework-p2-embedded,#homeworkCurrent iframe {display:block;width:100%!important;max-width:100%!important;margin:0!important;border:0!important;}
+}
+</style></head>
 <body>
 <main class="parents-main">
 <section class="parents-dashboard" aria-labelledby="parentsQuickTitle">
@@ -531,7 +539,7 @@
 <script src="https://labastide11.github.io/progressions-ce2/public-emploi-du-temps.js?v=34.51"></script>
 <script src="https://labastide11.github.io/progressions-ce2/data/parents-semaine.js?v=33.69"></script><script src="https://labastide11.github.io/progressions-ce2/data/calendrier-scolaire-2026-2027.js?v=34.63"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-engine.js?v=34.97"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p1.js?v=37.16"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p2.js?v=38.00"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p3.js?v=35.66"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p4.js?v=34.61"></script><script src="https://labastide11.github.io/progressions-ce2/data/devoirs-p5.js?v=34.62"></script><script src="https://labastide11.github.io/progressions-ce2/data/parents-travail.js?v=33.69"></script><script src="https://labastide11.github.io/progressions-ce2/data/parents-vie-classe.js?v=33.69"></script><script src="https://labastide11.github.io/progressions-ce2/data/parents-infos.js?v=35.37"></script>
 <script src="https://labastide11.github.io/progressions-ce2/data/parents-dictees.js?v=36.69"></script>
-<script src="parents.js?v=38.01"></script>
+<script src="parents.js?v=38.02"></script>
 <script src="i18n.js?v=35.34"></script>
 <script src="parents-analytics.js?v=35.43"></script>
 
