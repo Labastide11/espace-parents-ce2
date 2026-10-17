@@ -586,7 +586,14 @@ function homeworkWeekCalendarHtml(week,sourceItems=[]){
     }
     else {status='Classe · rien à préparer';}
     const taskKinds=weekGlanceItemHomeworkKinds(dayItems);
-    const taskBadges=taskKinds.map(k=>({key:k,meta:WEEK_GLANCE_HOMEWORK_BADGES[k]})).filter(x=>x.meta).map(({key,meta})=>`<span class="homework-week-calendar__homework-badge homework-week-calendar__homework-badge--${esc(key)}">${esc(meta.label)}</span>`).join('');
+    // P2 : conserver « La semaine en un coup d’œil » avec l'intitulé exact
+    // des devoirs. La P1 et les autres périodes gardent leurs badges existants.
+    const p2Summary=String(week.__period||'')==='p2';
+    const taskBadges=p2Summary
+      ? dayItems.map(it=>String(it&&it.title||it&&it.routineTitle||it&&it.notion||'').trim())
+          .filter(Boolean).filter((title,i,all)=>all.indexOf(title)===i)
+          .map(title=>`<span class="homework-week-calendar__homework-badge homework-week-calendar__homework-badge--p2-title">${esc(title)}</span>`).join('')
+      : taskKinds.map(k=>({key:k,meta:WEEK_GLANCE_HOMEWORK_BADGES[k]})).filter(x=>x.meta).map(({key,meta})=>`<span class="homework-week-calendar__homework-badge homework-week-calendar__homework-badge--${esc(key)}">${esc(meta.label)}</span>`).join('');
     const sportBadge=physicalKey&&![0,3,6].includes(dow)&&!br&&!off?`<span class="homework-week-calendar__sport-badge">${esc(WEEK_GLANCE_HOMEWORK_BADGES.sport.label)}</span>`:'';
     const evalMarker=glanceEvals.length?`<span class="homework-week-calendar__eval-badge">📝 ${glanceEvals.length>1?`${glanceEvals.length} évaluations`:'Évaluation'}</span>`:'';
     const isSpecialDay=Boolean(br||off||dow===0||dow===6||dow===3);
@@ -941,8 +948,7 @@ function homeworkAgendaTaskHtml(it,week){
     return `<div class="homework-agenda-entry homework-agenda-entry--task homework-agenda-entry--interactive">
       <div class="homework-block homework-task homework-task--main">
       <b>📚 ${esc(label)}</b>
-      <p>Fais tes exercices directement en ligne, avec une aide et une correction après chaque question.</p>
-      <a class="homework-p2-open" href="${esc(it.interactiveUrl)}" target="_blank" rel="noopener noreferrer">✏️ Faire les devoirs du jour ↗</a>
+      <iframe class="homework-p2-embedded" title="Exercices interactifs — ${esc(label)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" src="${esc(it.interactiveUrl)}&embed=1" style="display:block;width:100%;height:850px;max-width:100%;border:0;background:white;border-radius:12px" ></iframe>
       </div></div>`;
   }
 
@@ -1699,4 +1705,17 @@ window.addEventListener('parentslanguagechange',()=>{
   try{renderSchedule()}catch(e){console.warn('V35.20: rafraîchissement emploi du temps impossible',e)}
 });
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
+})();
+
+// P2 — hauteur des exercices embarqués, messages exclusivement depuis Progressions CE2.
+(function(){
+  const allowed='https://labastide11.github.io';
+  window.addEventListener('message',function(event){
+    if(event.origin!==allowed||!event.data||event.data.type!=='CE2_P2_FRAME_HEIGHT')return;
+    const h=Number(event.data.height);
+    if(!Number.isFinite(h)||h<120||h>10000)return;
+    document.querySelectorAll('iframe.homework-p2-embedded').forEach(function(frame){
+      if(frame.contentWindow===event.source){frame.style.height=Math.ceil(h+12)+'px';}
+    });
+  });
 })();
