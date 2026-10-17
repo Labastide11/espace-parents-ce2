@@ -951,7 +951,7 @@ function p2SingleDayHtml(week,sourceItems){
   const preferred=(sourceItems||[]).find(it=>it&&it.interactiveUrl&&/^2026-\d{2}-\d{2}$/.test(it.due||''));
   const day=preferred?preferred.due:week.start;
   const url=base+'?date='+encodeURIComponent(day)+'&embed=1';
-  return `<div class="p2-single-day" data-p2-week="${esc(week.start)}"><iframe class="homework-p2-embedded" title="Devoir interactif P2" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" src="${esc(url)}" style="display:block;width:100%;height:1100px;border:0;background:transparent;border-radius:12px"></iframe></div>`;
+  return `<div class="p2-single-day" data-p2-week="${esc(week.start)}"><iframe class="homework-p2-embedded" title="Devoir interactif P2" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" src="${esc(url)}" style="display:block;width:100%;height:1450px;border:0;background:transparent;border-radius:12px"></iframe></div>`;
 }
 function homeworkAgendaDayHtml(iso,items,evaluations,week){
   const d=dateFromIso(iso);
@@ -1044,6 +1044,10 @@ function homeworkWeekSectionHtml(week,{future=false}={}){
     : (items.length
       ? `${visibleWeekNote?`<div class="homework-empty">${esc(visibleWeekNote)}</div>`:''}${items.map(x=>homeworkItemCard(x,false,periodTag,lightWeek,week)).join('')}`
       : `<div class="homework-empty">🌱 ${esc(visibleWeekNote||'Aucun devoir cette semaine.')}</div>`);
+  if(periodTag==='p2'){
+    // Aucune surcouche d'agenda : l'interface officielle P2 possède déjà son agenda.
+    return `<section class="homework-two-week-section p2-native-section" aria-label="Devoirs de la période 2">${holidayRevisions}${agendaContent}</section>`;
+  }
   return `<section class="homework-two-week-section${future?' homework-two-week-section--next':''}" aria-label="${sectionLabel}">${anticipation}${weekCalendar}${calendar}${weekEvaluationsHtml}${advanceAnnouncementsHtml}${content}${week.holiday?`<div class="homework-holiday">🏖️ ${esc(week.holiday)}</div>`:''}${holidayRevisions}</section>`;
 }
 function renderHomework(){
@@ -1051,7 +1055,8 @@ function renderHomework(){
   if(!cur)return;
   if(!week){cur.innerHTML='<div class="homework-empty">Aucun devoir programmé.</div>';return;}
   const nextWeek=homeworkNextWeek(week);
-  cur.innerHTML=`${homeworkWeekSectionHtml(week)}${nextWeek?homeworkWeekSectionHtml(nextWeek,{future:true}):''}`;
+  const p2=String(week.__period||'')==='p2';
+  cur.innerHTML=`${homeworkWeekSectionHtml(week)}${!p2&&nextWeek?homeworkWeekSectionHtml(nextWeek,{future:true}):''}`;
 }
 
 function setupHomeworkTest(){
@@ -1715,22 +1720,3 @@ document.readyState==='loading'?document.addEventListener('DOMContentLoaded',ini
   });
 })();
 
-// P2 — la semaine en un coup d'œil pilote l'UNIQUE exercice affiché en dessous.
-(function(){
-  document.addEventListener('click',function(event){
-    const link=event.target.closest('#parentsViewHomework .homework-week-calendar__day--link');
-    if(!link)return;
-    const anchor=link.getAttribute('href')||'';
-    const match=anchor.match(/^#devoirs-(2026-\d{2}-\d{2})$/);
-    if(!match||match[1]<'2026-11-02'||match[1]>'2026-12-18')return;
-    const section=link.closest('.homework-two-week-section');
-    const container=section&&section.querySelector('.p2-single-day');
-    const frame=container&&container.querySelector('iframe.homework-p2-embedded');
-    if(!frame)return;
-    event.preventDefault();
-    const u=new URL(frame.src,location.href);
-    u.searchParams.set('date',match[1]);
-    frame.src=u.href;
-    container.scrollIntoView({behavior:'smooth',block:'start'});
-  });
-})();
