@@ -1388,6 +1388,32 @@ function renderClassInfo(){
   renderReminderList('parentsPermanentList',groups.permanent,'Aucun rappel permanent publié pour le moment.');
   renderReminderList('parentsCurrentList',groups.current,'Aucune information ponctuelle à signaler pour le moment.');
 
+  // P2 — Information aux familles : devoirs entièrement autonomes.
+  // Visible pendant les vacances de Toussaint et la période 2.
+  const parentNoticeHost=$('parentsCurrentList');
+  if(parentNoticeHost){
+    const today=isoToday();
+    const existing=parentNoticeHost.querySelector('#parentsHomeworkAutonomyNotice');
+    if(existing) existing.remove();
+    if(today>='2026-10-18' && today<='2026-12-18'){
+      const note=document.createElement('article');
+      note.id='parentsHomeworkAutonomyNotice';
+      note.className='parents-homework-autonomy-notice';
+      note.innerHTML=`
+        <h4>📚 Les devoirs évoluent dans l’Espace Parents !</h4>
+        <p>Chers parents,</p>
+        <p>À la suite de vos remarques, j’ai amélioré les devoirs en ligne. Vous m’aviez signalé que certains enfants ne pouvaient pas faire leur travail parce qu’ils avaient oublié leur cahier ou leur leçon à l’école.</p>
+        <p><strong>Désormais, tout est directement accessible dans la rubrique « Devoirs » :</strong> les consignes, les exercices, les leçons, les textes, les aides et les corrections immédiates.</p>
+        <p>Les activités sont présentées progressivement et permettent à chaque enfant de <strong>travailler de façon plus autonome</strong>, même sans son cahier. Il peut chercher, recevoir un indice, vérifier sa réponse et réessayer.</p>
+        <p>Votre rôle reste précieux pour l’encourager, l’écouter lire et valoriser ses efforts. Vous n’avez toutefois pas à expliquer ou corriger chaque exercice.</p>
+        <p>J’espère que cette organisation facilitera le travail à la maison et rendra ce moment plus agréable pour les enfants et les familles. N’hésitez pas à me faire part de vos remarques !</p>
+        <p class='parents-homework-autonomy-signature'><strong>M. Cotty</strong> — École La Gravette, CE2</p>
+      `;
+      parentNoticeHost.prepend(note);
+    }
+  }
+
+
   // V35.20 — ne plus afficher l'ancien lien « mots aux parents » devenu obsolète.
   const docs=(Array.isArray(I.documents)?I.documents:[]).filter(d=>{
     const label=String(typeof d==='string'?d:(d?.label||d?.title||''));
